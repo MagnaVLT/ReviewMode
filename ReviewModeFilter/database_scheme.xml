@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<backup>
+	<annotation_category_list> 
+		<item type='int(11)'>ID</item>
+		<item type='varchar(255)'>NAME</item>
+		<item type='text'>DESCRIPTION</item>
+	</annotation_category_list> 
+	<clip_info> 
+		<item type='bigint(20)'>ClipID</item>
+		<item type='varchar(32)'>VIN</item>
+		<item type='varchar(100)'>ClipName</item>
+		<item type='bigint(20)'>StartTime</item>
+		<item type='bigint(20)'>StopTime</item>
+		<item type='bigint(20)'>LocalPCTime</item>
+		<item type='varchar(23)'>FCMSWVer</item>
+		<item type='varchar(15)'>MESTVer</item>
+		<item type='varchar(8)'>ADTFVer</item>
+		<item type='varchar(40)'>DriverName</item>
+		<item type='datetime'>GPSTimeStamp</item>
+		<item type='double'>GPSLatitude</item>
+		<item type='double'>GPSLongitude</item>
+		<item type='double'>GPSSpeed</item>
+		<item type='double'>GPSHeading</item>
+		<item type='int(11)'>GPSInvalidCounter</item>
+		<item type='double'>GPSElevation</item>
+		<item type='int(11)'>YAHUTCOffset</item>
+		<item type='char(32)'>YAHUTCDST</item>
+		<item type='double'>YAHSUNSolarElevation</item>
+		<item type='double'>YAHSUNSolarAzimuth</item>
+		<item type='int(11)'>YAHWOEID</item>
+		<item type='varchar(32)'>YAHCity</item>
+		<item type='varchar(32)'>YAHStreet</item>
+		<item type='varchar(32)'>YAHHouse</item>
+		<item type='varchar(32)'>YAHRegion</item>
+		<item type='int(11)'>YAHZipCode</item>
+		<item type='varchar(32)'>YAHCounty</item>
+		<item type='varchar(32)'>YAHCountry</item>
+		<item type='char(32)'>YAHUnitTemp</item>
+		<item type='char(32)'>YAHUnitDist</item>
+		<item type='char(32)'>YAHUnitPress</item>
+		<item type='char(32)'>YAHUnitSpeed</item>
+		<item type='int(11)'>YAHWindChill</item>
+		<item type='int(11)'>YAHWindDirection</item>
+		<item type='int(11)'>YAHWindSpeed</item>
+		<item type='int(11)'>YAHHumidity</item>
+		<item type='int(11)'>YAHVisibility</item>
+		<item type='double'>YAHPressure</item>
+		<item type='int(11)'>YAHPressureTrend</item>
+		<item type='time'>YAHSunrise</item>
+		<item type='time'>YAHSunset</item>
+		<item type='double'>YAHObsLatitude</item>
+		<item type='double'>YAHObsLongitude</item>
+		<item type='varchar(32)'>YAHWeatherCondition</item>
+		<item type='int(11)'>YAHWeatherID</item>
+		<item type='int(11)'>YAHTemperature</item>
+		<item type='varchar(32)'>YAHyahooDate</item>
+		<item type='int(11)'>YAHInternetConnection</item>
+	</clip_info> 
+	<event_status_list> 
+		<item type='int(11)'>ID</item>
+		<item type='varchar(255)'>NAME</item>
+		<item type='text'>DESCRIPTION</item>
+	</event_status_list> 
+	<eyeq_event_id_list> 
+		<item type='int(11)'>EventID</item>
+		<item type='varchar(96)'>EventName</item>
+		<item type='varchar(2048)'>EventDescription</item>
+	</eyeq_event_id_list> 
+	<eyeq_event_report> 
+		<item type='bigint(20)'>ReportID</item>
+		<item type='varchar(32)'>VIN</item>
+		<item type='bigint(20)'>ClipID</item>
+		<item type='int(11)'>EventID</item>
+		<item type='bigint(20)'>LocalPCTime</item>
+		<item type='bigint(20)'>EventADTFTime</item>
+		<item type='varchar(1024)'>UserAnnotation</item>
+		<item type='int(10)'>EventStatus</item>
+		<item type='double'>GPSLongitude</item>
+		<item type='double'>GPSLatitude</item>
+	</eyeq_event_report> 
+	<fcm_event_report> 
+		<item type='bigint(20)'>ReportID</item>
+		<item type='varchar(32)'>VIN</item>
+		<item type='bigint(20)'>ClipID</item>
+		<item type='int(11)'>EventID</item>
+		<item type='bigint(20)'>LocalPCTime</item>
+		<item type='bigint(20)'>EventADTFTime</item>
+		<item type='varchar(1024)'>UserAnnotation</item>
+		<item type='int(10)'>EventStatus</item>
+		<item type='double'>GPSLongitude</item>
+		<item type='double'>GPSLatitude</item>
+	</fcm_event_report> 
+	<feature_category_list> 
+		<item type='int(11)'>ID</item>
+		<item type='varchar(255)'>NAME</item>
+		<item type='text'>DESCRIPTION</item>
+	</feature_category_list> 
+	<maz_event_id_list> 
+		<item type='int(11)'>EventID</item>
+		<item type='varchar(96)'>EventName</item>
+		<item type='varchar(2048)'>EventDescription</item>
+	</maz_event_id_list> 
+	<user_event_id_list> 
+		<item type='int(11)'>EventID</item>
+		<item type='varchar(96)'>EventName</item>
+		<item type='varchar(2048)'>EventDescription</item>
+	</user_event_id_list> 
+	<user_event_report> 
+		<item type='bigint(20)'>ReportID</item>
+		<item type='varchar(32)'>VIN</item>
+		<item type='bigint(20)'>ClipID</item>
+		<item type='int(11)'>EventID</item>
+		<item type='bigint(20)'>LocalPCTime</item>
+		<item type='bigint(20)'>EventADTFTime</item>
+		<item type='varchar(1024)'>UserAnnotation</item>
+		<item type='int(10)'>EventStatus</item>
+		<item type='double'>GPSLongitude</item>
+		<item type='double'>GPSLatitude</item>
+	</user_event_report> 
+</backup>
+
+
