@@ -1364,6 +1364,7 @@ bool ReviewModeFilter::changeDatFile()
 	if(this->m_oFilterGUI.txt_clip_directory->text().toStdString().empty())
 	{
 		MagnaUtil::show_message("Please select the clip-directory");
+		return false;
 	}
 
 	string dat = this->m_oFilterGUI.txt_clip_directory->text().toStdString() + this->m_oFilterGUI.lbl_clip->text().toStdString();
@@ -1376,6 +1377,11 @@ bool ReviewModeFilter::changeDatFile()
 		string att_value = "adtf.stg.harddisk_player";
 
 		XMLHandler *t = new XMLHandler(SYSTEM_RELEASE);
+		if(getCurClipText().compare(dat)==0){
+			MagnaUtil::show_message("The selected event is recorded in the current clip");
+			return false;
+		}
+
 		t->update("adtf:project", "configurations", att_name, att_value, dat);
 
 		return true;
