@@ -1236,6 +1236,8 @@ tResult ReviewModeFilter::on_btn_execute_clicked()
 			progress->setValue(40);
 			this->sqlFileHandler->insertNewRecords(this->m_pFilterWidget, "clip_info", clip_info_temp_url);
 			progress->setValue(80);
+			this->sqlFileHandler->insert_insertor(ReviewModeFilter::ID);
+
 			MagnaUtil::delete_file(TEMP_FILE + "tmp.xml");
 			this->sqlFileHandler->delete_temporal_database("temporal_database", "root", "hil");	
 			MagnaUtil::restartADTF();

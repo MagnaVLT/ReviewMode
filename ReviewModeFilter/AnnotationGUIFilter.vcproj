@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\ADTF\2.11.0\include&quot;;&quot;C:\Program Files (x86)\ADTF\2.11.0\addons\adtf-device-toolbox\include&quot;;&quot;C:\Program Files (x86)\ADTF\2.11.0\addons\adtf-display-toolbox\include&quot;;&quot;C:\Program Files (x86)\ADTF\2.11.0\addons\adtf-streaminglib\include&quot;;C:\QT\4.7.1\include;C:\Users\e39050\Documents\GitHub\ReviewModeFilter\rapidxml;&quot;C:\Program Files (x86)\MySQL\MySQL Server 5.5\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\ADTF\2.11.0\include&quot;;&quot;C:\Program Files (x86)\ADTF\2.11.0\addons\adtf-device-toolbox\include&quot;;&quot;C:\Program Files (x86)\ADTF\2.11.0\addons\adtf-display-toolbox\include&quot;;&quot;C:\Program Files (x86)\ADTF\2.11.0\addons\adtf-streaminglib\include&quot;;C:\QT\4.7.1\include;C:\Users\e39050\Documents\GitHub\ReviewMode\rapidxml;&quot;C:\Program Files (x86)\MySQL\MySQL Server 5.5\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TEMPLATEFILTER_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

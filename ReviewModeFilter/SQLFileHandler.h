@@ -21,10 +21,15 @@ public:
 	vector<string> getTablesFromXML(string schemeFile);
 	void insertNewRecords(QWidget* m_pFilterWidget, string dbName, string tmpFileName);
 	void delete_temporal_database(string db, string id, string password);
+	void insert_insertor(string id);
 private:
 	void addExistingReportID(string temp_stored_file, vector<string> *reportid_list);
 	bool check_table_existence(string table, vector<string> table_list_in_db);
 	bool check_database_existence(string DB);
 	vector<string> getTableListFrom(string DB);
 	QProgressDialog* getProgressDialog(QWidget* m_pFilterWidget);
+	void setUploadedEvents();
+
+	map<string, vector<string>> uploaded_events;
+
 };

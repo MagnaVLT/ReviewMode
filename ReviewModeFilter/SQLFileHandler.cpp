@@ -79,9 +79,39 @@ bool SQLFileHandler::check_db(string schemeXMLFile, string DB)
 		}
 	}
 	
+	setUploadedEvents();
 	return true;
 }
 
+void SQLFileHandler::insert_insertor(string id)
+{
+	vector<string> reportid_list = uploaded_events["reportid"];
+	vector<string> vin_list = uploaded_events["vin"];
+
+	if(reportid_list.size() == vin_list.size())
+	{
+		string curTime = MagnaUtil::bigIntegerToString(MagnaUtil::getCurrentSystemTime());
+		string query = "update event_report set insertor = '" + id + "', insertedtime = " + curTime + " where ";
+
+		for(unsigned int i = 0; i < reportid_list.size()-1 ; i++)
+		{	
+			query += " (reportid = " + reportid_list.at(i) + " and vin = '" + vin_list.at(i) + "') or ";
+		}
+		query += " (reportid = " + reportid_list.at(reportid_list.size()-1) + " and vin = '" + vin_list.at(reportid_list.size()-1) + "');";
+		(new Updator(query))->execute();
+	}
+
+	
+}
+void SQLFileHandler::setUploadedEvents()
+{
+	vector<string> field;
+	field.push_back("reportid");
+	field.push_back("vin");
+	string query = "select reportid, vin from event_report;";
+
+	uploaded_events = (new TemporalRetriever())->getData(field, query);
+}
 
 vector<string> SQLFileHandler::getFieldsFromXML(string schemeXMLFile, string table)
 {
