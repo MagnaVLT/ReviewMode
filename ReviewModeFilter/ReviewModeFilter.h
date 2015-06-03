@@ -134,7 +134,7 @@ private:
 
 	//tResult out_reviewed_data(IPin* pSource, IMediaSample* pMediaSample);
 	tResult send_data(cOutputPin *outpin, sEvent_Data reviewed_data);
-
+	int offset;
 	cMutex	m_oEventProcessMutex;
 	ListHandle* listhandle;
 	ComboHandle* combo_handle;
@@ -173,7 +173,7 @@ private:
 	void initGUI(std::vector<std::string> features, std::vector<std::string> event_type, QDate start, QDate end);
 	vector<string> getDateRange();
 	void refreshEventGroup();
-	void refreshAnnotationGroup();
+	void refreshAnnotationGroup(int current_offset);
 	vector<string> getEventCategories();
 	void saveCurrentStatus(std::string status);
 	void restoreCurrentStatus(const char* tmpFile);
@@ -247,6 +247,8 @@ public slots:
 	tResult on_btn_change_cancel_clicked();
 	tResult on_btn_change_clicked();
 	tResult on_btn_logout_clicked();
+	tResult on_btn_prev_clicked();
+	tResult on_btn_next_clicked();
 };
 
 #endif

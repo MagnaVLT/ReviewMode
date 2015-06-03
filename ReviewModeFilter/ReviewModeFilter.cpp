@@ -142,7 +142,6 @@ tResult ReviewModeFilter::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam
 	RETURN_NOERROR;
 }
 
-
 tResult ReviewModeFilter::Run(tInt nActivationCode, const tVoid* pvUserData, tInt szUserDataSize, ucom::IException** __exception_ptr/* =NULL */)
 {
 	return cBaseQtFilter::Run(nActivationCode, pvUserData, szUserDataSize, __exception_ptr);
@@ -198,7 +197,7 @@ void ReviewModeFilter::initAll()
 	this->initWorkspaceDirectory();
 
 	string tmpFile = TEMP_FILE + "tmp.xml";
-	this->sqlFileHandler = new SQLFileHandler(TEMP_FILE);
+	this->sqlFileHandler = new SQLFileHandler(TEMP_FILE, ID);
 
 	if(QFile().exists(QString(tmpFile.c_str())))
 	{
@@ -298,9 +297,10 @@ void ReviewModeFilter::initEventCombo(QComboBox* combobox, bool eyeq)
 
 	if(!selectedFeature.empty())
 	{
+		string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
 		selectedFeature = MagnaUtil::stringTokenizer(selectedFeature, '-').at(1);
 		vector<string> event_fields = getListField4Event();
-		string query = "select a.name, a.id from event_list a, project_event_map b where a.id = b.eventid and a.featureid = "+selectedFeature+";";
+		string query = "select a.name, a.id from event_list a, project_event_map b where a.id = b.eventid and b.projectid = "+projectid+" and a.featureid = "+selectedFeature+";";
 		map<string, vector<string>> eventContainer = (new Retriever(event_fields, query))->getData();
 		vector<string> event_list = listhandle->getConcatenatedText(eventContainer, event_fields);
 		combo_handle->initCombo(combobox, event_list);
@@ -456,6 +456,8 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_insert, SIGNAL(clicked()), this, SLOT(on_btn_insert_clicked()));
 	connect(m_oFilterGUI.btn_cancel, SIGNAL(clicked()), this, SLOT(on_btn_cancel_clicked()));
 	connect(m_oFilterGUI.btn_submit, SIGNAL(clicked()), this, SLOT(on_btn_submit_clicked()));
+	connect(m_oFilterGUI.btn_prev, SIGNAL(clicked()), this, SLOT(on_btn_prev_clicked()));
+	connect(m_oFilterGUI.btn_next, SIGNAL(clicked()), this, SLOT(on_btn_next_clicked()));
 
 	connect(m_oFilterGUI.chk_date, SIGNAL(clicked()), this, SLOT(on_chk_date_clicked()));
 
@@ -506,6 +508,8 @@ void ReviewModeFilter::unregisterEventHandler()
 	disconnect(this, SLOT(on_btn_insert_clicked()));
 	disconnect(this, SLOT(on_btn_cancel_clicked()));
 	disconnect(this, SLOT(on_btn_submit_clicked()));
+	disconnect(this, SLOT(on_btn_prev_clicked()));
+	disconnect(this, SLOT(on_btn_next_clicked()));
 
 	disconnect(this, SLOT(on_chk_date_clicked()));
 
@@ -558,7 +562,7 @@ tResult ReviewModeFilter::on_cbo_project_changed()
 {
 	this->initFeatureList();
 	this->refreshEventGroup();
-	this->refreshAnnotationGroup();
+	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -741,7 +745,7 @@ tResult ReviewModeFilter::on_txt_ms_edited()
 
 tResult ReviewModeFilter::on_txt_search_edited(const QString &search_text)
 {
-	this->refreshAnnotationGroup();
+	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -764,42 +768,42 @@ tResult ReviewModeFilter::on_chk_annotation_clicked()
 		this->listhandle->addItemsFromDB(m_oFilterGUI.listAnnotation, annotationModel, this->getListField4Annotation(), query4Annotation);
 	}
 
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_chk_search_clicked()
 {
 	this->toSearchAnnotationMode(this->m_oFilterGUI.chk_search->isChecked());
-	this->refreshAnnotationGroup();
+	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_chk_eyeq_event_clicked()
 {
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_chk_radar_event_clicked()
 {
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_chk_fcm_event_clicked()
 {
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_chk_user_event_clicked()
 {
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -825,9 +829,10 @@ tResult ReviewModeFilter::on_list_event_annotation_clicked(QModelIndex index)
 		this->m_oFilterGUI.lbl_clip->setText(dataContainer["clipname"].at(0).c_str());
 		string adtfTime = dataContainer["adtftime"].at(0);
 		string startTime = dataContainer["adtfstarttime"].at(0);
-		string r_time = MagnaUtil::integerToString(MagnaUtil::stringTointeger(adtfTime) - MagnaUtil::stringTointeger(startTime));
+		string r_time = MagnaUtil::longLongIntToString(MagnaUtil::stringToLongLongInt(adtfTime) - MagnaUtil::stringToLongLongInt(startTime));
 		r_time = MagnaUtil::convertMicroSecondToTime(r_time);
-		
+
+
 		this->m_oFilterGUI.lbl_adtftime->setText(r_time.c_str());
 		this->m_oFilterGUI.lbl_reportid->setText(dataContainer["reportid"].at(0).c_str());
 		string annotation_text = dataContainer["annotation"].at(0) + "-" + dataContainer["predefinedannotationid"].at(0);
@@ -854,6 +859,27 @@ tResult ReviewModeFilter::on_list_event_annotation_clicked(QModelIndex index)
 
 	RETURN_NOERROR;
 }
+
+tResult ReviewModeFilter::on_btn_prev_clicked()
+{
+
+	if(this->offset >= 100)
+	{
+		this->refreshAnnotationGroup(this->offset - 100);
+	}else
+	{
+		MagnaUtil::show_message("No Previous Event!");
+	}
+	
+	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter::on_btn_next_clicked()
+{
+	this->refreshAnnotationGroup(this->offset + 100);
+	RETURN_NOERROR;
+}
+
 
 tResult ReviewModeFilter::on_btn_udpate_clicked()
 {
@@ -889,7 +915,7 @@ tResult ReviewModeFilter::on_btn_udpate_clicked()
 		}
 
 		(new Updator(query))->execute();
-		this->refreshAnnotationGroup();
+		this->refreshAnnotationGroup(0);
 	}
 
 	RETURN_NOERROR;
@@ -987,6 +1013,7 @@ tResult ReviewModeFilter::on_btn_insert_clicked()
 tResult ReviewModeFilter::on_btn_cancel_clicked()
 {
 	this->toInsertMode(false);
+	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -1032,11 +1059,7 @@ tResult ReviewModeFilter::on_btn_submit_clicked()
 		field.push_back("adtfstarttime");
 		field.push_back("clipid");
 		map<string, vector<string>> containers = (new Retriever(field, query))->getData();
-		
-		int starttime = MagnaUtil::stringTointeger(containers["adtfstarttime"].at(0));
-
 		string clipid = containers["clipid"].at(0);
-
 		string m = this->m_oFilterGUI.txt_m->text().toStdString();
 		string s = this->m_oFilterGUI.txt_s->text().toStdString();
 		string ms = this->m_oFilterGUI.txt_ms->text().toStdString();
@@ -1044,10 +1067,11 @@ tResult ReviewModeFilter::on_btn_submit_clicked()
 		if(m.empty()) m = "00";
 		if(s.empty()) s = "00";
 		if(ms.empty()) ms = "000";
+		
+		__int64 starttime = MagnaUtil::stringToLongLongInt(containers["adtfstarttime"].at(0));
+		__int64 current_time = MagnaUtil::stringToLongLongInt(MagnaUtil::getMicroSecond(m,s,ms));
+		__int64 adtftime = starttime + current_time;
 
-		int adtfTimeStamp = MagnaUtil::stringTointeger(MagnaUtil::getMicroSecond(m,s,ms));
-		int adtftime = starttime + adtfTimeStamp;
-		string etime = MagnaUtil::convertMicroSecondToTime(MagnaUtil::integerToString(adtfTimeStamp));
 		string insert_query = "";
 		string projectid = MagnaUtil::stringTokenizer(project_raw_text, '-').at(1);
 
@@ -1056,12 +1080,12 @@ tResult ReviewModeFilter::on_btn_submit_clicked()
 			predefined_annotation = MagnaUtil::stringTokenizer(predefined_annotation, '-').at(1);
 
 			insert_query = " insert into event_report (reportid, vin, clipid, eventcategoryid, eventid, localpctime, adtftime, eventstatusid, predefinedannotationid, projectid, updator, updatedtime, insertor, insertedtime) ";
-			insert_query += " values (" + reportid + ", '" + vin + "', " + clipid + ", 3, " + eventid + ", " + "0" + ", " + MagnaUtil::integerToString(adtftime) + ", " + status + ", " +
+			insert_query += " values (" + reportid + ", '" + vin + "', " + clipid + ", 3, " + eventid + ", " + "0" + ", " + MagnaUtil::longLongIntToString(adtftime) + ", " + status + ", " +
 				predefined_annotation + ", " + projectid + ", '"+ReviewModeFilter::ID+"', "+curTime+", '"+ReviewModeFilter::ID+"', "+curTime+");";
 		}else
 		{
 			insert_query = " insert into event_report (reportid, vin, clipid, eventcategoryid, eventid, localpctime, adtftime, userannotation, eventstatusid, predefinedannotationid, projectid, updator, updatedtime, insertor, insertedtime) ";
-			insert_query += " values (" + reportid + ", '" + vin + "', " + clipid + ", 3, " + eventid + ", " + "0" + ", " + MagnaUtil::integerToString(adtftime) + ", '" + annotation + "', " 
+			insert_query += " values (" + reportid + ", '" + vin + "', " + clipid + ", 3, " + eventid + ", " + "0" + ", " + MagnaUtil::longLongIntToString(adtftime) + ", '" + annotation + "', " 
 				+ status + ", 0, "+ projectid + ", '"+ReviewModeFilter::ID+"', "+curTime+", '"+ReviewModeFilter::ID+"', "+curTime+");";
 		}
 
@@ -1084,7 +1108,7 @@ tResult ReviewModeFilter::on_dateEdit_changed()
 {
 	this->m_oFilterGUI.dateEdit->blockSignals(true);
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	this->m_oFilterGUI.dateEdit->blockSignals(false);
 	RETURN_NOERROR;
 }
@@ -1093,7 +1117,7 @@ tResult ReviewModeFilter::on_dateEdit_2_changed()
 {
 	this->m_oFilterGUI.dateEdit_2->blockSignals(true);
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	this->m_oFilterGUI.dateEdit_2->blockSignals(false);
 	RETURN_NOERROR;
 }
@@ -1201,51 +1225,46 @@ tResult ReviewModeFilter::on_btn_execute_clicked()
 		RETURN_NOERROR;
 	}
 
-	if (QMessageBox::Yes == QMessageBox(QMessageBox::Information, "CAUTION!!", "If yes, all the data in your database will be removed", QMessageBox::Yes|QMessageBox::No).exec()) 
+	QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
+	progress->setWindowTitle(QString("Copying SQL File to Database..."));
+	progress->autoClose();
+	string fileName = MagnaUtil::removeURLOfFile(sql);
+	fileName += " is copying...";
+	progress->setLabelText(QString(fileName.c_str()));
+	progress->setFixedWidth(500);
+	progress->setWindowModality(Qt::WindowModal);
+	progress->setRange(0,100);
+	progress->show();
+	
+	QApplication::processEvents();
+	
+	progress->setLabelText(QString("Init Temporal Database ..."));
+
+
+	this->sqlFileHandler->init_temporal_database("temporal_database", "root", "hil", sql, false);
+	progress->setValue(10);
+	progress->setLabelText(QString("Integrity Checking..."));
+	bool integrity = this->sqlFileHandler->check_integrity(DB_SCHEME, "temporal_database");
+
+	progress->setValue(20);
+
+	if(integrity==true)
 	{
-		QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
-		progress->setWindowTitle(QString("Copying SQL File to Database..."));
-		progress->autoClose();
-		string fileName = MagnaUtil::removeURLOfFile(sql);
-		fileName += " is copying...";
-		progress->setLabelText(QString(fileName.c_str()));
-		progress->setFixedWidth(500);
-		progress->setWindowModality(Qt::WindowModal);
-		progress->setRange(0,100);
-		progress->show();
-		
-		QApplication::processEvents();
-		
-		progress->setLabelText(QString("Init Temporal Database ..."));
+		string cur_dir = MagnaUtil::getCurPath();
+		string event_report_temp_url = cur_dir + "/review_workspace/event_report.zuna";
+		string clip_info_temp_url = cur_dir + "/review_workspace/clip_info.zuna";
 
+		this->sqlFileHandler->insertNewRecords(this->m_pFilterWidget, "event_report", event_report_temp_url);
+		progress->setValue(40);
+		this->sqlFileHandler->insertNewRecords(this->m_pFilterWidget, "clip_info", clip_info_temp_url);
+		progress->setValue(80);
 
-		this->sqlFileHandler->init_temporal_database("temporal_database", "root", "hil", sql, false);
-		progress->setValue(10);
-		progress->setLabelText(QString("Integrity Checking..."));
-		bool integrity = this->sqlFileHandler->check_integrity(DB_SCHEME, "temporal_database");
-
-		progress->setValue(20);
-
-		if(integrity==true)
-		{	
-			string cur_dir = MagnaUtil::getCurPath();
-			string event_report_temp_url = cur_dir + "/review_workspace/event_report.zuna";
-			string clip_info_temp_url = cur_dir + "/review_workspace/clip_info.zuna";
-
-			this->sqlFileHandler->insertNewRecords(this->m_pFilterWidget, "event_report", event_report_temp_url);
-			progress->setValue(40);
-			this->sqlFileHandler->insertNewRecords(this->m_pFilterWidget, "clip_info", clip_info_temp_url);
-			progress->setValue(80);
-			this->sqlFileHandler->insert_insertor(ReviewModeFilter::ID);
-
-			MagnaUtil::delete_file(TEMP_FILE + "tmp.xml");
-			this->sqlFileHandler->delete_temporal_database("temporal_database", "root", "hil");	
-			MagnaUtil::restartADTF();
-		}
-
-		progress->hide();
+		MagnaUtil::delete_file(TEMP_FILE + "tmp.xml");
+		this->sqlFileHandler->delete_temporal_database("temporal_database", "root", "hil");	
+		MagnaUtil::restartADTF();
 	}
 
+	progress->hide();
 	RETURN_NOERROR;
 }
 
@@ -1264,7 +1283,7 @@ tResult ReviewModeFilter::on_btn_LR1_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listFeature, this->featureModel, m_oFilterGUI.listFeatureSelected, this->selectedFeatureModel);
 	this->refreshEventGroup();
-	this->refreshAnnotationGroup();
+	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -1272,7 +1291,7 @@ tResult ReviewModeFilter::on_btn_RL1_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listFeatureSelected, this->selectedFeatureModel, m_oFilterGUI.listFeature, this->featureModel);
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -1280,28 +1299,28 @@ tResult ReviewModeFilter::on_btn_RL1_clicked()
 tResult ReviewModeFilter::on_btn_LR2_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listEvent, this->eventModel, m_oFilterGUI.listEventSelected, this->selectedEventModel);
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_btn_RL2_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listEventSelected, this->selectedEventModel, m_oFilterGUI.listEvent, this->eventModel);
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_btn_LR3_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listAnnotation, this->annotationModel, m_oFilterGUI.listAnnotationSelected, this->selectedAnnotationModel);
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_btn_RL3_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listAnnotationSelected, this->selectedAnnotationModel, m_oFilterGUI.listAnnotation, this->annotationModel);
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -1317,7 +1336,7 @@ tResult ReviewModeFilter::on_chk_date_clicked()
 	}
 
 	refreshEventGroup();
-	refreshAnnotationGroup();
+	refreshAnnotationGroup(0);
 	RETURN_NOERROR;
 }
 
@@ -1741,10 +1760,12 @@ void ReviewModeFilter::refreshEventGroup()
 
 }
 
-void ReviewModeFilter::refreshAnnotationGroup()
+void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 {
 	if(this->m_oFilterGUI.cbo_project->currentText().toStdString().empty()==false)
 	{
+		if(current_offset==0) this->offset = 0;
+		else this->offset = current_offset;
 
 		QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
 		progress->setWindowTitle(QString("Initializing..."));
@@ -1799,20 +1820,26 @@ void ReviewModeFilter::refreshAnnotationGroup()
 		}else{
 
 			vector<string> event_categories = getEventCategories();
-			string query = this->queryFactory->getEventListQuery(
+			string query = this->queryFactory->getEventListQuery(this->offset,
 				this->getListField4EventList(), ReviewModeFilter::ID , projectid, events, stime, etime, event_categories, annotations, search_condition, chk_search);
 			
 			progress->setValue(50);
-			recordsize += this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
+			recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
 		}
 
 		progress->setValue(90);
 		this->initAnnotationCombo(this->m_oFilterGUI.cbo_annotation);
-		QString str = QVariant(recordsize).toString() + " events have been selected.";
-		this->m_oFilterGUI.lbl_status->setText(str);
+		string text = MagnaUtil::integerToString(recordsize) + " events have been selected in the " + MagnaUtil::integerToString(this->offset/100 + 1) + " page.";
+		
+		this->m_oFilterGUI.lbl_status->setText(QString(text.c_str()));
 		this->saveCurrentStatus(LOGOUT);
 
 		progress->hide();
+		if(current_offset>0 && recordsize==0)
+		{
+			refreshAnnotationGroup(current_offset-100);
+			MagnaUtil::show_message("No Next Event!");
+		}
 	}
 }
 

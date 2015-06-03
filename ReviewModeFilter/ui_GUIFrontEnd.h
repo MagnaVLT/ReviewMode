@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ReviewMode_NoGPS.ui'
 **
-** Created: Sun May 31 02:10:21 2015
+** Created: Wed Jun 3 01:36:51 2015
 **      by: Qt User Interface Compiler version 4.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -82,6 +82,8 @@ public:
     QTextEdit *txt_annotation;
     QPushButton *btn_copy;
     QLabel *lbl_status;
+    QPushButton *btn_prev;
+    QPushButton *btn_next;
     QGroupBox *GrpInsert;
     QPushButton *btn_submit;
     QPushButton *btn_cancel;
@@ -270,7 +272,7 @@ public:
         listEventAnnotation = new QListView(GrpEdit);
         listEventAnnotation->setObjectName(QString::fromUtf8("listEventAnnotation"));
         listEventAnnotation->setEnabled(true);
-        listEventAnnotation->setGeometry(QRect(30, 30, 411, 151));
+        listEventAnnotation->setGeometry(QRect(30, 30, 411, 121));
         btn_showclip = new QPushButton(GrpEdit);
         btn_showclip->setObjectName(QString::fromUtf8("btn_showclip"));
         btn_showclip->setGeometry(QRect(690, 90, 151, 31));
@@ -314,6 +316,12 @@ public:
         lbl_status = new QLabel(GrpEdit);
         lbl_status->setObjectName(QString::fromUtf8("lbl_status"));
         lbl_status->setGeometry(QRect(10, 190, 851, 16));
+        btn_prev = new QPushButton(GrpEdit);
+        btn_prev->setObjectName(QString::fromUtf8("btn_prev"));
+        btn_prev->setGeometry(QRect(30, 152, 181, 31));
+        btn_next = new QPushButton(GrpEdit);
+        btn_next->setObjectName(QString::fromUtf8("btn_next"));
+        btn_next->setGeometry(QRect(260, 152, 181, 31));
         GrpInsert = new QGroupBox(Form);
         GrpInsert->setObjectName(QString::fromUtf8("GrpInsert"));
         GrpInsert->setGeometry(QRect(140, 300, 561, 261));
@@ -835,6 +843,8 @@ public:
         chk_text_annotation->setText(QApplication::translate("Form", "Use Predifined Annotation?", 0, QApplication::UnicodeUTF8));
         btn_copy->setText(QApplication::translate("Form", "Copy Clip", 0, QApplication::UnicodeUTF8));
         lbl_status->setText(QString());
+        btn_prev->setText(QApplication::translate("Form", "<< PREVIOUS", 0, QApplication::UnicodeUTF8));
+        btn_next->setText(QApplication::translate("Form", "NEXT >>", 0, QApplication::UnicodeUTF8));
         GrpInsert->setTitle(QApplication::translate("Form", "Event Data Insertion", 0, QApplication::UnicodeUTF8));
         btn_submit->setText(QApplication::translate("Form", "Insert", 0, QApplication::UnicodeUTF8));
         btn_cancel->setText(QApplication::translate("Form", "Cancel", 0, QApplication::UnicodeUTF8));

@@ -16,12 +16,12 @@
 
 using namespace std;
 
-SQLFileHandler::SQLFileHandler(string TEMP_FILE)
+SQLFileHandler::SQLFileHandler(string TEMP_FILE, string id)
 {
-	
+	this->id = id;
 }
 
-SQLFileHandler::~SQLFileHandler(void)
+SQLFileHandler::~SQLFileHandler()
 {
 }
 
@@ -70,7 +70,38 @@ bool SQLFileHandler::check_db(string schemeXMLFile, string DB)
 	
 			vector<string> fieldsFromXML = getFieldsFromXML(schemeXMLFile, table);
 			vector<string> fieldsFromDB = getFieldsFromDB(table, DB);
-	
+
+			//redandant start-------------------------------------------------
+			vector<int> deleteItem;
+			int size = fieldsFromXML.size();
+			for(int i = size-1 ; i >=0; i--){
+				if(fieldsFromXML.at(i)=="updator"||fieldsFromXML.at(i)=="insertor"||fieldsFromXML.at(i)=="updatedtime"||fieldsFromXML.at(i)=="insertedtime")
+					deleteItem.push_back(i);
+			}
+			for each(int i in deleteItem) fieldsFromXML.erase(fieldsFromXML.begin() + i);
+			//
+			deleteItem.clear();
+			size = fieldsFromDB.size();
+			for(int i = size-1 ; i >=0; i--){
+				if(fieldsFromDB.at(i)=="updator"||fieldsFromDB.at(i)=="insertor"||fieldsFromDB.at(i)=="updatedtime"||fieldsFromDB.at(i)=="insertedtime")
+					deleteItem.push_back(i);
+			}
+			for each(int i in deleteItem) fieldsFromDB.erase(fieldsFromDB.begin() + i);
+			if(deleteItem.size()==0)
+			{
+				string query = "ALTER TABLE event_report   ";
+				query += "ADD COLUMN updator VARCHAR(6) NOT NULL DEFAULT '0' AFTER PredefinedAnnotationID, ";
+				query += "ADD COLUMN insertor VARCHAR(6) NOT NULL DEFAULT '0' AFTER updator, ";
+				query += "ADD COLUMN updatedtime BIGINT(20) NOT NULL DEFAULT 0 AFTER insertor, ";
+				query += "ADD COLUMN insertedtime BIGINT(20) NOT NULL DEFAULT 0 AFTER updatedtime;";
+				(new TemporalUpdator(query))->execute();
+			}
+			//redandant end----------------------------------------------------
+
+			string curTime = MagnaUtil::bigIntegerToString(MagnaUtil::getCurrentSystemTime());
+			string query = "update event_report set insertor = '" + this->id +"', insertedtime = " + curTime + ";";
+			(new TemporalUpdator(query))->execute();
+
 			if(MagnaUtil::compare_string_vector(fieldsFromXML, fieldsFromDB)==false)
 			{
 				MagnaUtil::show_message("Fields in "+ table +" is not correct.");
@@ -83,26 +114,6 @@ bool SQLFileHandler::check_db(string schemeXMLFile, string DB)
 	return true;
 }
 
-void SQLFileHandler::insert_insertor(string id)
-{
-	vector<string> reportid_list = uploaded_events["reportid"];
-	vector<string> vin_list = uploaded_events["vin"];
-
-	if(reportid_list.size() == vin_list.size())
-	{
-		string curTime = MagnaUtil::bigIntegerToString(MagnaUtil::getCurrentSystemTime());
-		string query = "update event_report set insertor = '" + id + "', insertedtime = " + curTime + " where ";
-
-		for(unsigned int i = 0; i < reportid_list.size()-1 ; i++)
-		{	
-			query += " (reportid = " + reportid_list.at(i) + " and vin = '" + vin_list.at(i) + "') or ";
-		}
-		query += " (reportid = " + reportid_list.at(reportid_list.size()-1) + " and vin = '" + vin_list.at(reportid_list.size()-1) + "');";
-		(new Updator(query))->execute();
-	}
-
-	
-}
 void SQLFileHandler::setUploadedEvents()
 {
 	vector<string> field;

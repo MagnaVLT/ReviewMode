@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Sun May 31 02:10:21 2015
+** Created: Wed Jun 3 01:36:51 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      40,   14, // methods
+      42,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -72,6 +72,8 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
      969,   17,   18,   17, 0x0a,
     1000,   17,   18,   17, 0x0a,
     1024,   17,   18,   17, 0x0a,
+    1048,   17,   18,   17, 0x0a,
+    1070,   17,   18,   17, 0x0a,
 
        0        // eod
 };
@@ -106,6 +108,7 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_btn_change_pw_clicked()\0"
     "on_btn_change_cancel_clicked()\0"
     "on_btn_change_clicked()\0on_btn_logout_clicked()\0"
+    "on_btn_prev_clicked()\0on_btn_next_clicked()\0"
 };
 
 const QMetaObject ReviewModeFilter::staticMetaObject = {
@@ -219,9 +222,13 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 39: { tResult _r = on_btn_logout_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 40: { tResult _r = on_btn_prev_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 41: { tResult _r = on_btn_next_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         default: ;
         }
-        _id -= 40;
+        _id -= 42;
     }
     return _id;
 }

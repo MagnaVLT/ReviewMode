@@ -1,5 +1,8 @@
+
+#include "stdafx.h"
 #include "QueryFactory.h"
 #include <QtGui/QMessageBox>
+#include "Utils/Utilities.h"
 
 QueryFactory::QueryFactory(void)
 {
@@ -68,15 +71,15 @@ void QueryFactory::addGroupByClaud(vector<string> items, string* query)
 	*query+=  items.at(items.size()-1) + " " ;
 
 	*query+= " order by ";
-	for (unsigned int i =0 ; i < items.size()-1 ; i++)	{
+	for (unsigned int i =items.size()-1 ; i > 0 ; i--)	{
 		*query+= items.at(i) + ", ";
 	}
 
-	*query+=  items.at(items.size()-1) + ";" ;
+	*query+=  items.at(0);
 }
 
 
-string QueryFactory::getEventListQuery(vector<string> items, string userid, string projectid, vector<string> events, 
+string QueryFactory::getEventListQuery(int offset, vector<string> items, string userid, string projectid, vector<string> events, 
 									   string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search)
 {
 	string query = "";
@@ -87,7 +90,7 @@ string QueryFactory::getEventListQuery(vector<string> items, string userid, stri
 	query+=  items.at(items.size()-1) + " " ;
 
 	query += " from event_report a, event_list b where a.eventid = b.id ";
-	query += " and a.eventstatusid != 2 and projectid = " + projectid;
+	query += " and projectid = " + projectid;
 	
 	query = addFields(" a.eventcategoryid ", event_categories, query);
 	query = addFields(" a.eventid ", events, query);
@@ -109,7 +112,7 @@ string QueryFactory::getEventListQuery(vector<string> items, string userid, stri
 		query+= " and date(a.localpctime) >= '" + stime + "' and date(a.localpctime) <= '" + etime + "' ";
 	}
 
-	query+= " order by reportid;";
+	query+= " order by reportid desc limit " + MagnaUtil::integerToString(offset) + ", 100;";
 
 	return query;
 }

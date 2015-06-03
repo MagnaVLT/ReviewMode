@@ -48,13 +48,19 @@ public:
 		return s.str();
 	}
 
-	static string longToString(long i) 
+	static string longToString(unsigned long i) 
 	{
 		stringstream s;
 		s << i;
 		return s.str();
 	}
 
+	static string longLongIntToString(__int64 i) 
+	{
+		stringstream s;
+		s << i;
+		return s.str();
+	}
 
 	static int stringTointeger(string s)
 	{		
@@ -64,10 +70,18 @@ public:
 		return i;
 	}
 
-	static long stringToLong(string s)
-	{		
-		std::istringstream is(s); 
-		long i; 
+	static unsigned long stringToLong(string s)
+	{
+		std::istringstream is(s);
+		unsigned long i;
+		is >> i; 
+		return i;
+	}
+
+	static __int64 stringToLongLongInt(string s)
+	{
+		std::istringstream is(s);
+		__int64 i;
 		is >> i; 
 		return i;
 	}
@@ -302,22 +316,22 @@ public:
 	static string convertMicroSecondToTime(string str_timestamp)
 	{
 		
-		int timestamp = MagnaUtil::stringTointeger(str_timestamp);
-		int milliseconds = (int) (timestamp / 1000);
-		int seconds = (int) ((milliseconds / 1000) % 60);
-		int minutes = (int) (((milliseconds / 1000) / 60) % 60);
-		int hours = (int) ((((milliseconds / 1000) / 60) / 60) % 24);
+		__int64 timestamp = MagnaUtil::stringToLongLongInt(str_timestamp);
+		__int64 milliseconds = (__int64) (timestamp / 1000);
+		__int64 seconds = (__int64) ((milliseconds / 1000) % 60);
+		__int64 minutes = (__int64) (((milliseconds / 1000) / 60) % 60);
+		__int64 hours = (__int64) ((((milliseconds / 1000) / 60) / 60) % 24);
+		milliseconds = milliseconds - ((hours * 3600000) + (minutes * 60000) + (seconds * 1000));
 
 		string sec, min, hrs;
-		if(seconds<10)  sec="0"+MagnaUtil::integerToString(seconds);
-		else            sec= ""+MagnaUtil::integerToString(seconds);
-		if(minutes<10)  min="0"+MagnaUtil::integerToString(minutes);
-		else            min= ""+MagnaUtil::integerToString(minutes);
-		if(hours<10)    hrs="0"+MagnaUtil::integerToString(hours);
-		else            hrs= ""+MagnaUtil::integerToString(hours);
+		if(seconds<10)  sec="0"+MagnaUtil::longLongIntToString(seconds);
+		else            sec= ""+MagnaUtil::longLongIntToString(seconds);
+		if(minutes<10)  min="0"+MagnaUtil::longLongIntToString(minutes);
+		else            min= ""+MagnaUtil::longLongIntToString(minutes);
+		if(hours<10)    hrs="0"+MagnaUtil::longLongIntToString(hours);
+		else            hrs= ""+MagnaUtil::longLongIntToString(hours);
 
-
-		string r_time = hrs + ":" + min + ":" + sec + ":" + MagnaUtil::integerToString(milliseconds);
+		string r_time = hrs + ":" + min + ":" + sec + ":" + MagnaUtil::longLongIntToString(milliseconds);
 
 		return r_time;
 	}

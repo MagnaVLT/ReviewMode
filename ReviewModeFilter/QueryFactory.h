@@ -11,7 +11,7 @@ public:
 	~QueryFactory(void);
 	string getAnnotationCategoryQuery(vector<string> conditions, string projectid);
 	string getEventTypeQuery(vector<string> items, string table, vector<string> event_types, string stime, string etime, string projectid, vector<string> feature);
-	string getEventListQuery(vector<string> items, string userid, string projectid, vector<string> events, 
+	string getEventListQuery(int offset, vector<string> items, string userid, string projectid, vector<string> events, 
 		string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search);
 
 private:
