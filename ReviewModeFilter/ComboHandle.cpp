@@ -7,10 +7,9 @@ ComboHandle::ComboHandle(void)
 ComboHandle::~ComboHandle(void)
 {
 }
-
-
 void ComboHandle::initCombo(QComboBox* combobox, vector<string> data)
-{	
+{
+	combobox->clear();
 	combobox->addItem(QString(""));
 	for(unsigned int i = 0 ; i < data.size() ; i++){
 		string a = data.at(i);

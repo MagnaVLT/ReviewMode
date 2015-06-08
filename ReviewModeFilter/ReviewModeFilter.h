@@ -148,7 +148,7 @@ private:
 
 	QueryFactory* queryFactory;
 	SQLFileHandler* sqlFileHandler;
-	void initAll();
+	void initAllAtStart();
 	vector<string> getListField4Feature();
 	vector<string> getListField4Event();
 	vector<string> getListField4EventList();
@@ -205,6 +205,13 @@ private:
 	string getVinOfClip(string clip);
 	void initEventList();
 	void unregisterEventHandler();
+	void initAllDuringWork();
+	void initEventGroup();
+	void initAnnotationGroup();
+	void initBasicGroup();
+	void initCollectionCombo(QComboBox* combobox);
+	vector<string> getClipIDList();
+	vector<string> getClustersOfClips(vector<string> clipidList);
 
 public slots:
 	tResult on_btn_clip_clicked();
@@ -249,6 +256,9 @@ public slots:
 	tResult on_btn_logout_clicked();
 	tResult on_btn_prev_clicked();
 	tResult on_btn_next_clicked();
+	tResult on_cbo_vin_changed();
+	tResult on_chk_tour_clicked();
+	tResult on_cbo_collection_clicked();
 };
 
 #endif

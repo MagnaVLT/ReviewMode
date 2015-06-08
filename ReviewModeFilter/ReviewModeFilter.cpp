@@ -42,6 +42,7 @@ extern const std::string STATIC_TABLES = "./filter/Magna/static_tables.sql";
 extern const std::string BACKUP_DB = "fcm_hil_playback_backup";
 extern const std::string LOGIN = "1";
 extern const std::string LOGOUT = "0";
+extern const __int64 th = 300000;
 
 string ReviewModeFilter::USERLOG_ID = "";
 bool ReviewModeFilter::isTemporalClose = false;
@@ -190,7 +191,7 @@ tResult ReviewModeFilter::ReleaseView()
 	RETURN_NOERROR;
 }
 
-void ReviewModeFilter::initAll()
+void ReviewModeFilter::initAllAtStart()
 {
 	this->initMode();
 	this->initModel();
@@ -206,10 +207,115 @@ void ReviewModeFilter::initAll()
 		this->registerEventHandler();
 	}else
 	{
-
 		this->initEventList();
 		this->initGUI();
 	}
+}
+
+void ReviewModeFilter::initAllDuringWork()
+{
+	initEventGroup();
+	initAnnotationGroup();
+}
+
+void ReviewModeFilter::initBasicGroup()
+{
+	this->initVINCombo(this->m_oFilterGUI.cbo_vin);
+}
+
+void ReviewModeFilter::initCollectionCombo(QComboBox *combobox)
+{
+	vector<string> clipidList = getClipIDList();
+	clipidList = this->getClustersOfClips(clipidList);
+	combo_handle->initCombo(combobox, clipidList);
+
+	if(this->m_oFilterGUI.chk_tour->isChecked()==true) combobox->setEnabled(false);
+	else combobox->setEnabled(true);
+}
+
+vector<string> ReviewModeFilter::getClustersOfClips(vector<string> clipidList)
+{
+	vector<string> collection;
+	if(clipidList.size()==0){
+		return collection;
+	}
+
+	bool isNew = true;
+	string cur_start;
+	string cur_end;
+	int cnt = 1;
+
+	for(unsigned int i = 0 ; i < clipidList.size()-1 ; i++)
+	{
+		if(isNew == true) {
+			cur_start = clipidList.at(i);
+			isNew = false;
+		}
+
+		__int64 diff = MagnaUtil::stringToLongLongInt(clipidList.at(i+1)) - MagnaUtil::stringToLongLongInt(clipidList.at(i));
+		
+		if(diff>th){
+			cur_end = clipidList.at(i).substr(8, clipidList.at(i).length()-8);
+			string cur_text = "tour: " + MagnaUtil::integerToString(cnt) + "-" + cur_start + "-" + cur_end;
+			++cnt;
+			collection.push_back(cur_text);
+			isNew = true;
+		}else{
+			cur_end = clipidList.at(i);
+		}
+	}
+
+	cur_end = clipidList.at(clipidList.size()-1);
+	string cur_text = "tour: " + MagnaUtil::integerToString(cnt) + "-" + cur_start + "-" + cur_end;
+	collection.push_back(cur_text);
+
+	return collection;
+}
+
+vector<string> ReviewModeFilter::getClipIDList()
+{
+	string project_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
+	if(project_text!=""){
+		string projectid = MagnaUtil::stringTokenizer(project_text, '-').at(1);
+		string vin = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
+		
+		vector<string> collection_fields;
+		collection_fields.push_back("clipid");
+
+		string query = "select a.clipid as clipid from event_report a, event_list b, users_feature_project_map c ";
+		query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and ";
+		query += " c.projectID = "+projectid+" and c.UserID = '"+ReviewModeFilter::ID+"' ";
+		if(vin.empty()!=true) query += " and a.vin = '"+vin+"' ";
+		query += " group by a.clipid;";
+
+		map<string, vector<string>> collectionContainer = (new Retriever( collection_fields, query))->getData();
+
+		return collectionContainer["clipid"];
+	}else{
+		vector<string> empty_vector;
+		return empty_vector;
+	}
+}
+
+void ReviewModeFilter::initEventGroup()
+{
+	this->initModel();
+	this->m_oFilterGUI.chk_date->setChecked(true);
+	this->m_oFilterGUI.chk_eyeq_event->setChecked(false);
+	this->m_oFilterGUI.chk_fcm_event->setChecked(false);
+	this->m_oFilterGUI.chk_user_event->setChecked(false);
+	this->m_oFilterGUI.chk_radar->setChecked(false);
+}
+
+void ReviewModeFilter::initAnnotationGroup()
+{
+	this->initEventListModel();
+	this->m_oFilterGUI.lbl_table->setText(QString(""));
+	this->m_oFilterGUI.lbl_reportid->setText(QString(""));
+	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
+	this->m_oFilterGUI.lbl_adtftime->setText(QString(""));
+	this->m_oFilterGUI.lbl_clip->setText(QString(""));
+	this->m_oFilterGUI.chk_tour->setChecked(true);
 }
 
 void ReviewModeFilter::initMode()
@@ -320,16 +426,23 @@ void ReviewModeFilter::initFeatureCombo(QComboBox* combobox)
 }
 
 void ReviewModeFilter::initVINCombo(QComboBox* combobox)
-{
+{	
 	vector<string> vin_fields;
 	vin_fields.push_back("vin");
-	string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
-	string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
-	query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and ";
-	query += " c.projectID = "+projectid+" and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
+	string project_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
+	if(project_text!=""){
+		string projectid = MagnaUtil::stringTokenizer(project_text, '-').at(1);
+		string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
+		query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and ";
+		query += " c.projectID = "+projectid+" and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
 
-	map<string, vector<string>> vinContainer = (new Retriever( vin_fields, query))->getData();
-	combo_handle->initCombo(combobox, vinContainer["vin"]);
+		map<string, vector<string>> vinContainer = (new Retriever( vin_fields, query))->getData();
+		combo_handle->initCombo(combobox, vinContainer["vin"]);
+	}else{
+		vector<string> empty_vector;
+		combo_handle->initCombo(combobox, empty_vector);
+	}
+
 }
 
 
@@ -460,6 +573,7 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_next, SIGNAL(clicked()), this, SLOT(on_btn_next_clicked()));
 
 	connect(m_oFilterGUI.chk_date, SIGNAL(clicked()), this, SLOT(on_chk_date_clicked()));
+	connect(m_oFilterGUI.chk_tour, SIGNAL(clicked()), this, SLOT(on_chk_tour_clicked()));
 
 	connect(m_oFilterGUI.chk_eyeq_event, SIGNAL(clicked()), this, SLOT(on_chk_eyeq_event_clicked()));
 	connect(m_oFilterGUI.chk_fcm_event, SIGNAL(clicked()), this, SLOT(on_chk_fcm_event_clicked()));
@@ -478,6 +592,8 @@ void ReviewModeFilter::registerEventHandler()
 
 	connect(m_oFilterGUI.cbo_i_feature, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_i_feature_changed()));
 	connect(m_oFilterGUI.cbo_project, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_project_changed()));
+	connect(m_oFilterGUI.cbo_vin, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_vin_changed()));
+	connect(m_oFilterGUI.cbo_collection, SIGNAL(clicked()), this, SLOT(on_cbo_collection_clicked()));
 
 	connect(m_oFilterGUI.txt_m, SIGNAL(editingFinished()), this, SLOT(on_txt_m_edited()));
 	connect(m_oFilterGUI.txt_s, SIGNAL(editingFinished()), this, SLOT(on_txt_s_edited()));
@@ -560,6 +676,7 @@ string ReviewModeFilter::getCurClipText()
 
 tResult ReviewModeFilter::on_cbo_project_changed()
 {
+	this->initBasicGroup();
 	this->initFeatureList();
 	this->refreshEventGroup();
 	this->refreshAnnotationGroup(0);
@@ -625,7 +742,7 @@ tResult ReviewModeFilter::on_btn_login_clicked(){
 		this->m_oFilterGUI.lbl_user->setText(QString(text.c_str()));
 		this->m_oFilterGUI.txt_loginid->setText(QString(""));
 		this->m_oFilterGUI.txt_loginpw->setText(QString(""));
-		this->initAll();
+		this->initAllAtStart();
 	}else
 	{
 		MagnaUtil::show_message("Invalid ID and Password.");
@@ -701,7 +818,7 @@ tResult ReviewModeFilter::on_btn_login_clicked(string userid, string logid)
 	toLoginMode(false);
 	string text = ReviewModeFilter::ID + " is logged in";
 	this->m_oFilterGUI.lbl_user->setText(QString(text.c_str()));
-	this->initAll();
+	this->initAllAtStart();
 
 	RETURN_NOERROR;
 }
@@ -880,6 +997,30 @@ tResult ReviewModeFilter::on_btn_next_clicked()
 	RETURN_NOERROR;
 }
 
+tResult ReviewModeFilter::on_cbo_vin_changed()
+{
+	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
+	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter::on_chk_tour_clicked()
+{
+	if(this->m_oFilterGUI.chk_tour->isChecked()==true) this->m_oFilterGUI.cbo_collection->setEnabled(false);
+	else this->m_oFilterGUI.cbo_collection->setEnabled(true);
+	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter::on_cbo_collection_clicked()
+{
+	string vin = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
+	string project = this->m_oFilterGUI.cbo_project->currentText().toStdString();
+	if(vin=="" || project=="")
+	{
+		MagnaUtil::show_message("Please select a project and vin.");
+	}
+
+	RETURN_NOERROR;
+}
 
 tResult ReviewModeFilter::on_btn_udpate_clicked()
 {
@@ -1157,7 +1298,7 @@ tResult ReviewModeFilter::on_btn_setting_clicked()
 tResult ReviewModeFilter::on_btn_setting_cancel_clicked()
 {
 	this->sqlFileHandler->delete_temporal_database("temporal_database", "root", "hil");	
-	this->initAll();
+	this->initAllAtStart();
 	RETURN_NOERROR;
 }
 
@@ -1695,10 +1836,12 @@ void ReviewModeFilter::refreshEventGroup()
 {
 
 	string cbo_project_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
-	
+	string vin_text = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
+	string collection_text = this->m_oFilterGUI.cbo_collection->currentText().toStdString();
+
 	if(cbo_project_text.empty()==true)
 	{
-		this->initModel();
+		initEventGroup();
 	}else{
 
 		QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
@@ -1762,7 +1905,11 @@ void ReviewModeFilter::refreshEventGroup()
 
 void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 {
-	if(this->m_oFilterGUI.cbo_project->currentText().toStdString().empty()==false)
+	if(this->m_oFilterGUI.cbo_project->currentText().toStdString().empty()==true)
+	{
+		initAnnotationGroup();
+	}
+	else
 	{
 		if(current_offset==0) this->offset = 0;
 		else this->offset = current_offset;
