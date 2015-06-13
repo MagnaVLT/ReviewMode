@@ -38,7 +38,8 @@ string QueryFactory::getAnnotationCategoryQuery(vector<string> featureList, stri
 	return query;
 }
 
-string QueryFactory::getEventTypeQuery(vector<string> items, string table, vector<string> event_catetories, string stime, string etime, string projectid, vector<string> feature)
+string QueryFactory::getEventTypeQuery(vector<string> items, string table, vector<string> event_catetories, string stime, string etime, string projectid, vector<string> feature,
+									   string vin, bool chk_tour, string start_clip, string end_clip)
 {
 	string query = "";
 	query+= "select ";
@@ -51,7 +52,18 @@ string QueryFactory::getEventTypeQuery(vector<string> items, string table, vecto
 	query += " where a.id = b.eventid and b.projectid = " + projectid + " ";
 	if(!stime.empty() && !etime.empty())
 		query+= " and date(b.localpctime) >= '" + stime + "' and date(b.localpctime) <= '" + etime + "' ";
-	query += " and b.eventstatusid != 2 and a.id in (select d.id from project_event_map c, event_list d where c.eventid = d.id and c.projectid = "+projectid + " ";
+
+	if(vin!= "")
+	{
+		query+= " and b.vin = '" + vin + "' ";
+	}
+
+	if(chk_tour == false && start_clip != "" && end_clip != "")
+	{
+		query+= " and b.clipid >= " + start_clip + " and b.clipid <= " + end_clip + " ";
+	}
+
+	query += " and a.id in (select d.id from project_event_map c, event_list d where c.eventid = d.id and c.projectid = "+projectid + " ";
 	query = this->addFields("d.featureid", feature, query);
 	query+= ")";
 	query = this->addFields("b.eventcategoryid", event_catetories, query);
@@ -80,7 +92,8 @@ void QueryFactory::addGroupByClaud(vector<string> items, string* query)
 
 
 string QueryFactory::getEventListQuery(int offset, vector<string> items, string userid, string projectid, vector<string> events, 
-									   string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search)
+									   string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search,
+									   string vin, bool chk_tour, string start_clip, string end_clip)
 {
 	string query = "";
 	query+= "select ";
@@ -110,6 +123,16 @@ string QueryFactory::getEventListQuery(int offset, vector<string> items, string 
 	if(!stime.empty() && !etime.empty())
 	{
 		query+= " and date(a.localpctime) >= '" + stime + "' and date(a.localpctime) <= '" + etime + "' ";
+	}
+
+	if(vin!= "")
+	{
+		query+= " and a.vin = '" + vin + "' ";
+	}
+
+	if(chk_tour == false && start_clip != "" && end_clip != "")
+	{
+		query+= " and a.clipid >= " + start_clip + " and a.clipid <= " + end_clip + " ";
 	}
 
 	query+= " order by reportid desc limit " + MagnaUtil::integerToString(offset) + ", 100;";

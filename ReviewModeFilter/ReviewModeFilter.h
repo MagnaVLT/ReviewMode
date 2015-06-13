@@ -52,6 +52,8 @@ public:
 	static string ID;
 	static string USERLOG_ID;
 	static bool isTemporalClose;
+	static map<string, string> localtime_clipid_map;
+
     /** 
 		*	Class constructor for databaseFilter
 		*	@param string for info.
@@ -210,8 +212,8 @@ private:
 	void initAnnotationGroup();
 	void initBasicGroup();
 	void initCollectionCombo(QComboBox* combobox);
-	vector<string> getClipIDList();
-	vector<string> getClustersOfClips(vector<string> clipidList);
+	map<string, vector<string>> getClipIDList();
+	vector<string> getClustersOfClips(vector<string> clipidList, vector<string> localpctime_list);
 
 public slots:
 	tResult on_btn_clip_clicked();
@@ -259,6 +261,7 @@ public slots:
 	tResult on_cbo_vin_changed();
 	tResult on_chk_tour_clicked();
 	tResult on_cbo_collection_clicked();
+	tResult on_cbo_collection_changed();
 };
 
 #endif

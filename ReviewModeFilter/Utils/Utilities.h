@@ -359,6 +359,42 @@ public:
 		return result;
 	}
 
+	static tUInt64 MagnaUtil::getCurrentLocalTime()
+	{
+		SYSTEMTIME localTime;
+
+		GetLocalTime(&localTime);
+
+		tUInt64 result = localTime.wYear;
+		result = (((((result*100 + localTime.wMonth)*100 + localTime.wDay)*100 + localTime.wHour)*100 + localTime.wMinute)*100 + localTime.wSecond)*1000 + localTime.wMilliseconds;
+
+		return result;
+	}
+
+
+	static string MagnaUtil::convertSystemTimeToTime(string sysTime){
+		string y = sysTime.substr(2, 2);
+		string m = sysTime.substr(4, 2);
+		string d = sysTime.substr(6, 2);
+		string h = sysTime.substr(8, 2);
+		string min = sysTime.substr(10, 2);
+		string s = sysTime.substr(12, 2);
+		string ms = sysTime.substr(14, 3);
+		return y + "/" + m + "/" + d + " " + h + ":" + min + ":" + s + ":" + ms;
+	}
+
+	static __int64 MagnaUtil::convertSystemTimeToSecond(string sysTime){
+		__int64 y = MagnaUtil::stringTointeger(sysTime.substr(2, 2));
+		__int64 m = MagnaUtil::stringTointeger(sysTime.substr(4, 2));
+		__int64 d = MagnaUtil::stringTointeger(sysTime.substr(6, 2));
+		__int64 h = MagnaUtil::stringTointeger(sysTime.substr(8, 2));
+		__int64 min = MagnaUtil::stringTointeger(sysTime.substr(10, 2));
+		__int64 s = MagnaUtil::stringTointeger(sysTime.substr(12, 2));
+		
+		s += (y* 365* 30 * 24* 60 * 60) + (m * 30 * 24 * 60* 60) + (d * 24 * 60*60) + (h * 60 * 60) + (min *60);
+		return s;
+	}
+
 	static string MagnaUtil::getMicroSecond(string m, string s, string ms)
 	{
 		string timeStamp = "";

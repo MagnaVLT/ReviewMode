@@ -14,8 +14,8 @@ class XMLHandler
 public:
 	XMLHandler(string filename);
 	~XMLHandler(void);
-	void update(string path1, string path2, string filter_name, string filter_value, string replace_value);
-	string getCurDatFile(string path1, string path2, string filter_name, string filter_value);
+	void update(string path1, string path2, string mode_name, string filter_name, string filter_value, string replace_value);
+	string getCurDatFile(string path1, string path2, string mode_name, string filter_name, string filter_value);
 	vector<string> getNodeListAtSecondLevel(string node_name);
 	vector<string> getNodeListAtFirstLevel(string node_name);
 	vector<string> getNodeNameListAtFirstLevel(string node_name);
@@ -33,6 +33,7 @@ public:
 
 private:
 	//xml_node<>* getNode(string node_name);
+	void getConfiguration(xml_node<> * root_node, string config_name);
 	void getNodeValue(xml_node<> * root_node, string att_name, string att_value);
 	void save();
 	string filename;
