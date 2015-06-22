@@ -140,6 +140,10 @@ private:
 	cMutex	m_oEventProcessMutex;
 	ListHandle* listhandle;
 	ComboHandle* combo_handle;
+	QStandardItemModel* projectModel;
+	QStandardItemModel* selectedProjectModel;
+	QStandardItemModel* vinModel;
+	QStandardItemModel* selectedVinModel;
 	QStandardItemModel* featureModel;
 	QStandardItemModel* selectedFeatureModel;
 	QStandardItemModel* eventModel;
@@ -161,9 +165,10 @@ private:
 	void initModel();
 	void initFeatureModel();
 	void initEventListModel();
+	void initIProjectCombo(QComboBox* combobox);
+	void initIVinCombo(QComboBox* combobox);
 	void registerEventHandler();
 	void initGUI();
-	void initVINCombo(QComboBox* combobox);
 	void initEventCategoryCombo(QComboBox* combobox);
 	void initEventCombo(QComboBox* combobox, bool eyeq);
 	void initFeatureCombo(QComboBox* combobox);
@@ -197,14 +202,16 @@ private:
 	void transform_data(sEvent_Data *event_data, vector<string> item_list, map<string, vector<string>> containers);
 	void get_Clip_data(sEvent_Data *event_data, vector<string> item_list, map<string, vector<string>> containers);
 	void toLoginMode(bool mode);
-	void initProjectCombo(QComboBox* combobox);
 	void initFeatureList();
 	void initWorkspaceDirectory();
+	void initProjectList();
+	void initVINList();
 	tResult on_btn_login_clicked(string userid, string logid);
 	string recordLog(string id, bool isLogin);
 	void setOnline(string id, bool online);
 	bool checkAuth(string id, string pass);
 	string getVinOfClip(string clip);
+	vector<string> getListField4Project();
 	void initEventList();
 	void unregisterEventHandler();
 	void initAllDuringWork();
@@ -255,7 +262,6 @@ public slots:
 	tResult on_btn_change_pw_clicked();
 	tResult on_btn_change_cancel_clicked();
 	tResult on_btn_change_clicked();
-	tResult on_btn_logout_clicked();
 	tResult on_btn_prev_clicked();
 	tResult on_btn_next_clicked();
 	tResult on_cbo_vin_changed();

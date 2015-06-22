@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Wed Jun 10 17:01:58 2015
+** Created: Mon Jun 22 17:59:50 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      46,   14, // methods
+      45,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -72,12 +72,11 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
      969,   17,   18,   17, 0x0a,
     1000,   17,   18,   17, 0x0a,
     1024,   17,   18,   17, 0x0a,
-    1048,   17,   18,   17, 0x0a,
-    1070,   17,   18,   17, 0x0a,
-    1092,   17,   18,   17, 0x0a,
-    1113,   17,   18,   17, 0x0a,
-    1135,   17,   18,   17, 0x0a,
-    1163,   17,   18,   17, 0x0a,
+    1046,   17,   18,   17, 0x0a,
+    1068,   17,   18,   17, 0x0a,
+    1089,   17,   18,   17, 0x0a,
+    1111,   17,   18,   17, 0x0a,
+    1139,   17,   18,   17, 0x0a,
 
        0        // eod
 };
@@ -111,10 +110,9 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_btn_login_clicked()\0on_cbo_project_changed()\0"
     "on_btn_change_pw_clicked()\0"
     "on_btn_change_cancel_clicked()\0"
-    "on_btn_change_clicked()\0on_btn_logout_clicked()\0"
-    "on_btn_prev_clicked()\0on_btn_next_clicked()\0"
-    "on_cbo_vin_changed()\0on_chk_tour_clicked()\0"
-    "on_cbo_collection_clicked()\0"
+    "on_btn_change_clicked()\0on_btn_prev_clicked()\0"
+    "on_btn_next_clicked()\0on_cbo_vin_changed()\0"
+    "on_chk_tour_clicked()\0on_cbo_collection_clicked()\0"
     "on_cbo_collection_changed()\0"
 };
 
@@ -227,23 +225,21 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 38: { tResult _r = on_btn_change_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 39: { tResult _r = on_btn_logout_clicked();
+        case 39: { tResult _r = on_btn_prev_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 40: { tResult _r = on_btn_prev_clicked();
+        case 40: { tResult _r = on_btn_next_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 41: { tResult _r = on_btn_next_clicked();
+        case 41: { tResult _r = on_cbo_vin_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 42: { tResult _r = on_cbo_vin_changed();
+        case 42: { tResult _r = on_chk_tour_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 43: { tResult _r = on_chk_tour_clicked();
+        case 43: { tResult _r = on_cbo_collection_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 44: { tResult _r = on_cbo_collection_clicked();
-            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 45: { tResult _r = on_cbo_collection_changed();
+        case 44: { tResult _r = on_cbo_collection_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         default: ;
         }
-        _id -= 46;
+        _id -= 45;
     }
     return _id;
 }

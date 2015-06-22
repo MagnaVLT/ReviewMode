@@ -166,7 +166,6 @@ tHandle ReviewModeFilter::CreateView()
 		}
 	}
 
-	this->m_oFilterGUI.btn_logout->setVisible(false);
 	this->m_oFilterGUI.grp_pwchange->setVisible(false);
 	this->toLoginMode(true);
 	
@@ -193,8 +192,8 @@ tResult ReviewModeFilter::ReleaseView()
 
 void ReviewModeFilter::initAllAtStart()
 {
-	this->initMode();
 	this->initModel();
+	this->initMode();
 	this->initWorkspaceDirectory();
 
 	string tmpFile = TEMP_FILE + "tmp.xml";
@@ -207,6 +206,7 @@ void ReviewModeFilter::initAllAtStart()
 		this->registerEventHandler();
 	}else
 	{
+
 		this->initEventList();
 		this->initGUI();
 	}
@@ -220,7 +220,7 @@ void ReviewModeFilter::initAllDuringWork()
 
 void ReviewModeFilter::initBasicGroup()
 {
-	this->initVINCombo(this->m_oFilterGUI.cbo_vin);
+//	this->initVINCombo(this->m_oFilterGUI.cbo_vin);
 }
 
 void ReviewModeFilter::initCollectionCombo(QComboBox *combobox)
@@ -291,19 +291,20 @@ vector<string> ReviewModeFilter::getClustersOfClips(vector<string> clipidList, v
 
 map<string, vector<string>> ReviewModeFilter::getClipIDList()
 {
-	string project_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
-	if(project_text!=""){
-		string projectid = MagnaUtil::stringTokenizer(project_text, '-').at(1);
-		string vin = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
-		
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
+	if(!project_id.empty()){
+
 		vector<string> collection_fields;
 		collection_fields.push_back("clipid");
 		collection_fields.push_back("localpctime");
 
 		string query = "select a.clipid as clipid, d.localpctime as localpctime from event_report a, event_list b, users_feature_project_map c, clip_info d ";
-		query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and a.clipid = d.clipid and ";
-		query += " c.projectID = "+projectid+" and c.UserID = '"+ReviewModeFilter::ID+"' ";
-		if(vin.empty()!=true) query += " and a.vin = '"+vin+"' ";
+		query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and a.clipid = d.clipid ";
+		query += " and c.UserID = '"+ReviewModeFilter::ID+"' ";
+		query = this->queryFactory->addFieldsViaInStatement("c.projectID", project_id, query, 2, false);
+		if(!vin_id.empty()) query = this->queryFactory->addFieldsViaInStatement("a.vin", vin_id, query, 2, true);
 		query += " group by a.clipid order by a.clipid;";
 
 		map<string, vector<string>> collectionContainer = (new Retriever( collection_fields, query))->getData();
@@ -355,13 +356,12 @@ void ReviewModeFilter::initGUI()
 {
 	m_oFilterGUI.lbl_reportid->setVisible(false);
 	m_oFilterGUI.lbl_table->setVisible(false);
-	this->initFeatureList();
 	QDate date = QDate::currentDate();
 	m_oFilterGUI.dateEdit->setDate(date);
 	m_oFilterGUI.dateEdit_2->setDate(date);
-	this->toTextAnnotationMode(true);
-	this->initStatusCombo(this->m_oFilterGUI.cbo_status);
-	this->initProjectCombo(this->m_oFilterGUI.cbo_project);
+	//this->toTextAnnotationMode(true);
+	//this->initStatusCombo(this->m_oFilterGUI.cbo_status);
+	this->initProjectList();
 	this->registerEventHandler();
 }
 
@@ -373,21 +373,47 @@ void ReviewModeFilter::initWorkspaceDirectory()
 	MagnaUtil::make_directory(TEMP_FILE);
 }
 
+void ReviewModeFilter::initProjectList()
+{
+	selectedProjectModel = new QStandardItemModel();
+	this->m_oFilterGUI.listProjectSelected->setModel(this->selectedProjectModel);
+	featureModel = new QStandardItemModel();
+	string query4Project = "select b.name, b.id from users_project_map a, project b ";
+	query4Project += " where a.projectid = b.id and b.isopen = 0 and a.userid = '" + ReviewModeFilter::ID + "';";
+	this->listhandle->addItemsFromDB(m_oFilterGUI.listProject, projectModel, this->getListField4Project(), query4Project);
+}
+
+void ReviewModeFilter::initVINList()
+{
+	selectedVinModel = new QStandardItemModel();
+	this->m_oFilterGUI.listVinSelected->setModel(this->selectedVinModel);
+	vinModel = new QStandardItemModel();
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+
+	string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
+	query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and ";
+	query = this->queryFactory->addFieldsViaInStatement("c.projectID", project_id, query, 2, false);
+	query += " and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
+	
+	vector<string> vin_field;
+	vin_field.push_back("vin");
+
+	this->listhandle->addItemsFromDB(m_oFilterGUI.listVin, vinModel, vin_field, query);
+}
+
+
 void ReviewModeFilter::initFeatureList()
 {
 	selectedFeatureModel = new QStandardItemModel();
 	this->m_oFilterGUI.listFeatureSelected->setModel(this->selectedFeatureModel);
 
-	vector<string> tokens = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-');
-	if(tokens.size()>1)
-	{
-		string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
-		string query =	" select b.name, b.id from users_feature_project_map a, feature_list b ";
-		query +=		" where a.featureid = b.id and a.userid = '"+ReviewModeFilter::ID+"' and a.projectid = "+projectid+";";
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	string query =	" select b.name, b.id from users_feature_project_map a, feature_list b ";
+	query +=		" where a.featureid = b.id and a.userid = '"+ReviewModeFilter::ID+"'";
+	query = queryFactory->addFieldsViaInStatement("a.projectid", project_id, query, 2, false);
 
-		featureModel = new QStandardItemModel();
-		this->listhandle->addItemsFromDB(m_oFilterGUI.listFeature, featureModel, this->getListField4Feature(), query);
-	}
+	featureModel = new QStandardItemModel();
+	this->listhandle->addItemsFromDB(m_oFilterGUI.listFeature, featureModel, this->getListField4Feature(), query);
 }
 
 void ReviewModeFilter::initEventList()
@@ -398,6 +424,11 @@ void ReviewModeFilter::initEventList()
 
 
 void ReviewModeFilter::initModel(){
+	projectModel = new QStandardItemModel();
+	selectedProjectModel = new QStandardItemModel();
+	vinModel = new QStandardItemModel();
+	selectedVinModel = new QStandardItemModel();
+
 	featureModel = new QStandardItemModel();
 	selectedFeatureModel = new QStandardItemModel();
 	eventModel = new QStandardItemModel();
@@ -406,6 +437,10 @@ void ReviewModeFilter::initModel(){
 	selectedAnnotationModel = new QStandardItemModel();
 	eventListModel = new QStandardItemModel();
 
+	this->m_oFilterGUI.listProject->setModel(this->projectModel);
+	this->m_oFilterGUI.listProjectSelected->setModel(this->selectedProjectModel);
+	this->m_oFilterGUI.listVin->setModel(this->vinModel);
+	this->m_oFilterGUI.listVinSelected->setModel(this->selectedVinModel);
 	this->m_oFilterGUI.listFeature->setModel(this->featureModel);
 	this->m_oFilterGUI.listFeatureSelected->setModel(this->selectedFeatureModel);
 	this->m_oFilterGUI.listEvent->setModel(this->eventModel);
@@ -418,6 +453,41 @@ void ReviewModeFilter::initEventListModel(){
 	eventListModel = new QStandardItemModel();	
 }
 
+void ReviewModeFilter::initIProjectCombo(QComboBox* combobox)
+{
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	vector<string> project_name = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 0);	
+	
+	if(!project_id.empty() && project_id.size() == project_name.size())
+	{
+		vector<string> text_list;
+		for(unsigned int i = 0 ; i < project_id.size() ; i++)
+		{
+			text_list.push_back(project_name.at(i) + "-" + project_id.at(i));
+		}
+		combo_handle->initCombo(this->m_oFilterGUI.cbo_i_project, text_list);
+	}else
+	{
+		MagnaUtil::show_message("Select Project");
+	}
+}
+
+void ReviewModeFilter::initIVinCombo(QComboBox* combobox)
+{
+
+	vector<string> vin = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);	
+	if(!vin.empty())
+	{		
+		combo_handle->initCombo(this->m_oFilterGUI.cbo_i_vin, vin);
+	}else
+	{
+		MagnaUtil::show_message("Select VIN");
+	}
+}
+
+
+
 void ReviewModeFilter::initEventCombo(QComboBox* combobox, bool eyeq)
 {
 	string selectedFeature = m_oFilterGUI.cbo_i_feature->currentText().toStdString();
@@ -425,7 +495,7 @@ void ReviewModeFilter::initEventCombo(QComboBox* combobox, bool eyeq)
 
 	if(!selectedFeature.empty())
 	{
-		string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
+		string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_i_project->currentText().toStdString(), '-').at(1);
 		selectedFeature = MagnaUtil::stringTokenizer(selectedFeature, '-').at(1);
 		vector<string> event_fields = getListField4Event();
 		string query = "select a.name, a.id from event_list a, project_event_map b where a.id = b.eventid and b.projectid = "+projectid+" and a.featureid = "+selectedFeature+";";
@@ -437,34 +507,17 @@ void ReviewModeFilter::initEventCombo(QComboBox* combobox, bool eyeq)
 
 void ReviewModeFilter::initFeatureCombo(QComboBox* combobox)
 {
-	string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+
 	vector<string> feature_fields = getListField4Feature();
 	string query = "select b.name as name, b.id as id from users_feature_project_map a, feature_list b ";
-	query += " where a.FeatureID = b.ID and a.UserID = '" + ReviewModeFilter::ID + "' and a.projectid = " + projectid +";";
+	query += " where a.FeatureID = b.ID and a.UserID = '" + ReviewModeFilter::ID + "' ";
+	query = this->queryFactory->addFieldsViaInStatement("a.projectid", project_id, query, 2, false);
 
 	map<string, vector<string>> featureContainer = (new Retriever(feature_fields, query))->getData();
 	vector<string> event_list = listhandle->getConcatenatedText(featureContainer, feature_fields);
 	combo_handle->initCombo(combobox, event_list);
-}
-
-void ReviewModeFilter::initVINCombo(QComboBox* combobox)
-{	
-	vector<string> vin_fields;
-	vin_fields.push_back("vin");
-	string project_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
-	if(project_text!=""){
-		string projectid = MagnaUtil::stringTokenizer(project_text, '-').at(1);
-		string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
-		query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and ";
-		query += " c.projectID = "+projectid+" and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
-
-		map<string, vector<string>> vinContainer = (new Retriever( vin_fields, query))->getData();
-		combo_handle->initCombo(combobox, vinContainer["vin"]);
-	}else{
-		vector<string> empty_vector;
-		combo_handle->initCombo(combobox, empty_vector);
-	}
-
 }
 
 
@@ -474,7 +527,7 @@ void ReviewModeFilter::initEventCategoryCombo(QComboBox* combobox)
 	event_category_field.push_back("name");
 	event_category_field.push_back("id");
 	string query = "select name, id from event_category_list ";
-
+	
 	map<string, vector<string>> eCategoryContainer = (new Retriever(event_category_field, query))->getData();
 	vector<string> category_list = listhandle->getConcatenatedText(eCategoryContainer, event_category_field);
 	combo_handle->initCombo(combobox, category_list);
@@ -491,8 +544,10 @@ void ReviewModeFilter::initIAnnotationCombo(QComboBox* combobox)
 		selectedFeature = MagnaUtil::stringTokenizer(selectedFeature, '-').at(1).substr(0, 1);
 		vector<string> vstr_fetures;
 		vstr_fetures.push_back(selectedFeature);
-		string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
-		string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, projectid);	
+		vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+
+
+		string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, project_id);	
 		map<string, vector<string>> annotationContainer = (new Retriever(annotation_fields, query4Annotation))->getData();
 		vector<string> status_list = listhandle->getConcatenatedText(annotationContainer, annotation_fields);
 		combo_handle->initCombo(combobox, status_list);
@@ -503,8 +558,10 @@ void ReviewModeFilter::initAnnotationCombo(QComboBox* combobox, vector<string> v
 {
 	vector<string> annotation_fields = getListField4Annotation();
 	vstr_fetures = MagnaUtil::getTokenedVector(vstr_fetures, '-', 1);
-	string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
-	string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, projectid);
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+
+	string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, project_id);
 	
 	if(query4Annotation.empty())
 	{
@@ -519,14 +576,13 @@ void ReviewModeFilter::initAnnotationCombo(QComboBox* combobox, vector<string> v
 	}
 }
 
-
 void ReviewModeFilter::initAnnotationCombo(QComboBox* combobox)
 {
 	vector<string> annotation_fields = getListField4Annotation();
 	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
-	string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
 
-	string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, projectid);
+	string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, project_id);
 
 	if(query4Annotation.empty())
 	{
@@ -541,26 +597,10 @@ void ReviewModeFilter::initAnnotationCombo(QComboBox* combobox)
 	}
 }
 
-void ReviewModeFilter::initProjectCombo(QComboBox* combobox)
-{
-	vector<string> project_fields;
-	project_fields.push_back("name");
-	project_fields.push_back("id");
-	string query4Project = "select b.name, b.id from users_project_map a, project b ";
-	query4Project += " where a.projectid = b.id and b.isopen = 0 and a.userid = '" + ReviewModeFilter::ID + "';";
-	map<string, vector<string>> projectContainer = (new Retriever(project_fields, query4Project))->getData();
-	vector<string> project_list = listhandle->getConcatenatedText(projectContainer, project_fields);
-	combobox->clear();
-	combo_handle->initCombo(combobox, project_list);
-}
-
-
-
 
 
 void ReviewModeFilter::initStatusCombo(QComboBox* combobox)
 {
-
 	combobox->clear();
 	vector<string> status_fields = getField4Status();
 	string query = "select name, id from event_status_list where id<>1";
@@ -577,7 +617,6 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_execute, SIGNAL(clicked()), this, SLOT(on_btn_execute_clicked()));
 	connect(m_oFilterGUI.btn_clip, SIGNAL(clicked()), this, SLOT(on_btn_clip_clicked()));
 	connect(m_oFilterGUI.btn_copy, SIGNAL(clicked()), this, SLOT(on_btn_copy_clicked()));
-	connect(m_oFilterGUI.btn_logout, SIGNAL(clicked()), this, SLOT(on_btn_logout_clicked()));
 
 	connect(m_oFilterGUI.btn_LR1, SIGNAL(clicked()), this, SLOT(on_btn_LR1_clicked()));
 	connect(m_oFilterGUI.btn_RL1, SIGNAL(clicked()), this, SLOT(on_btn_RL1_clicked()));
@@ -613,8 +652,8 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.listEventAnnotation, SIGNAL(clicked(const QModelIndex)), this, SLOT(on_list_event_annotation_clicked(QModelIndex)));
 
 	connect(m_oFilterGUI.cbo_i_feature, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_i_feature_changed()));
-	connect(m_oFilterGUI.cbo_project, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_project_changed()));
-	connect(m_oFilterGUI.cbo_vin, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_vin_changed()));
+	//connect(m_oFilterGUI.cbo_project, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_project_changed()));
+	//connect(m_oFilterGUI.cbo_vin, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_vin_changed()));
 	connect(m_oFilterGUI.cbo_collection, SIGNAL(clicked()), this, SLOT(on_cbo_collection_clicked()));
 	connect(m_oFilterGUI.cbo_collection, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_collection_changed()));
 
@@ -624,7 +663,6 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.txt_search, SIGNAL(textChanged(const QString &)), this, SLOT(on_txt_search_edited(const QString &)));
 }
 
-
 void ReviewModeFilter::unregisterEventHandler()
 {
 	disconnect(this, SLOT(on_btn_setting_clicked()));
@@ -633,7 +671,6 @@ void ReviewModeFilter::unregisterEventHandler()
 	disconnect(this, SLOT(on_btn_execute_clicked()));
 	disconnect(this, SLOT(on_btn_clip_clicked()));
 	disconnect(this, SLOT(on_btn_copy_clicked()));
-	disconnect(this, SLOT(on_btn_logout_clicked()));
 
 	disconnect(this, SLOT(on_btn_LR1_clicked()));
 	disconnect(this, SLOT(on_btn_RL1_clicked()));
@@ -773,16 +810,6 @@ tResult ReviewModeFilter::on_btn_login_clicked(){
 
 	RETURN_NOERROR;
 }
-tResult ReviewModeFilter::on_btn_logout_clicked(){
-	ReviewModeFilter::ID = "";
-	this->m_oFilterGUI.lbl_user->setText(QString(""));
-	MagnaUtil::delete_file(TEMP_FILE + "tmp.xml");
-	this->m_oFilterGUI.txt_loginid->setFocus(Qt::MouseFocusReason);
-	unregisterEventHandler();
-	this->toLoginMode(true);
-
-	RETURN_NOERROR;
-}
 
 bool ReviewModeFilter::checkAuth(string id, string pass)
 {
@@ -900,9 +927,9 @@ tResult ReviewModeFilter::on_chk_annotation_clicked()
 
 	
 	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
-	string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
 
-	string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, projectid);
+	string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, project_id);
 	if(!query4Annotation.empty())
 	{
 		this->listhandle->addItemsFromDB(m_oFilterGUI.listAnnotation, annotationModel, this->getListField4Annotation(), query4Annotation);
@@ -1042,9 +1069,11 @@ tResult ReviewModeFilter::on_chk_tour_clicked()
 
 tResult ReviewModeFilter::on_cbo_collection_clicked()
 {
-	string vin = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
-	string project = this->m_oFilterGUI.cbo_project->currentText().toStdString();
-	if(vin=="" || project=="")
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
+
+	if(vin_id.empty() || project_id.empty())
 	{
 		MagnaUtil::show_message("Please select a project and vin.");
 	}
@@ -1150,7 +1179,9 @@ tResult ReviewModeFilter::on_btn_insert_clicked()
 		RETURN_NOERROR;
 	}
 
-	if(this->m_oFilterGUI.cbo_project->currentText().toStdString().empty())
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	if(project_id.empty())
 	{
 		MagnaUtil::show_message("Select Project");
 		RETURN_NOERROR;
@@ -1180,11 +1211,13 @@ tResult ReviewModeFilter::on_btn_insert_clicked()
 		this->m_oFilterGUI.txt_ms->clear();
 		this->m_oFilterGUI.txt_clip->setEnabled(false);
 		this->m_oFilterGUI.txt_clip->setText(QString(clip.c_str()));
-		this->m_oFilterGUI.txt_vin->setText(QString(vin.c_str()));
 
+		this->initIProjectCombo(this->m_oFilterGUI.cbo_i_project);
+		this->initIVinCombo(this->m_oFilterGUI.cbo_i_vin);
 		this->initIAnnotationCombo(this->m_oFilterGUI.cbo_i_annotation);
 		this->initStatusCombo(this->m_oFilterGUI.cbo_i_status);
 		this->initFeatureCombo(this->m_oFilterGUI.cbo_i_feature);
+
 	}
 
 	RETURN_NOERROR;
@@ -1221,9 +1254,9 @@ tResult ReviewModeFilter::on_btn_submit_clicked()
 	string predefined_annotation = this->m_oFilterGUI.cbo_i_annotation->currentText().toStdString();
 
 
-	string vin = this->m_oFilterGUI.txt_vin->text().toStdString();
+	string vin = this->m_oFilterGUI.cbo_i_vin->currentText().toStdString();
 	string clip = MagnaUtil::removeURLOfFile(this->m_oFilterGUI.txt_clip->text().toStdString());
-	string project_raw_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
+	string project_raw_text = this->m_oFilterGUI.cbo_i_project->currentText().toStdString();
 
 	if(status.empty() || feature.empty() || vin.empty() || clip.empty() || (!this->m_oFilterGUI.chk_i_text_annotation->isChecked() && annotation.empty()) ||
 		(this->m_oFilterGUI.chk_i_text_annotation->isChecked() && predefined_annotation.empty()))
@@ -1623,9 +1656,9 @@ void ReviewModeFilter::toLoginMode(bool mode)
 	this->m_oFilterGUI.btn_clip->setVisible(!mode);
 	this->m_oFilterGUI.txt_clip_directory->setVisible(!mode);
 	this->m_oFilterGUI.btn_setting->setVisible(!mode);
-	this->m_oFilterGUI.cbo_project->setVisible(!mode);
+	
 	this->m_oFilterGUI.cbo_collection->setVisible(!mode);
-	this->m_oFilterGUI.cbo_vin->setVisible(!mode);
+	
 	this->m_oFilterGUI.txt_loginpw->setEchoMode(QLineEdit::Password);
 }
 
@@ -1649,9 +1682,7 @@ void ReviewModeFilter::toSettingMode(bool mode)
 	this->m_oFilterGUI.GrpEvent->setEnabled(!mode);
 	this->m_oFilterGUI.GrpEdit->setEnabled(!mode);
 	this->m_oFilterGUI.btn_setting->setEnabled(!mode);
-	this->m_oFilterGUI.cbo_project->setVisible(!mode);
 	this->m_oFilterGUI.cbo_collection->setVisible(!mode);
-	this->m_oFilterGUI.cbo_vin->setVisible(!mode);
 	this->m_oFilterGUI.btn_browse->setFocus(Qt::OtherFocusReason);
 }
 
@@ -1664,9 +1695,7 @@ void ReviewModeFilter::toInsertMode(bool mode)
 	this->m_oFilterGUI.GrpEdit->setEnabled(!mode);
 	this->m_oFilterGUI.btn_clip->setEnabled(!mode);
 	this->m_oFilterGUI.btn_setting->setVisible(!mode);
-	this->m_oFilterGUI.cbo_project->setVisible(!mode);
 	this->m_oFilterGUI.cbo_collection->setVisible(!mode);
-	this->m_oFilterGUI.cbo_vin->setVisible(!mode);
 	if(mode==true) this->m_oFilterGUI.txt_m->setFocus(Qt::OtherFocusReason);
 }
 
@@ -1697,10 +1726,6 @@ void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 
 	string start_date = xmlHandle->getNodeValue("start_date", "value");
 	string end_date = xmlHandle->getNodeValue("end_date", "value");
-
-	combo_handle->initCombo(this->m_oFilterGUI.cbo_project, project_list);
-	int index_project = m_oFilterGUI.cbo_project->findText(selected_project.c_str());
-	this->m_oFilterGUI.cbo_project->setCurrentIndex(index_project);
 
 
 	this->initAnnotationCombo(this->m_oFilterGUI.cbo_annotation, selected_feature_list);
@@ -1787,8 +1812,8 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 	string edate;
 	string text_annotation;
 	string clip_directory;
-	string selected_project;
 	vector<string> project_list;
+	vector<string> selected_project_list;
 	vector<string> table;
 	vector<string> featureList;
 	vector<string> selectedFeatureList;
@@ -1808,10 +1833,12 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 
 	sdate = this->getDate(this->m_oFilterGUI.dateEdit, "/");
 	edate = this->getDate(this->m_oFilterGUI.dateEdit_2, "/");
-	selected_project = this->m_oFilterGUI.cbo_project->currentText().toStdString();
 
-	for(int idx = 0 ; idx < this->m_oFilterGUI.cbo_project->count() ; idx++)
-		project_list.push_back(this->m_oFilterGUI.cbo_project->itemText(idx).toStdString());
+	for(int idx = 0 ; idx < this->m_oFilterGUI.listProject->model()->rowCount() ; idx++)
+		project_list.push_back(this->m_oFilterGUI.listProject->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.listProjectSelected->model()->rowCount() ; idx++)
+		selected_project_list.push_back(this->m_oFilterGUI.listProjectSelected->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
 
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listFeature->model()->rowCount() ; idx++)
 		featureList.push_back(this->m_oFilterGUI.listFeature->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
@@ -1851,7 +1878,6 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 	xmlHandle.addItem("start_date", "value", sdate);
 	xmlHandle.addItem("end_date", "value", edate);
 	xmlHandle.addItem("selected_event", "value", selectedEvent);
-	xmlHandle.addItem("selected_project", "value", selected_project);
 	if(status==LOGIN) xmlHandle.addItem("logid", "value", ReviewModeFilter::USERLOG_ID);
 	else
 	{
@@ -1864,9 +1890,9 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 		string id = "";
 		xmlHandle.addItem("login", "value", id);
 	}
-	
 
 	xmlHandle.addItems("project_list", "item", project_list);
+	xmlHandle.addItems("selected_project_list", "item", selected_project_list);
 	xmlHandle.addItems("feature_list", "item", featureList);
 	xmlHandle.addItems("selected_feature_list", "item", selectedFeatureList);
 	xmlHandle.addItems("event_list", "item", eventList);
@@ -1883,8 +1909,10 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 void ReviewModeFilter::refreshEventGroup()
 {
 
-	string cbo_project_text = this->m_oFilterGUI.cbo_project->currentText().toStdString();
-	string vin = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
+
+
 	string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
 	string start_clip = "";
 	string end_clip = "";
@@ -1897,7 +1925,7 @@ void ReviewModeFilter::refreshEventGroup()
 	}
 
 
-	if(cbo_project_text.empty()==true)
+	if(project_id.empty()==true)
 	{
 		initEventGroup();
 	}else{
@@ -1927,8 +1955,6 @@ void ReviewModeFilter::refreshEventGroup()
 		string stime, etime;
 		vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 
-		string txt_project = this->m_oFilterGUI.cbo_project->currentText().toStdString();
-		string projectid = MagnaUtil::stringTokenizer(txt_project, '-').at(1);
 		progress->setValue(20);
 
 		if(!this->m_oFilterGUI.chk_date->isChecked())
@@ -1942,14 +1968,14 @@ void ReviewModeFilter::refreshEventGroup()
 
 		if(vstr_fetures.size()>0)
 		{
-			string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b", categories, stime, etime, projectid, vstr_fetures,
-				vin, chk_tour, start_clip, end_clip);
+			string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b", categories, stime, etime, project_id, vstr_fetures,
+				vin_id, chk_tour, start_clip, end_clip);
 
 			this->listhandle->addItemsFromDB(m_oFilterGUI.listEvent, eventModel, this->getListField4Event(), query);
 			progress->setValue(90);
 		}
 		
-		string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, projectid);
+		string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, project_id);
 		if(!query4Annotation.empty())
 		{
 			this->listhandle->addItemsFromDB(m_oFilterGUI.listAnnotation, annotationModel, this->getListField4Annotation(), query4Annotation);
@@ -1964,7 +1990,12 @@ void ReviewModeFilter::refreshEventGroup()
 
 void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 {
-	if(this->m_oFilterGUI.cbo_project->currentText().toStdString().empty()==true)
+
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
+
+
+	if(project_id.empty()==true)
 	{
 		initAnnotationGroup();
 	}
@@ -1992,8 +2023,6 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 
 		vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 		vector<string> annotations = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listAnnotationSelected, 1);
-		string projectid = MagnaUtil::stringTokenizer(this->m_oFilterGUI.cbo_project->currentText().toStdString(), '-').at(1);
-		string vin = this->m_oFilterGUI.cbo_vin->currentText().toStdString();
 		string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
 		string start_clip = "";
 		string end_clip = "";
@@ -2039,8 +2068,8 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 
 			vector<string> event_categories = getEventCategories();
 			string query = this->queryFactory->getEventListQuery(this->offset,
-				this->getListField4EventList(), ReviewModeFilter::ID , projectid, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
-				vin, chk_tour, start_clip, end_clip);
+				this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
+				vin_id, chk_tour, start_clip, end_clip);
 			
 			progress->setValue(50);
 			recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
@@ -2122,6 +2151,15 @@ string ReviewModeFilter::getVinOfClip(string clip)
 	else return "";
 }
 
+
+vector<string> ReviewModeFilter::getListField4Project()
+{
+	vector<string> itemsFromDB;
+	itemsFromDB.push_back("name");
+	itemsFromDB.push_back("id");
+
+	return itemsFromDB;
+}
 
 vector<string> ReviewModeFilter::getListField4Feature()
 {

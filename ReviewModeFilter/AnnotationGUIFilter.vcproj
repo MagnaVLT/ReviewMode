@@ -191,6 +191,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ReviewMode_NoGPS.ui"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)\bin\uic.exe -o &quot;ui_GUIFrontEnd.h&quot; &quot;ReviewMode_NoGPS.ui&quot;&#x0D;&#x0A;"
+						Outputs="ui_GUIFrontEnd.h"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\ReviewModeFilter.cpp"
 				>
 			</File>
@@ -408,19 +421,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\ReviewMode_NoGPS.ui"
-			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="$(QTDIR)\bin\uic.exe -o &quot;ui_GUIFrontEnd.h&quot; &quot;ReviewMode_NoGPS.ui&quot;&#x0D;&#x0A;"
-					Outputs="ui_GUIFrontEnd.h"
-				/>
-			</FileConfiguration>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

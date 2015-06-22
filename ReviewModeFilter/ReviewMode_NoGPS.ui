@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>894</width>
+    <width>1200</width>
     <height>744</height>
    </rect>
   </property>
@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>40</y>
-     <width>871</width>
-     <height>441</height>
+     <y>30</y>
+     <width>1181</width>
+     <height>461</height>
     </rect>
    </property>
    <property name="title">
@@ -29,8 +29,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
-      <width>851</width>
+      <y>130</y>
+      <width>1161</width>
       <height>171</height>
      </rect>
     </property>
@@ -118,155 +118,350 @@
       <enum>QAbstractItemView::MultiSelection</enum>
      </property>
     </widget>
-    <widget class="QLabel" name="label">
+    <widget class="QGroupBox" name="date">
      <property name="geometry">
       <rect>
-       <x>500</x>
-       <y>80</y>
-       <width>46</width>
-       <height>13</height>
+       <x>420</x>
+       <y>20</y>
+       <width>161</width>
+       <height>131</height>
       </rect>
      </property>
-     <property name="text">
-      <string>START</string>
+     <property name="title">
+      <string>date</string>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
+     <widget class="QDateEdit" name="dateEdit_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>90</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="currentSection">
+       <enum>QDateTimeEdit::YearSection</enum>
+      </property>
+      <property name="displayFormat">
+       <string>yyyy/MM/dd</string>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="dateEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>41</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="locale">
+       <locale language="English" country="UnitedStates"/>
+      </property>
+      <property name="currentSection">
+       <enum>QDateTimeEdit::YearSection</enum>
+      </property>
+      <property name="displayFormat">
+       <string>yyyy/MM/dd</string>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>START</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_date">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>All Date?</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>100</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>END</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
-       <x>500</x>
-       <y>130</y>
-       <width>46</width>
-       <height>13</height>
+       <x>600</x>
+       <y>20</y>
+       <width>120</width>
+       <height>131</height>
       </rect>
      </property>
-     <property name="text">
-      <string>END</string>
+     <property name="title">
+      <string>Event Category</string>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
+     <widget class="QCheckBox" name="chk_fcm_event">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>26</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>FCM</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_radar">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>103</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Radar</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_user_event">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>77</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Manual</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_eyeq_event">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>51</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>EyeQ</string>
+      </property>
+     </widget>
     </widget>
-    <widget class="QDateEdit" name="dateEdit">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+    <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
-       <x>550</x>
-       <y>71</y>
-       <width>121</width>
-       <height>31</height>
+       <x>740</x>
+       <y>20</y>
+       <width>120</width>
+       <height>131</height>
       </rect>
      </property>
-     <property name="locale">
-      <locale language="English" country="UnitedStates"/>
+     <property name="title">
+      <string>Day Type</string>
      </property>
-     <property name="currentSection">
-      <enum>QDateTimeEdit::YearSection</enum>
-     </property>
-     <property name="displayFormat">
-      <string>yyyy/MM/dd</string>
-     </property>
-     <property name="calendarPopup">
-      <bool>true</bool>
-     </property>
+     <widget class="QCheckBox" name="chk_day_1">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>26</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Day</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_day_3">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>100</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Night</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_day_2">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>63</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dusk</string>
+      </property>
+     </widget>
     </widget>
-    <widget class="QDateEdit" name="dateEdit_2">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
-       <x>550</x>
-       <y>120</y>
-       <width>121</width>
-       <height>31</height>
+       <x>880</x>
+       <y>20</y>
+       <width>120</width>
+       <height>131</height>
       </rect>
      </property>
-     <property name="currentSection">
-      <enum>QDateTimeEdit::YearSection</enum>
+     <property name="title">
+      <string>Weather Type</string>
      </property>
-     <property name="displayFormat">
-      <string>yyyy/MM/dd</string>
-     </property>
-     <property name="calendarPopup">
-      <bool>true</bool>
-     </property>
+     <widget class="QCheckBox" name="chk_weather_1">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>26</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Clear</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_weather_4">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>103</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Snow</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_weather_3">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>77</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Overcast</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_weather_2">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>51</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rain</string>
+      </property>
+     </widget>
     </widget>
-    <widget class="QCheckBox" name="chk_user_event">
+    <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
-       <x>700</x>
-       <y>100</y>
-       <width>91</width>
-       <height>17</height>
+       <x>1020</x>
+       <y>20</y>
+       <width>120</width>
+       <height>131</height>
       </rect>
      </property>
-     <property name="text">
-      <string>User_Event</string>
+     <property name="title">
+      <string>Road Type</string>
      </property>
-    </widget>
-    <widget class="QCheckBox" name="chk_eyeq_event">
-     <property name="geometry">
-      <rect>
-       <x>700</x>
-       <y>70</y>
-       <width>81</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>EyeQ_Event</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chk_fcm_event">
-     <property name="geometry">
-      <rect>
-       <x>700</x>
-       <y>40</y>
-       <width>81</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>FCM_Event</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chk_date">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>40</y>
-       <width>101</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>All Date?</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chk_radar">
-     <property name="geometry">
-      <rect>
-       <x>700</x>
-       <y>130</y>
-       <width>91</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Radar_Event</string>
-     </property>
+     <widget class="QCheckBox" name="chk_road_1">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>26</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Highway</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_road_3">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>103</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Both</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_road_2">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>65</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Urban</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QGroupBox" name="GrpEvent">
@@ -276,9 +471,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>230</y>
-      <width>851</width>
-      <height>201</height>
+      <y>300</y>
+      <width>1161</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
@@ -290,7 +485,7 @@
        <x>440</x>
        <y>40</y>
        <width>170</width>
-       <height>151</height>
+       <height>101</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -303,7 +498,7 @@
        <x>660</x>
        <y>40</y>
        <width>170</width>
-       <height>151</height>
+       <height>101</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -314,7 +509,7 @@
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>20</y>
+       <y>14</y>
        <width>41</width>
        <height>16</height>
       </rect>
@@ -332,7 +527,7 @@
        <x>20</x>
        <y>40</y>
        <width>170</width>
-       <height>151</height>
+       <height>101</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -345,7 +540,7 @@
        <x>240</x>
        <y>40</y>
        <width>170</width>
-       <height>151</height>
+       <height>101</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -356,7 +551,7 @@
      <property name="geometry">
       <rect>
        <x>620</x>
-       <y>120</y>
+       <y>96</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -369,7 +564,7 @@
      <property name="geometry">
       <rect>
        <x>670</x>
-       <y>20</y>
+       <y>16</y>
        <width>161</width>
        <height>20</height>
       </rect>
@@ -382,7 +577,7 @@
      <property name="geometry">
       <rect>
        <x>620</x>
-       <y>90</y>
+       <y>66</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -395,7 +590,7 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>90</y>
+       <y>66</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -408,7 +603,7 @@
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>20</y>
+       <y>14</y>
        <width>81</width>
        <height>16</height>
       </rect>
@@ -421,7 +616,7 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>120</y>
+       <y>96</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -434,7 +629,7 @@
      <property name="geometry">
       <rect>
        <x>500</x>
-       <y>20</y>
+       <y>16</y>
        <width>151</width>
        <height>17</height>
       </rect>
@@ -447,7 +642,7 @@
      <property name="geometry">
       <rect>
        <x>425</x>
-       <y>20</y>
+       <y>14</y>
        <width>71</width>
        <height>17</height>
       </rect>
@@ -463,18 +658,99 @@
      <property name="geometry">
       <rect>
        <x>499</x>
-       <y>19</y>
+       <y>13</y>
        <width>331</width>
        <height>20</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="list_selected_event_status">
+     <property name="geometry">
+      <rect>
+       <x>1032</x>
+       <y>14</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Selected Event Status</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_29">
+     <property name="geometry">
+      <rect>
+       <x>890</x>
+       <y>14</y>
+       <width>71</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string>Event Status</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_RL2_2">
+     <property name="geometry">
+      <rect>
+       <x>990</x>
+       <y>96</y>
+       <width>31</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QListView" name="listEventStatus">
+     <property name="geometry">
+      <rect>
+       <x>860</x>
+       <y>40</y>
+       <width>121</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
+    </widget>
+    <widget class="QListView" name="listEventStatusSelected">
+     <property name="geometry">
+      <rect>
+       <x>1030</x>
+       <y>40</y>
+       <width>111</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_LR2_2">
+     <property name="geometry">
+      <rect>
+       <x>990</x>
+       <y>66</y>
+       <width>31</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&gt;&gt;</string>
      </property>
     </widget>
    </widget>
    <widget class="QLabel" name="label_25">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>21</y>
+      <x>90</x>
+      <y>20</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -483,43 +759,23 @@
      <string>Project</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="cbo_project">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>17</y>
-      <width>171</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_27">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>293</x>
       <y>20</y>
-      <width>21</width>
+      <width>81</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>VIN</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbo_vin">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>17</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
+     <string>Selected Project</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="chk_tour">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>860</x>
       <y>20</y>
       <width>91</width>
       <height>17</height>
@@ -535,11 +791,141 @@
    <widget class="QComboBox" name="cbo_collection">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>18</y>
+      <x>860</x>
+      <y>40</y>
       <width>301</width>
       <height>22</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_LR1_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>50</y>
+      <width>31</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;&gt;</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listProject">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>40</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_RL1_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>80</y>
+      <width>31</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;&lt;</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listProjectSelected">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>40</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
+    </property>
+   </widget>
+   <widget class="QListView" name="listVin">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>40</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_RL1_3">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>80</y>
+      <width>31</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;&lt;</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listVinSelected">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>40</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_LR1_3">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>50</y>
+      <width>31</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_28">
+    <property name="geometry">
+     <rect>
+      <x>721</x>
+      <y>20</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Selected VIN</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_30">
+    <property name="geometry">
+     <rect>
+      <x>526</x>
+      <y>20</y>
+      <width>46</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>VIN</string>
     </property>
    </widget>
   </widget>
@@ -547,8 +933,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>490</y>
-     <width>871</width>
+     <y>510</y>
+     <width>1181</width>
      <height>211</height>
     </rect>
    </property>
@@ -774,8 +1160,8 @@
   <widget class="QGroupBox" name="GrpInsert">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>300</y>
+     <x>250</x>
+     <y>470</y>
      <width>561</width>
      <height>261</height>
     </rect>
@@ -1486,7 +1872,7 @@
    <widget class="QLabel" name="label_19">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>250</x>
       <y>80</y>
       <width>141</width>
       <height>16</height>
@@ -1549,21 +1935,47 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="txt_vin">
+   <widget class="QComboBox" name="cbo_i_project">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>100</y>
       <width>181</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cbo_i_vin">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>100</y>
+      <width>191</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_31">
+    <property name="geometry">
+     <rect>
+      <x>43</x>
+      <y>80</y>
+      <width>141</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Project*</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>
   <widget class="QPushButton" name="btn_setting">
    <property name="geometry">
     <rect>
-     <x>794</x>
+     <x>1100</x>
      <y>10</y>
      <width>91</width>
      <height>21</height>
@@ -1599,8 +2011,8 @@
   <widget class="QGroupBox" name="grp_login">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>250</y>
+     <x>500</x>
+     <y>220</y>
      <width>231</width>
      <height>121</height>
     </rect>
@@ -2102,8 +2514,8 @@
   <widget class="QGroupBox" name="grp_pwchange">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>370</y>
+     <x>500</x>
+     <y>340</y>
      <width>231</width>
      <height>181</height>
     </rect>
@@ -2654,19 +3066,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="btn_logout">
-   <property name="geometry">
-    <rect>
-     <x>710</x>
-     <y>10</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Logout</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="lbl_user">
    <property name="geometry">
     <rect>
@@ -2683,8 +3082,8 @@
   <widget class="QGroupBox" name="GrpSetting">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>20</y>
+     <x>780</x>
+     <y>30</y>
      <width>321</width>
      <height>161</height>
     </rect>
@@ -3233,9 +3632,7 @@
   <tabstop>btn_setting</tabstop>
   <tabstop>txt_clip_directory</tabstop>
   <tabstop>btn_clip</tabstop>
-  <tabstop>cbo_project</tabstop>
   <tabstop>btn_copy</tabstop>
-  <tabstop>txt_vin</tabstop>
   <tabstop>btn_execute</tabstop>
   <tabstop>txt_sqlfile</tabstop>
   <tabstop>btn_browse</tabstop>
