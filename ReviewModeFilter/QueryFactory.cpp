@@ -99,7 +99,7 @@ void QueryFactory::addGroupByClaud(vector<string> items, string* query)
 
 std::string QueryFactory::getEventListQuery(int offset, vector<string> items, string userid, vector<string> projectid, vector<string> events, 
 									   string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search,
-									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
+									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads, vector<string> event_status)
 {
 	string query = "";
 	query+= "select ";
@@ -113,6 +113,7 @@ std::string QueryFactory::getEventListQuery(int offset, vector<string> items, st
 	query = this->addFieldsViaInStatement("c.daytypeid", days, query, 2, false);
 	query = this->addFieldsViaInStatement("c.weathertypeid", weathers, query, 2, false);
 	query = this->addFieldsViaInStatement("c.roadtypeid", roads, query, 2, false);
+	query = this->addFieldsViaInStatement("a.eventstatusid", event_status, query, 2, false);
 	
 	query = addFields(" a.eventcategoryid ", event_categories, query);
 	query = addFields(" a.eventid ", events, query);
@@ -194,3 +195,4 @@ std::string QueryFactory::addFieldsViaInStatement(string field, vector<string> v
 
 	return query;
 }
+

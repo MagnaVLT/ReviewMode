@@ -14,7 +14,7 @@ public:
 		vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads);
 	string getEventListQuery(int offset, vector<string> items, string userid, vector<string> projectid, vector<string> events, 
 		string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search,
-		vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads);
+		vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads, vector<string> event_status);
 	std::string addFieldsViaInStatement(string field, vector<string> values, string query, int order, bool is_text);
 
 private:

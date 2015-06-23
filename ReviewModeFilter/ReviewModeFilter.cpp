@@ -196,6 +196,7 @@ void ReviewModeFilter::initAllAtStart()
 	this->initFeatureModel();
 	this->initModel();
 	this->initMode();
+	this->initStatusCombo(this->m_oFilterGUI.cbo_status);
 	this->initWorkspaceDirectory();
 
 	string tmpFile = TEMP_FILE + "tmp.xml";
@@ -1083,6 +1084,9 @@ tResult ReviewModeFilter::on_cbo_collection_changed()
 	RETURN_NOERROR;
 }
 
+
+
+
 tResult ReviewModeFilter::on_btn_udpate_clicked()
 {
 	string reportid = this->m_oFilterGUI.lbl_reportid->text().toStdString();
@@ -1944,7 +1948,7 @@ void ReviewModeFilter::refreshEventGroup()
 	vector<string> days = this->getDayTypes();
 	vector<string> weathers = this->getWeatherTypes();
 	vector<string> roads = this->getRoadTypes();
-
+	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 
 	string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
 	string start_clip = "";
@@ -1973,53 +1977,83 @@ void ReviewModeFilter::refreshEventGroup()
 		progress->show();
 		QApplication::processEvents();
 		progress->setLabelText(QString("Init Event Filter Panel ..."));
+		refreshEvents(progress, project_id, vstr_fetures, vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
+		refreshAnnotation(project_id, vstr_fetures, progress);
+		refreshAICombo(project_id, vstr_fetures, progress);
 
-		this->m_oFilterGUI.cbo_annotation->clear();
-		eventModel = new QStandardItemModel();
-		selectedEventModel = new QStandardItemModel();
-		annotationModel = new QStandardItemModel();
-		selectedAnnotationModel = new QStandardItemModel();
+		progress->hide();
+	}
+}
 
-		this->m_oFilterGUI.listEvent->setModel(this->eventModel);
-		this->m_oFilterGUI.listEventSelected->setModel(this->selectedEventModel);
-		this->m_oFilterGUI.listAnnotation->setModel(this->annotationModel);
-		this->m_oFilterGUI.listAnnotationSelected->setModel(this->selectedAnnotationModel);
-		this->m_oFilterGUI.chk_search->setChecked(false);
-		this->on_chk_search_clicked();
-		string stime, etime;
-		vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
+void ReviewModeFilter::refreshAICombo(vector<string> project_id, vector<string> vstr_fetures, QProgressDialog * progress)
+{
+	string query = "select name, id from additional_event_type ";
+	query = this->queryFactory->addFieldsViaInStatement("featureid", vstr_fetures, query, 1, false);
+	query += ";";
+	
+	vector<string> fields;
+	fields.push_back("name");
+	fields.push_back("id");
 
-		progress->setValue(20);
+	map<string, vector<string>> container = (new Retriever(fields, query))->getData();
+	vector<string> ai_list = listhandle->getConcatenatedText(container, fields);
+	
+	this->m_oFilterGUI.cbo_AI->clear();
+	combo_handle->initCombo(this->m_oFilterGUI.cbo_AI, ai_list);
+	
+}
 
-		if(!this->m_oFilterGUI.chk_date->isChecked())
-		{
-			vector<string> dateRange= getDateRange();
-			stime = dateRange.at(0);
-			etime = dateRange.at(1);
-		}
+void ReviewModeFilter::refreshAnnotation(vector<string> project_id, vector<string> vstr_fetures, QProgressDialog * progress)
+{
 
-		vector<string> categories = this->getEventCategories();
+	this->m_oFilterGUI.cbo_annotation->clear();
+	annotationModel = new QStandardItemModel();
+	selectedAnnotationModel = new QStandardItemModel();
 
-		if(vstr_fetures.size()>0)
-		{
-			string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b, clip_info c", categories, stime, etime, project_id, vstr_fetures,
-				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
+	this->m_oFilterGUI.listAnnotation->setModel(this->annotationModel);
+	this->m_oFilterGUI.listAnnotationSelected->setModel(this->selectedAnnotationModel);
+	this->m_oFilterGUI.chk_search->setChecked(false);
+	this->on_chk_search_clicked();
 
-			this->listhandle->addItemsFromDB(m_oFilterGUI.listEvent, eventModel, this->getListField4Event(), query);
-			progress->setValue(90);
-		}
-		
+	if(vstr_fetures.size()>0)
+	{
 		string query4Annotation = this->queryFactory->getAnnotationCategoryQuery(vstr_fetures, project_id);
 		if(!query4Annotation.empty())
 		{
 			this->listhandle->addItemsFromDB(m_oFilterGUI.listAnnotation, annotationModel, this->getListField4Annotation(), query4Annotation);
 			progress->setValue(100);
 		}
-
-		progress->hide();
 	}
 
+}
 
+void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> vstr_fetures, vector<string> project_id, vector<string> vin_id, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
+{
+	eventModel = new QStandardItemModel();
+	selectedEventModel = new QStandardItemModel();
+
+	this->m_oFilterGUI.listEvent->setModel(this->eventModel);
+	this->m_oFilterGUI.listEventSelected->setModel(this->selectedEventModel);
+
+	vector<string> categories = this->getEventCategories();
+	progress->setValue(20);
+
+	string stime, etime;
+	if(!this->m_oFilterGUI.chk_date->isChecked())
+	{
+		vector<string> dateRange= getDateRange();
+		stime = dateRange.at(0);
+		etime = dateRange.at(1);
+	}
+
+	if(vstr_fetures.size()>0)
+	{
+		string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b, clip_info c", categories, stime, etime, project_id, vstr_fetures,
+			vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
+
+		this->listhandle->addItemsFromDB(m_oFilterGUI.listEvent, eventModel, this->getListField4Event(), query);
+		progress->setValue(90);
+	}
 }
 
 void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
@@ -2031,8 +2065,9 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 	vector<string> days = this->getDayTypes();
 	vector<string> weathers = this->getWeatherTypes();
 	vector<string> roads = this->getRoadTypes();
+	vector<string> event_status = this->getEventStatus();
 
-	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty())
+	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty() || event_status.empty())
 	{
 		initAnnotationGroup();
 	}
@@ -2105,7 +2140,7 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 			vector<string> event_categories = getEventCategories();
 			string query = this->queryFactory->getEventListQuery(this->offset,
 				this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
-				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
+				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status);
 			
 			progress->setValue(50);
 			recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
@@ -2126,7 +2161,6 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 		}
 	}
 }
-
 
 void ReviewModeFilter::refreseInsertPanel()
 {
@@ -2166,6 +2200,18 @@ vector<string> ReviewModeFilter::getWeatherTypes()
 	return weather;
 }
 
+vector<string> ReviewModeFilter::getEventStatus()
+{
+	vector<string> event_status;
+	if(this->m_oFilterGUI.chk_event_status_1->isChecked()) event_status.push_back("1");
+	if(this->m_oFilterGUI.chk_event_status_2->isChecked()) event_status.push_back("2");
+	if(this->m_oFilterGUI.chk_event_status_3->isChecked()) event_status.push_back("3");
+	if(this->m_oFilterGUI.chk_event_status_4->isChecked()) event_status.push_back("4");
+	if(this->m_oFilterGUI.chk_event_status_5->isChecked()) event_status.push_back("5");
+
+	return event_status;
+}
+
 vector<string> ReviewModeFilter::getRoadTypes()
 {
 	vector<string> roads;
@@ -2176,7 +2222,16 @@ vector<string> ReviewModeFilter::getRoadTypes()
 	return roads;
 }
 
+vector<string> ReviewModeFilter::get_condition_for_ai()
+{
+	vector<string> field;
+	field.push_back("projectid");
+	field.push_back("featureid");
+	field.push_back("vin");
+	field.push_back("eventcategoryid");
 
+	return field;
+}
 
 vector<string> ReviewModeFilter::getDateRange(){
 	vector<string> dateRange;

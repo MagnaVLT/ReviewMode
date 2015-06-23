@@ -179,12 +179,18 @@ private:
 	string getDate(QDateEdit* edit, string comp);
 	void initGUI(std::vector<std::string> features, std::vector<std::string> event_type, QDate start, QDate end);
 	vector<string> getRoadTypes();
+	vector<string> get_condition_for_ai();
 	vector<string> getDateRange();
 	void refreshEventGroup();
+
+	void refreshAnnotation(vector<string> project_id, vector<string> vstr_fetures, QProgressDialog * progress);
+
+	void refreshEvents(QProgressDialog * progress, vector<string> vstr_fetures, vector<string> project_id, vector<string> vin_id, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads);
 	void refreshAnnotationGroup(int current_offset);
 	vector<string> getEventCategories();
 	vector<string> getDayTypes();
 	vector<string> getWeatherTypes();
+	vector<string> getEventStatus();
 	void saveCurrentStatus(std::string status);
 	void restoreCurrentStatus(const char* tmpFile);
 	void toInsertMode(bool mode);
@@ -271,6 +277,7 @@ public slots:
 	tResult on_btn_RL_clicked();
 	tResult on_btn_LR0_clicked();
 	tResult on_btn_RL0_clicked();
+	void refreshAICombo(vector<string> project_id, vector<string> vstr_fetures, QProgressDialog * progress);
 };
 
 #endif

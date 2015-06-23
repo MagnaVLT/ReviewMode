@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Mon Jun 22 22:50:40 2015
+** Created: Tue Jun 23 03:54:41 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      44,   14, // methods
+      45,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -76,6 +76,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
     1046,   17,   18,   17, 0x0a,
     1066,   17,   18,   17, 0x0a,
     1087,   17,   18,   17, 0x0a,
+    1141, 1108,   17,   17, 0x0a,
 
        0        // eod
 };
@@ -111,6 +112,8 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_cbo_collection_changed()\0"
     "on_btn_LR_clicked()\0on_btn_RL_clicked()\0"
     "on_btn_LR0_clicked()\0on_btn_RL0_clicked()\0"
+    "project_id,vstr_fetures,progress\0"
+    "refreshAICombo(vector<string>,vector<string>,QProgressDialog*)\0"
 };
 
 const QMetaObject ReviewModeFilter::staticMetaObject = {
@@ -232,9 +235,10 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 43: { tResult _r = on_btn_RL0_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 44: refreshAICombo((*reinterpret_cast< vector<string>(*)>(_a[1])),(*reinterpret_cast< vector<string>(*)>(_a[2])),(*reinterpret_cast< QProgressDialog*(*)>(_a[3]))); break;
         default: ;
         }
-        _id -= 44;
+        _id -= 45;
     }
     return _id;
 }
