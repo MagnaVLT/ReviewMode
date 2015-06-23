@@ -229,16 +229,34 @@ void ReviewModeFilter::initBasicGroup()
 
 void ReviewModeFilter::initCollectionCombo(QComboBox *combobox)
 {
-	map<string, vector<string>> list_container = getClipIDList();
-	vector<string> clipidList = this->getClustersOfClips(list_container["clipid"], list_container["localpctime"]);
-	combo_handle->initCombo(combobox, clipidList);
+	QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
+	progress->setWindowTitle(QString("Clustering Collections..."));
+	progress->autoClose();
+	progress->setLabelText(QString("Clustering Collections..."));
+	progress->setFixedWidth(500);
+	progress->setWindowModality(Qt::WindowModal);
+	progress->setRange(0,100);
+	progress->show();
 
+	map<string, vector<string>> list_container = getClipIDList();
+	progress->setValue(50);
+	vector<string> clipidList = this->getClustersOfClips(list_container["clipid"], list_container["localpctime"]);
+	progress->setValue(80);
+	combo_handle->initCombo(combobox, clipidList);
+	
 	if(this->m_oFilterGUI.chk_tour->isChecked()==true) combobox->setEnabled(false);
 	else combobox->setEnabled(true);
+
+	progress->hide();
 }
 
 vector<string> ReviewModeFilter::getClustersOfClips(vector<string> clipidList, vector<string> localpctime_list)
 {
+
+
+
+
+
 	vector<string> collection;
 	if(clipidList.size()==0){
 		return collection;
@@ -290,6 +308,8 @@ vector<string> ReviewModeFilter::getClustersOfClips(vector<string> clipidList, v
 	collection.push_back(cur_text);
 	ReviewModeFilter::localtime_clipid_map[cur_text] = string(cur_value);
 
+
+
 	return collection;
 }
 
@@ -311,6 +331,7 @@ map<string, vector<string>> ReviewModeFilter::getClipIDList()
 		if(!vin_id.empty()) query = this->queryFactory->addFieldsViaInStatement("a.vin", vin_id, query, 2, true);
 		query += " group by a.clipid order by a.clipid;";
 
+		LOG_INFO(query.c_str());
 		map<string, vector<string>> collectionContainer = (new Retriever( collection_fields, query))->getData();
 
 		return collectionContainer;
@@ -392,18 +413,22 @@ void ReviewModeFilter::initVINList()
 	selectedVinModel = new QStandardItemModel();
 	this->m_oFilterGUI.listVinSelected->setModel(this->selectedVinModel);
 	vinModel = new QStandardItemModel();
+	this->m_oFilterGUI.listVin->setModel(this->vinModel);
+
 	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
 
-	string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
-	query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid ";
-	query = this->queryFactory->addFieldsViaInStatement("c.projectID", project_id, query, 2, false);
-	query += " and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
-	
+	if(!project_id.empty())
+	{
+		string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
+		query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid ";
+		query = this->queryFactory->addFieldsViaInStatement("c.projectID", project_id, query, 2, false);
+		query += " and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
 
-	vector<string> vin_field;
-	vin_field.push_back("vin");
+		vector<string> vin_field;
+		vin_field.push_back("vin");
 
-	this->listhandle->addItemsFromDB(m_oFilterGUI.listVin, vinModel, vin_field, query);
+		this->listhandle->addItemsFromDB(m_oFilterGUI.listVin, vinModel, vin_field, query);
+	}
 }
 
 
@@ -412,13 +437,16 @@ void ReviewModeFilter::initFeatureList()
 	selectedFeatureModel = new QStandardItemModel();
 	this->m_oFilterGUI.listFeatureSelected->setModel(this->selectedFeatureModel);
 
-	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
-	string query =	" select b.name, b.id from users_feature_project_map a, feature_list b ";
-	query +=		" where a.featureid = b.id and a.userid = '"+ReviewModeFilter::ID+"'";
-	query = queryFactory->addFieldsViaInStatement("a.projectid", project_id, query, 2, false);
-
 	featureModel = new QStandardItemModel();
-	this->listhandle->addItemsFromDB(m_oFilterGUI.listFeature, featureModel, this->getListField4Feature(), query);
+	this->m_oFilterGUI.listFeature->setModel(this->featureModel);
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);
+
+	if(!project_id.empty()){
+		string query =	" select b.name, b.id from users_feature_project_map a, feature_list b ";
+		query +=		" where a.featureid = b.id and a.userid = '"+ReviewModeFilter::ID+"'";
+		query = queryFactory->addFieldsViaInStatement("a.projectid", project_id, query, 2, false);
+		this->listhandle->addItemsFromDB(m_oFilterGUI.listFeature, featureModel, this->getListField4Feature(), query);
+	}
 }
 
 void ReviewModeFilter::initEventList()
@@ -672,6 +700,12 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.chk_road_1, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
 	connect(m_oFilterGUI.chk_road_2, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
 	connect(m_oFilterGUI.chk_road_3, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+
+	connect(m_oFilterGUI.chk_event_status_1, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_event_status_2, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_event_status_3, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_event_status_4, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_event_status_5, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
 
 	connect(m_oFilterGUI.chk_annotation, SIGNAL(clicked()), this, SLOT(on_chk_annotation_clicked()));
 	connect(m_oFilterGUI.chk_search, SIGNAL(clicked()), this, SLOT(on_chk_search_clicked()));
@@ -1501,11 +1535,12 @@ tResult ReviewModeFilter:: on_btn_LR_clicked()
 
 tResult ReviewModeFilter:: on_btn_RL_clicked()
 {
-	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listProjectSelected, this->selectedProjectModel, m_oFilterGUI.listProject, this->selectedProjectModel);
+	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listProjectSelected, this->selectedProjectModel, m_oFilterGUI.listProject, this->projectModel);
 	this->initBasicGroup();
 	this->initFeatureList();
 	this->refreshEventGroup();
 	this->refreshAnnotationGroup(0);
+
 	RETURN_NOERROR;
 }
 tResult ReviewModeFilter:: on_btn_LR0_clicked()
@@ -1529,7 +1564,6 @@ tResult ReviewModeFilter:: on_btn_RL0_clicked()
 tResult ReviewModeFilter::on_btn_LR1_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listFeature, this->featureModel, m_oFilterGUI.listFeatureSelected, this->selectedFeatureModel);
-	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
 	this->refreshEventGroup();
 	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
@@ -1948,7 +1982,7 @@ void ReviewModeFilter::refreshEventGroup()
 	vector<string> days = this->getDayTypes();
 	vector<string> weathers = this->getWeatherTypes();
 	vector<string> roads = this->getRoadTypes();
-	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
+	
 
 	string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
 	string start_clip = "";
@@ -1977,35 +2011,38 @@ void ReviewModeFilter::refreshEventGroup()
 		progress->show();
 		QApplication::processEvents();
 		progress->setLabelText(QString("Init Event Filter Panel ..."));
-		refreshEvents(progress, project_id, vstr_fetures, vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
-		refreshAnnotation(project_id, vstr_fetures, progress);
-		refreshAICombo(project_id, vstr_fetures, progress);
+		refreshEvents(progress, project_id, vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
+		refreshAnnotation(project_id, progress);
+		refreshAICombo(project_id, progress);
 
 		progress->hide();
 	}
 }
 
-void ReviewModeFilter::refreshAICombo(vector<string> project_id, vector<string> vstr_fetures, QProgressDialog * progress)
+void ReviewModeFilter::refreshAICombo(vector<string> project_id, QProgressDialog * progress)
 {
-	string query = "select name, id from additional_event_type ";
-	query = this->queryFactory->addFieldsViaInStatement("featureid", vstr_fetures, query, 1, false);
-	query += ";";
-	
-	vector<string> fields;
-	fields.push_back("name");
-	fields.push_back("id");
-
-	map<string, vector<string>> container = (new Retriever(fields, query))->getData();
-	vector<string> ai_list = listhandle->getConcatenatedText(container, fields);
-	
+	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 	this->m_oFilterGUI.cbo_AI->clear();
-	combo_handle->initCombo(this->m_oFilterGUI.cbo_AI, ai_list);
-	
+
+	if(!vstr_fetures.empty()){
+		string query = "select name, id from additional_event_type ";
+		query = this->queryFactory->addFieldsViaInStatement("featureid", vstr_fetures, query, 1, false);
+		query += ";";
+
+		vector<string> fields;
+		fields.push_back("name");
+		fields.push_back("id");
+
+		map<string, vector<string>> container = (new Retriever(fields, query))->getData();
+		vector<string> ai_list = listhandle->getConcatenatedText(container, fields);
+
+		combo_handle->initCombo(this->m_oFilterGUI.cbo_AI, ai_list);
+	}	
 }
 
-void ReviewModeFilter::refreshAnnotation(vector<string> project_id, vector<string> vstr_fetures, QProgressDialog * progress)
+void ReviewModeFilter::refreshAnnotation(vector<string> project_id, QProgressDialog * progress)
 {
-
+	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 	this->m_oFilterGUI.cbo_annotation->clear();
 	annotationModel = new QStandardItemModel();
 	selectedAnnotationModel = new QStandardItemModel();
@@ -2027,7 +2064,9 @@ void ReviewModeFilter::refreshAnnotation(vector<string> project_id, vector<strin
 
 }
 
-void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> vstr_fetures, vector<string> project_id, vector<string> vin_id, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
+void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> project_id, 
+									 vector<string> vin_id, bool chk_tour, 
+									 string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
 {
 	eventModel = new QStandardItemModel();
 	selectedEventModel = new QStandardItemModel();
@@ -2035,7 +2074,10 @@ void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> 
 	this->m_oFilterGUI.listEvent->setModel(this->eventModel);
 	this->m_oFilterGUI.listEventSelected->setModel(this->selectedEventModel);
 
+	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 	vector<string> categories = this->getEventCategories();
+	vector<string> status = this->getEventStatus();
+
 	progress->setValue(20);
 
 	string stime, etime;
@@ -2046,14 +2088,16 @@ void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> 
 		etime = dateRange.at(1);
 	}
 
-	if(vstr_fetures.size()>0)
+	if(!(vstr_fetures.empty() || categories.empty() || status.empty() || vin_id.empty() || weathers.empty() || days.empty() || roads.empty()))
 	{
-		string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b, clip_info c", categories, stime, etime, project_id, vstr_fetures,
-			vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
-
+		string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), 
+			" event_report b, clip_info c", categories, stime, etime, vstr_fetures, project_id,
+			vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, status);
+		
 		this->listhandle->addItemsFromDB(m_oFilterGUI.listEvent, eventModel, this->getListField4Event(), query);
-		progress->setValue(90);
 	}
+
+	progress->setValue(90);
 }
 
 void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
@@ -2167,6 +2211,7 @@ void ReviewModeFilter::refreseInsertPanel()
 	this->initEventCombo(this->m_oFilterGUI.cbo_i_event, true);
 	this->initIAnnotationCombo(this->m_oFilterGUI.cbo_i_annotation);
 }
+
 
 vector<string> ReviewModeFilter::getEventCategories()
 {

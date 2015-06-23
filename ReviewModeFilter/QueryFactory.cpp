@@ -37,8 +37,9 @@ std::string QueryFactory::getAnnotationCategoryQuery(vector<string> conditions, 
 	return query;
 }
 
-std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, vector<string> event_types, string stime, string etime, vector<string> projectid, vector<string> feature,
-									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
+std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, vector<string> event_types, string stime, string etime, 
+											vector<string> feature, vector<string> project_id,
+									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads, vector<string> status)
 {
 	string query = "";
 	query+= "select ";
@@ -47,11 +48,15 @@ std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, 
 	}
 	query+=  items.at(items.size()-1) + " " ;
 
-	query += " from " + table;
+	query += " from ";
+	query += "(select d.name as name, d.id as id from project_event_map c, event_list d where c.eventid = d.id ";
+	query = this->addFieldsViaInStatement("c.projectid", project_id, query, 2, false);
+	query = this->addFieldsViaInStatement("d.featureid", feature, query, 2, false);
+	query+= ") a, " + table ;
 	query += " where a.id = b.eventid ";
 	query += " and b.clipid = c.clipid ";
 
-	query = this->addFieldsViaInStatement("b.projectid", projectid, query, 2, false);
+	query = this->addFieldsViaInStatement("b.projectid", project_id, query, 2, false);
 	if(!stime.empty() && !etime.empty())
 		query+= " and date(b.localpctime) >= '" + stime + "' and date(b.localpctime) <= '" + etime + "' ";
 
@@ -65,14 +70,11 @@ std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, 
 		query+= " and b.clipid >= " + start_clip + " and b.clipid <= " + end_clip + " ";
 	}
 
-	query += " and a.id in (select d.id from project_event_map c, event_list d where c.eventid = d.id ";
-	query = this->addFieldsViaInStatement("c.projectid", projectid, query, 2, false);
-	query = this->addFields("d.featureid", feature, query);
-	query+= ")";
-	query = this->addFields("b.eventcategoryid", event_types, query);
-	this->addGroupByClaud(items, &query);
 
-	LOG_INFO(query.c_str());
+	query = this->addFieldsViaInStatement("b.eventcategoryid", event_types, query, 2, false);
+	query = this->addFieldsViaInStatement("b.eventstatusid", status, query, 2, false);
+
+	this->addGroupByClaud(items, &query);
 
 	return query;
 }
