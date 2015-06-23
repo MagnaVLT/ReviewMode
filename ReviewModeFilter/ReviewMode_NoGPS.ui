@@ -253,6 +253,9 @@
       <property name="text">
        <string>FCM</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_radar">
       <property name="geometry">
@@ -265,6 +268,9 @@
       </property>
       <property name="text">
        <string>Radar</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QCheckBox" name="chk_user_event">
@@ -279,6 +285,9 @@
       <property name="text">
        <string>Manual</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_eyeq_event">
       <property name="geometry">
@@ -291,6 +300,9 @@
       </property>
       <property name="text">
        <string>EyeQ</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -318,6 +330,9 @@
       <property name="text">
        <string>Day</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_day_3">
       <property name="geometry">
@@ -331,6 +346,9 @@
       <property name="text">
        <string>Night</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_day_2">
       <property name="geometry">
@@ -343,6 +361,9 @@
       </property>
       <property name="text">
        <string>Dusk</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -370,6 +391,9 @@
       <property name="text">
        <string>Clear</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_weather_4">
       <property name="geometry">
@@ -382,6 +406,9 @@
       </property>
       <property name="text">
        <string>Snow</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QCheckBox" name="chk_weather_3">
@@ -396,6 +423,9 @@
       <property name="text">
        <string>Overcast</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_weather_2">
       <property name="geometry">
@@ -408,6 +438,9 @@
       </property>
       <property name="text">
        <string>Rain</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -435,6 +468,9 @@
       <property name="text">
        <string>Highway</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_road_3">
       <property name="geometry">
@@ -448,6 +484,9 @@
       <property name="text">
        <string>Both</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="chk_road_2">
       <property name="geometry">
@@ -460,6 +499,9 @@
       </property>
       <property name="text">
        <string>Urban</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -798,7 +840,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_LR1_2">
+   <widget class="QPushButton" name="btn_LR">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -824,7 +866,7 @@
      <enum>QAbstractItemView::MultiSelection</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_RL1_2">
+   <widget class="QPushButton" name="btn_RL">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -863,7 +905,7 @@
      <enum>QAbstractItemView::MultiSelection</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_RL1_3">
+   <widget class="QPushButton" name="btn_RL0">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -889,7 +931,7 @@
      <enum>QAbstractItemView::MultiSelection</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_LR1_3">
+   <widget class="QPushButton" name="btn_LR0">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -2011,8 +2053,8 @@
   <widget class="QGroupBox" name="grp_login">
    <property name="geometry">
     <rect>
-     <x>500</x>
-     <y>220</y>
+     <x>460</x>
+     <y>200</y>
      <width>231</width>
      <height>121</height>
     </rect>
@@ -2514,8 +2556,8 @@
   <widget class="QGroupBox" name="grp_pwchange">
    <property name="geometry">
     <rect>
-     <x>500</x>
-     <y>340</y>
+     <x>460</x>
+     <y>320</y>
      <width>231</width>
      <height>181</height>
     </rect>

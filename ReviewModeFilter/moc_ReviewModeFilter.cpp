@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Mon Jun 22 17:59:50 2015
+** Created: Mon Jun 22 22:50:40 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      45,   14, // methods
+      44,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -48,35 +48,34 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
      324,   17,   18,   17, 0x0a,
      346,   17,   18,   17, 0x0a,
      370,   17,   18,   17, 0x0a,
-     398,   17,   18,   17, 0x0a,
-     425,   17,   18,   17, 0x0a,
-     454,   17,   18,   17, 0x0a,
-     482,   17,   18,   17, 0x0a,
-     510,   17,   18,   17, 0x0a,
-     534,   17,   18,   17, 0x0a,
-     567,   17,   18,   17, 0x0a,
-     602,   17,   18,   17, 0x0a,
-     626,   17,   18,   17, 0x0a,
-     650,   17,   18,   17, 0x0a,
-     668,   17,   18,   17, 0x0a,
-     686,   17,   18,   17, 0x0a,
-     705,   17,   18,   17, 0x0a,
-     732,   17,   18,   17, 0x0a,
-     758,   17,   18,   17, 0x0a,
-     804,   17,   18,   17, 0x0a,
-     828,   17,   18,   17, 0x0a,
-     864,  852,   18,   17, 0x0a,
-     894,   17,   18,   17, 0x0a,
-     917,   17,   18,   17, 0x0a,
-     942,   17,   18,   17, 0x0a,
-     969,   17,   18,   17, 0x0a,
-    1000,   17,   18,   17, 0x0a,
-    1024,   17,   18,   17, 0x0a,
+     387,   17,   18,   17, 0x0a,
+     415,   17,   18,   17, 0x0a,
+     439,   17,   18,   17, 0x0a,
+     472,   17,   18,   17, 0x0a,
+     507,   17,   18,   17, 0x0a,
+     531,   17,   18,   17, 0x0a,
+     555,   17,   18,   17, 0x0a,
+     573,   17,   18,   17, 0x0a,
+     591,   17,   18,   17, 0x0a,
+     610,   17,   18,   17, 0x0a,
+     637,   17,   18,   17, 0x0a,
+     663,   17,   18,   17, 0x0a,
+     709,   17,   18,   17, 0x0a,
+     733,   17,   18,   17, 0x0a,
+     769,  757,   18,   17, 0x0a,
+     799,   17,   18,   17, 0x0a,
+     822,   17,   18,   17, 0x0a,
+     849,   17,   18,   17, 0x0a,
+     880,   17,   18,   17, 0x0a,
+     904,   17,   18,   17, 0x0a,
+     926,   17,   18,   17, 0x0a,
+     948,   17,   18,   17, 0x0a,
+     970,   17,   18,   17, 0x0a,
+     998,   17,   18,   17, 0x0a,
+    1026,   17,   18,   17, 0x0a,
     1046,   17,   18,   17, 0x0a,
-    1068,   17,   18,   17, 0x0a,
-    1089,   17,   18,   17, 0x0a,
-    1111,   17,   18,   17, 0x0a,
-    1139,   17,   18,   17, 0x0a,
+    1066,   17,   18,   17, 0x0a,
+    1087,   17,   18,   17, 0x0a,
 
        0        // eod
 };
@@ -91,11 +90,7 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_btn_LR2_clicked()\0on_btn_RL2_clicked()\0"
     "on_btn_LR3_clicked()\0on_btn_RL3_clicked()\0"
     "on_dateEdit_changed()\0on_chk_date_clicked()\0"
-    "on_dateEdit_2_changed()\0"
-    "on_chk_eyeq_event_clicked()\0"
-    "on_chk_fcm_event_clicked()\0"
-    "on_chk_radar_event_clicked()\0"
-    "on_chk_user_event_clicked()\0"
+    "on_dateEdit_2_changed()\0on_chk_clicked()\0"
     "on_chk_annotation_clicked()\0"
     "on_chk_search_clicked()\0"
     "on_chk_text_annotation_clicked()\0"
@@ -107,13 +102,15 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_list_event_annotation_clicked(QModelIndex)\0"
     "on_btn_udpate_clicked()\0on_btn_insert_clicked()\0"
     "search_text\0on_txt_search_edited(QString)\0"
-    "on_btn_login_clicked()\0on_cbo_project_changed()\0"
+    "on_btn_login_clicked()\0"
     "on_btn_change_pw_clicked()\0"
     "on_btn_change_cancel_clicked()\0"
     "on_btn_change_clicked()\0on_btn_prev_clicked()\0"
-    "on_btn_next_clicked()\0on_cbo_vin_changed()\0"
-    "on_chk_tour_clicked()\0on_cbo_collection_clicked()\0"
+    "on_btn_next_clicked()\0on_chk_tour_clicked()\0"
+    "on_cbo_collection_clicked()\0"
     "on_cbo_collection_changed()\0"
+    "on_btn_LR_clicked()\0on_btn_RL_clicked()\0"
+    "on_btn_LR0_clicked()\0on_btn_RL0_clicked()\0"
 };
 
 const QMetaObject ReviewModeFilter::staticMetaObject = {
@@ -177,69 +174,67 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 14: { tResult _r = on_dateEdit_2_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 15: { tResult _r = on_chk_eyeq_event_clicked();
+        case 15: { tResult _r = on_chk_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 16: { tResult _r = on_chk_fcm_event_clicked();
+        case 16: { tResult _r = on_chk_annotation_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 17: { tResult _r = on_chk_radar_event_clicked();
+        case 17: { tResult _r = on_chk_search_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 18: { tResult _r = on_chk_user_event_clicked();
+        case 18: { tResult _r = on_chk_text_annotation_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 19: { tResult _r = on_chk_annotation_clicked();
+        case 19: { tResult _r = on_chk_i_text_annotation_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 20: { tResult _r = on_chk_search_clicked();
+        case 20: { tResult _r = on_btn_cancel_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 21: { tResult _r = on_chk_text_annotation_clicked();
+        case 21: { tResult _r = on_btn_submit_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 22: { tResult _r = on_chk_i_text_annotation_clicked();
+        case 22: { tResult _r = on_txt_m_edited();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 23: { tResult _r = on_btn_cancel_clicked();
+        case 23: { tResult _r = on_txt_s_edited();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 24: { tResult _r = on_btn_submit_clicked();
+        case 24: { tResult _r = on_txt_ms_edited();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 25: { tResult _r = on_txt_m_edited();
+        case 25: { tResult _r = on_cbo_i_feature_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 26: { tResult _r = on_txt_s_edited();
+        case 26: { tResult _r = on_btn_showclip_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 27: { tResult _r = on_txt_ms_edited();
+        case 27: { tResult _r = on_list_event_annotation_clicked((*reinterpret_cast< QModelIndex(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 28: { tResult _r = on_cbo_i_feature_changed();
+        case 28: { tResult _r = on_btn_udpate_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 29: { tResult _r = on_btn_showclip_clicked();
+        case 29: { tResult _r = on_btn_insert_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 30: { tResult _r = on_list_event_annotation_clicked((*reinterpret_cast< QModelIndex(*)>(_a[1])));
+        case 30: { tResult _r = on_txt_search_edited((*reinterpret_cast< const QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 31: { tResult _r = on_btn_udpate_clicked();
+        case 31: { tResult _r = on_btn_login_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 32: { tResult _r = on_btn_insert_clicked();
+        case 32: { tResult _r = on_btn_change_pw_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 33: { tResult _r = on_txt_search_edited((*reinterpret_cast< const QString(*)>(_a[1])));
+        case 33: { tResult _r = on_btn_change_cancel_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 34: { tResult _r = on_btn_login_clicked();
+        case 34: { tResult _r = on_btn_change_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 35: { tResult _r = on_cbo_project_changed();
+        case 35: { tResult _r = on_btn_prev_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 36: { tResult _r = on_btn_change_pw_clicked();
+        case 36: { tResult _r = on_btn_next_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 37: { tResult _r = on_btn_change_cancel_clicked();
+        case 37: { tResult _r = on_chk_tour_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 38: { tResult _r = on_btn_change_clicked();
+        case 38: { tResult _r = on_cbo_collection_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 39: { tResult _r = on_btn_prev_clicked();
+        case 39: { tResult _r = on_cbo_collection_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 40: { tResult _r = on_btn_next_clicked();
+        case 40: { tResult _r = on_btn_LR_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 41: { tResult _r = on_cbo_vin_changed();
+        case 41: { tResult _r = on_btn_RL_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 42: { tResult _r = on_chk_tour_clicked();
+        case 42: { tResult _r = on_btn_LR0_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 43: { tResult _r = on_cbo_collection_clicked();
-            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 44: { tResult _r = on_cbo_collection_changed();
+        case 43: { tResult _r = on_btn_RL0_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         default: ;
         }
-        _id -= 45;
+        _id -= 44;
     }
     return _id;
 }

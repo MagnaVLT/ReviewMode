@@ -178,10 +178,13 @@ private:
 	void initCombo(QComboBox* combobox, vector<string> data);
 	string getDate(QDateEdit* edit, string comp);
 	void initGUI(std::vector<std::string> features, std::vector<std::string> event_type, QDate start, QDate end);
+	vector<string> getRoadTypes();
 	vector<string> getDateRange();
 	void refreshEventGroup();
 	void refreshAnnotationGroup(int current_offset);
 	vector<string> getEventCategories();
+	vector<string> getDayTypes();
+	vector<string> getWeatherTypes();
 	void saveCurrentStatus(std::string status);
 	void restoreCurrentStatus(const char* tmpFile);
 	void toInsertMode(bool mode);
@@ -213,6 +216,7 @@ private:
 	string getVinOfClip(string clip);
 	vector<string> getListField4Project();
 	void initEventList();
+	void initProjectModel();
 	void unregisterEventHandler();
 	void initAllDuringWork();
 	void initEventGroup();
@@ -238,10 +242,7 @@ public slots:
 	tResult on_dateEdit_changed();
 	tResult on_chk_date_clicked();
 	tResult on_dateEdit_2_changed();
-	tResult on_chk_eyeq_event_clicked();
-	tResult on_chk_fcm_event_clicked();
-	tResult on_chk_radar_event_clicked();
-	tResult on_chk_user_event_clicked();
+	tResult on_chk_clicked();
 	tResult on_chk_annotation_clicked();
 	tResult on_chk_search_clicked();
 	tResult on_chk_text_annotation_clicked();
@@ -258,16 +259,18 @@ public slots:
 	tResult on_btn_insert_clicked();
 	tResult on_txt_search_edited(const QString &search_text);
 	tResult on_btn_login_clicked();
-	tResult on_cbo_project_changed();
 	tResult on_btn_change_pw_clicked();
 	tResult on_btn_change_cancel_clicked();
 	tResult on_btn_change_clicked();
 	tResult on_btn_prev_clicked();
 	tResult on_btn_next_clicked();
-	tResult on_cbo_vin_changed();
 	tResult on_chk_tour_clicked();
 	tResult on_cbo_collection_clicked();
 	tResult on_cbo_collection_changed();
+	tResult on_btn_LR_clicked();
+	tResult on_btn_RL_clicked();
+	tResult on_btn_LR0_clicked();
+	tResult on_btn_RL0_clicked();
 };
 
 #endif

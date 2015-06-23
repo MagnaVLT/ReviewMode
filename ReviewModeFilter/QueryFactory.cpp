@@ -38,7 +38,7 @@ std::string QueryFactory::getAnnotationCategoryQuery(vector<string> conditions, 
 }
 
 std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, vector<string> event_types, string stime, string etime, vector<string> projectid, vector<string> feature,
-									   vector<string> vin, bool chk_tour, string start_clip, string end_clip)
+									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
 {
 	string query = "";
 	query+= "select ";
@@ -49,11 +49,17 @@ std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, 
 
 	query += " from " + table;
 	query += " where a.id = b.eventid ";
+	query += " and b.clipid = c.clipid ";
+
 	query = this->addFieldsViaInStatement("b.projectid", projectid, query, 2, false);
 	if(!stime.empty() && !etime.empty())
 		query+= " and date(b.localpctime) >= '" + stime + "' and date(b.localpctime) <= '" + etime + "' ";
 
 	query = this->addFieldsViaInStatement("b.vin", vin, query, 2, true);
+	query = this->addFieldsViaInStatement("c.daytypeid", days, query, 2, false);
+	query = this->addFieldsViaInStatement("c.weathertypeid", weathers, query, 2, false);
+	query = this->addFieldsViaInStatement("c.roadtypeid", roads, query, 2, false);
+
 	if(chk_tour == false && start_clip != "" && end_clip != "")
 	{
 		query+= " and b.clipid >= " + start_clip + " and b.clipid <= " + end_clip + " ";
@@ -65,6 +71,9 @@ std::string QueryFactory::getEventTypeQuery(vector<string> items, string table, 
 	query+= ")";
 	query = this->addFields("b.eventcategoryid", event_types, query);
 	this->addGroupByClaud(items, &query);
+
+	LOG_INFO(query.c_str());
+
 	return query;
 }
 
@@ -90,7 +99,7 @@ void QueryFactory::addGroupByClaud(vector<string> items, string* query)
 
 std::string QueryFactory::getEventListQuery(int offset, vector<string> items, string userid, vector<string> projectid, vector<string> events, 
 									   string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search,
-									   vector<string> vin, bool chk_tour, string start_clip, string end_clip)
+									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads)
 {
 	string query = "";
 	query+= "select ";
@@ -99,8 +108,11 @@ std::string QueryFactory::getEventListQuery(int offset, vector<string> items, st
 	}
 	query+=  items.at(items.size()-1) + " " ;
 
-	query += " from event_report a, event_list b where a.eventid = b.id ";
+	query += " from event_report a, event_list b, clip_info c where a.eventid = b.id and a.clipid = c.clipid ";
 	query = this->addFieldsViaInStatement("projectid", projectid, query, 2, false);
+	query = this->addFieldsViaInStatement("c.daytypeid", days, query, 2, false);
+	query = this->addFieldsViaInStatement("c.weathertypeid", weathers, query, 2, false);
+	query = this->addFieldsViaInStatement("c.roadtypeid", roads, query, 2, false);
 	
 	query = addFields(" a.eventcategoryid ", event_categories, query);
 	query = addFields(" a.eventid ", events, query);
@@ -132,6 +144,7 @@ std::string QueryFactory::getEventListQuery(int offset, vector<string> items, st
 
 	query+= " order by reportid desc limit " + MagnaUtil::integerToString(offset) + ", 100;";
 
+	LOG_INFO(query.c_str());
 	return query;
 }
 

@@ -192,6 +192,8 @@ tResult ReviewModeFilter::ReleaseView()
 
 void ReviewModeFilter::initAllAtStart()
 {
+	this->initProjectModel();
+	this->initFeatureModel();
 	this->initModel();
 	this->initMode();
 	this->initWorkspaceDirectory();
@@ -220,7 +222,8 @@ void ReviewModeFilter::initAllDuringWork()
 
 void ReviewModeFilter::initBasicGroup()
 {
-//	this->initVINCombo(this->m_oFilterGUI.cbo_vin);
+	this->initVINList();
+	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
 }
 
 void ReviewModeFilter::initCollectionCombo(QComboBox *combobox)
@@ -391,10 +394,11 @@ void ReviewModeFilter::initVINList()
 	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
 
 	string query = "select a.vin as vin from event_report a, event_list b, users_feature_project_map c ";
-	query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid and ";
+	query += " where a.eventid = b.id and c.featureid = b.FeatureID and a.projectid = c.projectid ";
 	query = this->queryFactory->addFieldsViaInStatement("c.projectID", project_id, query, 2, false);
 	query += " and c.UserID = '"+ReviewModeFilter::ID+"' group by a.vin;";
 	
+
 	vector<string> vin_field;
 	vin_field.push_back("vin");
 
@@ -422,35 +426,46 @@ void ReviewModeFilter::initEventList()
 	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
 }
 
-
-void ReviewModeFilter::initModel(){
+void ReviewModeFilter::initProjectModel(){
 	projectModel = new QStandardItemModel();
 	selectedProjectModel = new QStandardItemModel();
 	vinModel = new QStandardItemModel();
 	selectedVinModel = new QStandardItemModel();
+	this->m_oFilterGUI.listProject->setModel(this->projectModel);
+	this->m_oFilterGUI.listProjectSelected->setModel(this->selectedProjectModel);
+	this->m_oFilterGUI.listVin->setModel(this->vinModel);
+	this->m_oFilterGUI.listVinSelected->setModel(this->selectedVinModel);
+}
 
-	featureModel = new QStandardItemModel();
-	selectedFeatureModel = new QStandardItemModel();
+void ReviewModeFilter::initModel()
+{
 	eventModel = new QStandardItemModel();
 	selectedEventModel = new QStandardItemModel();
 	annotationModel = new QStandardItemModel();
 	selectedAnnotationModel = new QStandardItemModel();
 	eventListModel = new QStandardItemModel();
+	
 
-	this->m_oFilterGUI.listProject->setModel(this->projectModel);
-	this->m_oFilterGUI.listProjectSelected->setModel(this->selectedProjectModel);
-	this->m_oFilterGUI.listVin->setModel(this->vinModel);
-	this->m_oFilterGUI.listVinSelected->setModel(this->selectedVinModel);
-	this->m_oFilterGUI.listFeature->setModel(this->featureModel);
-	this->m_oFilterGUI.listFeatureSelected->setModel(this->selectedFeatureModel);
 	this->m_oFilterGUI.listEvent->setModel(this->eventModel);
 	this->m_oFilterGUI.listEventSelected->setModel(this->selectedEventModel);
 	this->m_oFilterGUI.listAnnotation->setModel(this->annotationModel);
 	this->m_oFilterGUI.listAnnotationSelected->setModel(this->selectedAnnotationModel);
+	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
+
+}
+
+void ReviewModeFilter::initFeatureModel()
+{
+	featureModel = new QStandardItemModel();
+	selectedFeatureModel = new QStandardItemModel();
+
+	this->m_oFilterGUI.listFeature->setModel(this->featureModel);
+	this->m_oFilterGUI.listFeatureSelected->setModel(this->selectedFeatureModel);
 }
 
 void ReviewModeFilter::initEventListModel(){
 	eventListModel = new QStandardItemModel();	
+	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
 }
 
 void ReviewModeFilter::initIProjectCombo(QComboBox* combobox)
@@ -485,8 +500,6 @@ void ReviewModeFilter::initIVinCombo(QComboBox* combobox)
 		MagnaUtil::show_message("Select VIN");
 	}
 }
-
-
 
 void ReviewModeFilter::initEventCombo(QComboBox* combobox, bool eyeq)
 {
@@ -618,6 +631,11 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_clip, SIGNAL(clicked()), this, SLOT(on_btn_clip_clicked()));
 	connect(m_oFilterGUI.btn_copy, SIGNAL(clicked()), this, SLOT(on_btn_copy_clicked()));
 
+	connect(m_oFilterGUI.btn_LR, SIGNAL(clicked()), this, SLOT(on_btn_LR_clicked()));
+	connect(m_oFilterGUI.btn_RL, SIGNAL(clicked()), this, SLOT(on_btn_RL_clicked()));
+	connect(m_oFilterGUI.btn_LR0, SIGNAL(clicked()), this, SLOT(on_btn_LR0_clicked()));
+	connect(m_oFilterGUI.btn_RL0, SIGNAL(clicked()), this, SLOT(on_btn_RL0_clicked()));
+
 	connect(m_oFilterGUI.btn_LR1, SIGNAL(clicked()), this, SLOT(on_btn_LR1_clicked()));
 	connect(m_oFilterGUI.btn_RL1, SIGNAL(clicked()), this, SLOT(on_btn_RL1_clicked()));
 	connect(m_oFilterGUI.btn_LR2, SIGNAL(clicked()), this, SLOT(on_btn_LR2_clicked()));
@@ -636,11 +654,24 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.chk_date, SIGNAL(clicked()), this, SLOT(on_chk_date_clicked()));
 	connect(m_oFilterGUI.chk_tour, SIGNAL(clicked()), this, SLOT(on_chk_tour_clicked()));
 
-	connect(m_oFilterGUI.chk_eyeq_event, SIGNAL(clicked()), this, SLOT(on_chk_eyeq_event_clicked()));
-	connect(m_oFilterGUI.chk_fcm_event, SIGNAL(clicked()), this, SLOT(on_chk_fcm_event_clicked()));
-	connect(m_oFilterGUI.chk_user_event, SIGNAL(clicked()), this, SLOT(on_chk_user_event_clicked()));
-	connect(m_oFilterGUI.chk_radar, SIGNAL(clicked()), this, SLOT(on_chk_radar_event_clicked()));
-	
+	connect(m_oFilterGUI.chk_eyeq_event, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_fcm_event, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_user_event, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_radar, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+
+	connect(m_oFilterGUI.chk_day_1, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_day_2, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_day_3, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+
+	connect(m_oFilterGUI.chk_weather_1, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_weather_2, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_weather_3, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_weather_4, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+
+	connect(m_oFilterGUI.chk_road_1, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_road_2, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+	connect(m_oFilterGUI.chk_road_3, SIGNAL(clicked()), this, SLOT(on_chk_clicked()));
+
 	connect(m_oFilterGUI.chk_annotation, SIGNAL(clicked()), this, SLOT(on_chk_annotation_clicked()));
 	connect(m_oFilterGUI.chk_search, SIGNAL(clicked()), this, SLOT(on_chk_search_clicked()));
 	connect(m_oFilterGUI.chk_text_annotation, SIGNAL(clicked()), this, SLOT(on_chk_text_annotation_clicked()));
@@ -689,7 +720,7 @@ void ReviewModeFilter::unregisterEventHandler()
 
 	disconnect(this, SLOT(on_chk_date_clicked()));
 
-	disconnect(this, SLOT(on_chk_eyeq_event_clicked()));
+	disconnect(this, SLOT(on_chk_clicked()));
 	disconnect(this, SLOT(on_chk_fcm_event_clicked()));
 	disconnect(this, SLOT(on_chk_user_event_clicked()));
 	disconnect(this, SLOT(on_chk_radar_event_clicked()));
@@ -732,15 +763,6 @@ string ReviewModeFilter::getCurClipText()
 	}
 
 	return datFile;
-}
-
-tResult ReviewModeFilter::on_cbo_project_changed()
-{
-	this->initBasicGroup();
-	this->initFeatureList();
-	this->refreshEventGroup();
-	this->refreshAnnotationGroup(0);
-	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_btn_change_pw_clicked(){
@@ -946,28 +968,7 @@ tResult ReviewModeFilter::on_chk_search_clicked()
 	RETURN_NOERROR;
 }
 
-tResult ReviewModeFilter::on_chk_eyeq_event_clicked()
-{
-	refreshEventGroup();
-	refreshAnnotationGroup(0);
-	RETURN_NOERROR;
-}
-
-tResult ReviewModeFilter::on_chk_radar_event_clicked()
-{
-	refreshEventGroup();
-	refreshAnnotationGroup(0);
-	RETURN_NOERROR;
-}
-
-tResult ReviewModeFilter::on_chk_fcm_event_clicked()
-{
-	refreshEventGroup();
-	refreshAnnotationGroup(0);
-	RETURN_NOERROR;
-}
-
-tResult ReviewModeFilter::on_chk_user_event_clicked()
+tResult ReviewModeFilter::on_chk_clicked()
 {
 	refreshEventGroup();
 	refreshAnnotationGroup(0);
@@ -1047,14 +1048,6 @@ tResult ReviewModeFilter::on_btn_next_clicked()
 	RETURN_NOERROR;
 }
 
-tResult ReviewModeFilter::on_cbo_vin_changed()
-{
-	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
-	this->refreshEventGroup();
-	this->refreshAnnotationGroup(0);
-
-	RETURN_NOERROR;
-}
 
 tResult ReviewModeFilter::on_chk_tour_clicked()
 {
@@ -1492,10 +1485,47 @@ tResult ReviewModeFilter::send_data(cOutputPin *outpin, sEvent_Data reviewed_dat
 	RETURN_NOERROR;
 }
 
+tResult ReviewModeFilter:: on_btn_LR_clicked()
+{
+	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listProject, this->projectModel, m_oFilterGUI.listProjectSelected, this->selectedProjectModel);	
+	this->initBasicGroup();
+	this->initFeatureList();
+	this->refreshEventGroup();
+	this->refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter:: on_btn_RL_clicked()
+{
+	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listProjectSelected, this->selectedProjectModel, m_oFilterGUI.listProject, this->selectedProjectModel);
+	this->initBasicGroup();
+	this->initFeatureList();
+	this->refreshEventGroup();
+	this->refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
+tResult ReviewModeFilter:: on_btn_LR0_clicked()
+{
+	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listVin, this->vinModel, m_oFilterGUI.listVinSelected, this->selectedVinModel);
+	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
+	this->refreshEventGroup();
+	this->refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
+tResult ReviewModeFilter:: on_btn_RL0_clicked()
+{
+	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listVinSelected, this->selectedVinModel, m_oFilterGUI.listVin, this->vinModel);
+	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
+	this->refreshEventGroup();
+	this->refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
+
 
 tResult ReviewModeFilter::on_btn_LR1_clicked()
 {
 	this->listhandle->moveSelectedItemWithDelete(m_oFilterGUI.listFeature, this->featureModel, m_oFilterGUI.listFeatureSelected, this->selectedFeatureModel);
+	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
 	this->refreshEventGroup();
 	this->refreshAnnotationGroup(0);
 	RETURN_NOERROR;
@@ -1911,6 +1941,9 @@ void ReviewModeFilter::refreshEventGroup()
 
 	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
 	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
+	vector<string> days = this->getDayTypes();
+	vector<string> weathers = this->getWeatherTypes();
+	vector<string> roads = this->getRoadTypes();
 
 
 	string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
@@ -1925,9 +1958,10 @@ void ReviewModeFilter::refreshEventGroup()
 	}
 
 
-	if(project_id.empty()==true)
+	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty())
 	{
 		initEventGroup();
+
 	}else{
 
 		QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
@@ -1968,8 +2002,8 @@ void ReviewModeFilter::refreshEventGroup()
 
 		if(vstr_fetures.size()>0)
 		{
-			string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b", categories, stime, etime, project_id, vstr_fetures,
-				vin_id, chk_tour, start_clip, end_clip);
+			string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), " event_list a, event_report b, clip_info c", categories, stime, etime, project_id, vstr_fetures,
+				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
 
 			this->listhandle->addItemsFromDB(m_oFilterGUI.listEvent, eventModel, this->getListField4Event(), query);
 			progress->setValue(90);
@@ -1994,8 +2028,11 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
 	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
 
+	vector<string> days = this->getDayTypes();
+	vector<string> weathers = this->getWeatherTypes();
+	vector<string> roads = this->getRoadTypes();
 
-	if(project_id.empty()==true)
+	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty())
 	{
 		initAnnotationGroup();
 	}
@@ -2013,7 +2050,6 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 		progress->show();
 		QApplication::processEvents();
 		progress->setLabelText(QString("Init Review Panel ..."));
-
 
 		this->initEventListModel();
 		this->m_oFilterGUI.lbl_table->setText(QString(""));
@@ -2069,7 +2105,7 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 			vector<string> event_categories = getEventCategories();
 			string query = this->queryFactory->getEventListQuery(this->offset,
 				this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
-				vin_id, chk_tour, start_clip, end_clip);
+				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
 			
 			progress->setValue(50);
 			recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
@@ -2107,8 +2143,40 @@ vector<string> ReviewModeFilter::getEventCategories()
 	if(this->m_oFilterGUI.chk_radar->isChecked()) categories.push_back("4");
 
 	return categories;
-
 }
+
+vector<string> ReviewModeFilter::getDayTypes()
+{
+	vector<string> days;
+	if(this->m_oFilterGUI.chk_day_1->isChecked()) days.push_back("1");
+	if(this->m_oFilterGUI.chk_day_2->isChecked()) days.push_back("2");
+	if(this->m_oFilterGUI.chk_day_3->isChecked()) days.push_back("3");
+
+	return days;
+}
+
+vector<string> ReviewModeFilter::getWeatherTypes()
+{
+	vector<string> weather;
+	if(this->m_oFilterGUI.chk_weather_1->isChecked()) weather.push_back("1");
+	if(this->m_oFilterGUI.chk_weather_2->isChecked()) weather.push_back("2");
+	if(this->m_oFilterGUI.chk_weather_3->isChecked()) weather.push_back("3");
+	if(this->m_oFilterGUI.chk_weather_4->isChecked()) weather.push_back("4");
+
+	return weather;
+}
+
+vector<string> ReviewModeFilter::getRoadTypes()
+{
+	vector<string> roads;
+	if(this->m_oFilterGUI.chk_road_1->isChecked()) roads.push_back("1");
+	if(this->m_oFilterGUI.chk_road_2->isChecked()) roads.push_back("2");
+	if(this->m_oFilterGUI.chk_road_3->isChecked()) roads.push_back("3");
+
+	return roads;
+}
+
+
 
 vector<string> ReviewModeFilter::getDateRange(){
 	vector<string> dateRange;
