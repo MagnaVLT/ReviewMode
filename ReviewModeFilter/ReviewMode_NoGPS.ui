@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1383</width>
     <height>901</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>30</y>
-     <width>1181</width>
+     <width>1241</width>
      <height>461</height>
     </rect>
    </property>
@@ -30,7 +30,7 @@
      <rect>
       <x>10</x>
       <y>130</y>
-      <width>1161</width>
+      <width>1281</width>
       <height>171</height>
      </rect>
     </property>
@@ -121,7 +121,7 @@
     <widget class="QGroupBox" name="date">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>440</x>
        <y>20</y>
        <width>161</width>
        <height>131</height>
@@ -232,7 +232,7 @@
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>626</x>
        <y>20</y>
        <width>101</width>
        <height>131</height>
@@ -309,7 +309,7 @@
     <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
-       <x>710</x>
+       <x>750</x>
        <y>20</y>
        <width>81</width>
        <height>131</height>
@@ -370,7 +370,7 @@
     <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
-       <x>800</x>
+       <x>860</x>
        <y>20</y>
        <width>91</width>
        <height>131</height>
@@ -447,7 +447,7 @@
     <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
-       <x>900</x>
+       <x>980</x>
        <y>20</y>
        <width>91</width>
        <height>131</height>
@@ -508,9 +508,9 @@
     <widget class="QGroupBox" name="groupBox_5">
      <property name="geometry">
       <rect>
-       <x>1004</x>
+       <x>1100</x>
        <y>20</y>
-       <width>141</width>
+       <width>121</width>
        <height>131</height>
       </rect>
      </property>
@@ -607,7 +607,7 @@
      <rect>
       <x>10</x>
       <y>300</y>
-      <width>1161</width>
+      <width>1221</width>
       <height>151</height>
      </rect>
     </property>
@@ -617,7 +617,7 @@
     <widget class="QListView" name="listAnnotation">
      <property name="geometry">
       <rect>
-       <x>440</x>
+       <x>391</x>
        <y>40</y>
        <width>170</width>
        <height>101</height>
@@ -630,7 +630,7 @@
     <widget class="QListView" name="listAnnotationSelected">
      <property name="geometry">
       <rect>
-       <x>660</x>
+       <x>611</x>
        <y>40</y>
        <width>170</width>
        <height>101</height>
@@ -644,7 +644,7 @@
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>14</y>
+       <y>16</y>
        <width>41</width>
        <height>16</height>
       </rect>
@@ -661,7 +661,7 @@
       <rect>
        <x>20</x>
        <y>40</y>
-       <width>170</width>
+       <width>151</width>
        <height>101</height>
       </rect>
      </property>
@@ -672,9 +672,9 @@
     <widget class="QListView" name="listEventSelected">
      <property name="geometry">
       <rect>
-       <x>240</x>
+       <x>220</x>
        <y>40</y>
-       <width>170</width>
+       <width>151</width>
        <height>101</height>
       </rect>
      </property>
@@ -685,7 +685,7 @@
     <widget class="QPushButton" name="btn_RL3">
      <property name="geometry">
       <rect>
-       <x>620</x>
+       <x>571</x>
        <y>96</y>
        <width>31</width>
        <height>23</height>
@@ -698,7 +698,7 @@
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>670</x>
+       <x>621</x>
        <y>16</y>
        <width>161</width>
        <height>20</height>
@@ -711,7 +711,7 @@
     <widget class="QPushButton" name="btn_LR3">
      <property name="geometry">
       <rect>
-       <x>620</x>
+       <x>571</x>
        <y>66</y>
        <width>31</width>
        <height>23</height>
@@ -724,7 +724,7 @@
     <widget class="QPushButton" name="btn_LR2">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>180</x>
        <y>66</y>
        <width>31</width>
        <height>23</height>
@@ -737,8 +737,8 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>14</y>
+       <x>260</x>
+       <y>16</y>
        <width>81</width>
        <height>16</height>
       </rect>
@@ -750,7 +750,7 @@
     <widget class="QPushButton" name="btn_RL2">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>180</x>
        <y>96</y>
        <width>31</width>
        <height>23</height>
@@ -763,8 +763,8 @@
     <widget class="QCheckBox" name="chk_annotation">
      <property name="geometry">
       <rect>
-       <x>500</x>
-       <y>16</y>
+       <x>451</x>
+       <y>17</y>
        <width>151</width>
        <height>17</height>
       </rect>
@@ -776,8 +776,8 @@
     <widget class="QCheckBox" name="chk_search">
      <property name="geometry">
       <rect>
-       <x>425</x>
-       <y>14</y>
+       <x>376</x>
+       <y>16</y>
        <width>71</width>
        <height>17</height>
       </rect>
@@ -792,8 +792,8 @@
     <widget class="QLineEdit" name="txt_search">
      <property name="geometry">
       <rect>
-       <x>499</x>
-       <y>13</y>
+       <x>450</x>
+       <y>15</y>
        <width>331</width>
        <height>20</height>
       </rect>
@@ -802,7 +802,7 @@
     <widget class="QLabel" name="listSelectedAI">
      <property name="geometry">
       <rect>
-       <x>1040</x>
+       <x>1070</x>
        <y>14</y>
        <width>101</width>
        <height>20</height>
@@ -812,41 +812,30 @@
       <string>Selected Add. Info.</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_29">
+    <widget class="QPushButton" name="btn_RL4">
      <property name="geometry">
       <rect>
-       <x>852</x>
-       <y>14</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="text">
-      <string>AI</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btn_RL2_2">
-     <property name="geometry">
-      <rect>
-       <x>990</x>
+       <x>985</x>
        <y>96</y>
-       <width>31</width>
+       <width>41</width>
        <height>23</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>6</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>&lt;&lt;</string>
+      <string>REMOVE</string>
      </property>
     </widget>
     <widget class="QListView" name="listAI">
      <property name="geometry">
       <rect>
-       <x>860</x>
+       <x>800</x>
        <y>40</y>
-       <width>121</width>
+       <width>181</width>
        <height>101</height>
       </rect>
      </property>
@@ -859,7 +848,7 @@
       <rect>
        <x>1030</x>
        <y>40</y>
-       <width>111</width>
+       <width>181</width>
        <height>101</height>
       </rect>
      </property>
@@ -867,27 +856,48 @@
       <enum>QAbstractItemView::MultiSelection</enum>
      </property>
     </widget>
-    <widget class="QPushButton" name="btn_LR2_2">
+    <widget class="QPushButton" name="btn_LR4">
      <property name="geometry">
       <rect>
-       <x>990</x>
+       <x>985</x>
        <y>66</y>
-       <width>31</width>
+       <width>41</width>
        <height>23</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>6</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>&gt;&gt;</string>
+      <string>ADD</string>
      </property>
     </widget>
     <widget class="QComboBox" name="cbo_AI">
      <property name="geometry">
       <rect>
-       <x>870</x>
+       <x>850</x>
        <y>12</y>
-       <width>111</width>
+       <width>131</width>
        <height>22</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="chk_AI">
+     <property name="geometry">
+      <rect>
+       <x>800</x>
+       <y>15</y>
+       <width>70</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>All AI?</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -1078,235 +1088,313 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>510</y>
-     <width>1181</width>
-     <height>211</height>
+     <y>500</y>
+     <width>1241</width>
+     <height>251</height>
     </rect>
    </property>
    <property name="title">
     <string>Event Review</string>
    </property>
-   <widget class="QListView" name="listEventAnnotation">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QGroupBox" name="grp_annotation">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>411</width>
-      <height>121</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_showclip">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>90</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Show Clip</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_update">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>120</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Update</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbo_annotation">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>80</y>
-      <width>221</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbo_status">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>150</y>
-      <width>221</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_adtftime">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
+      <x>370</x>
       <y>20</y>
-      <width>171</width>
-      <height>20</height>
+      <width>861</width>
+      <height>211</height>
      </rect>
     </property>
-    <property name="text">
-     <string/>
+    <property name="title">
+     <string>Review</string>
     </property>
+    <widget class="QPushButton" name="btn_insert">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>150</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Insert</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_copy">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>60</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Copy Clip</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="chk_text_annotation">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>60</y>
+       <width>151</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Use Predifined Annotation?</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_clip">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>40</y>
+       <width>381</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_next">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>152</y>
+       <width>181</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>NEXT &gt;&gt;</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbo_status">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>152</y>
+       <width>221</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="txt_annotation">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>80</y>
+       <width>221</width>
+       <height>51</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_update">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>120</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Update</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_table">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>10</y>
+       <width>46</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_status">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>851</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_reportid">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>10</y>
+       <width>46</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>132</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Event Status</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_prev">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>152</y>
+       <width>181</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;&lt; PREVIOUS</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbo_annotation">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>80</y>
+       <width>221</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QListView" name="listEventAnnotation">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>411</width>
+       <height>121</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_adtftime">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>20</y>
+       <width>171</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_showclip">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>90</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show Clip</string>
+     </property>
+    </widget>
    </widget>
-   <widget class="QLabel" name="lbl_clip">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>40</y>
-      <width>381</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_reportid">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>10</y>
-      <width>46</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_insert">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>150</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Insert</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_table">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>10</y>
-      <width>46</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>130</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Event Status</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="chk_text_annotation">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>60</y>
-      <width>151</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Use Predifined Annotation?</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="txt_annotation">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>80</y>
-      <width>221</width>
-      <height>51</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_copy">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>60</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Copy Clip</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_status">
+   <widget class="QGroupBox" name="grp_playlist">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>190</y>
-      <width>851</width>
-      <height>16</height>
+      <y>19</y>
+      <width>331</width>
+      <height>211</height>
      </rect>
     </property>
-    <property name="text">
-     <string/>
+    <property name="title">
+     <string>PlayList</string>
     </property>
+    <widget class="QListView" name="list_playlist">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>311</width>
+       <height>121</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_generate">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>153</y>
+       <width>311</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate Play-List</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_status_playlist">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
-   <widget class="QPushButton" name="btn_prev">
+   <widget class="QPushButton" name="btn_show_playlist">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>152</y>
-      <width>181</width>
-      <height>31</height>
+      <x>345</x>
+      <y>22</y>
+      <width>20</width>
+      <height>211</height>
      </rect>
     </property>
     <property name="text">
-     <string>&lt;&lt; PREVIOUS</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_next">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>152</y>
-      <width>181</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>NEXT &gt;&gt;</string>
+     <string>&lt;</string>
     </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="GrpInsert">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>300</y>
+     <x>530</x>
+     <y>770</y>
      <width>561</width>
      <height>261</height>
     </rect>
@@ -2156,8 +2244,8 @@
   <widget class="QGroupBox" name="grp_login">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>230</y>
+     <x>530</x>
+     <y>290</y>
      <width>231</width>
      <height>121</height>
     </rect>
@@ -2659,8 +2747,8 @@
   <widget class="QGroupBox" name="grp_pwchange">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>350</y>
+     <x>530</x>
+     <y>410</y>
      <width>231</width>
      <height>181</height>
     </rect>

@@ -15,30 +15,36 @@ ListHandle::~ListHandle(void)
 
 void ListHandle::moveSelectedItemWithDelete(QListView* source, QStandardItemModel* sourceModel, QListView* destination, QStandardItemModel* destinationModel)
 {
+	moveSelectedItems(source, sourceModel, destination, destinationModel);
+	removeSelectedItems(source, sourceModel);
+}
 
-
+void ListHandle::moveSelectedItems(QListView* source, QStandardItemModel* sourceModel, QListView* destination, QStandardItemModel* destinationModel)
+{
 	for each(const QModelIndex &index in source->selectionModel()->selectedIndexes())
 	{
 		QStandardItem* items = new QStandardItem(sourceModel->itemFromIndex(index)->text());
-		destinationModel->appendRow(items);
+		if(destinationModel->findItems(sourceModel->itemFromIndex(index)->text(), Qt::MatchExactly).empty())
+		{
+			destinationModel->appendRow(items);
+		}
 	}
 
 	destination->setModel(destinationModel);
+}
 
+void ListHandle::removeSelectedItems(QListView* source, QStandardItemModel* sourceModel)
+{
 	QModelIndexList indexes = source->selectionModel()->selectedIndexes();
 	while(indexes.size()) {
 		sourceModel->removeRow(indexes.first().row());
 		source->setModel(sourceModel);
 		indexes = source->selectionModel()->selectedIndexes();
 	}
-
-	//source->setModel(sourceModel);
-
 }
 
-void ListHandle::removeAll(QListView* source){
 
-	
+void ListHandle::removeAll(QListView* source){
 	for (int i = 0 ; i < source->model()->rowCount() ; i++)
 	{
 		source->model()->removeRow(i);

@@ -24,6 +24,7 @@
 #include <QtCore/QTextStream>
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
+#include <QtGui/QShortcut>
 #include "XML/XMLHandler.h"
 
 #include "DB/Updator.h"
@@ -192,8 +193,12 @@ tResult ReviewModeFilter::ReleaseView()
 
 void ReviewModeFilter::initAllAtStart()
 {
+	
+	
+
 	this->initProjectModel();
 	this->initFeatureModel();
+	this->initAI();
 	this->initModel();
 	this->initMode();
 	this->initStatusCombo(this->m_oFilterGUI.cbo_status);
@@ -223,39 +228,35 @@ void ReviewModeFilter::initAllDuringWork()
 
 void ReviewModeFilter::initBasicGroup()
 {
-	this->initVINList();
-	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
-}
-
-void ReviewModeFilter::initCollectionCombo(QComboBox *combobox)
-{
 	QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
-	progress->setWindowTitle(QString("Clustering Collections..."));
+	progress->setWindowTitle(QString("Initializing VIN and Clustering Collections..."));
 	progress->autoClose();
-	progress->setLabelText(QString("Clustering Collections..."));
+	progress->setLabelText(QString("Initializing VIN and Clustering Collections..."));
 	progress->setFixedWidth(500);
 	progress->setWindowModality(Qt::WindowModal);
 	progress->setRange(0,100);
 	progress->show();
 
-	map<string, vector<string>> list_container = getClipIDList();
-	progress->setValue(50);
-	vector<string> clipidList = this->getClustersOfClips(list_container["clipid"], list_container["localpctime"]);
+	this->initVINList();
+	progress->setValue(30);
+	this->initCollectionCombo(this->m_oFilterGUI.cbo_collection);
 	progress->setValue(80);
-	combo_handle->initCombo(combobox, clipidList);
-	
-	if(this->m_oFilterGUI.chk_tour->isChecked()==true) combobox->setEnabled(false);
-	else combobox->setEnabled(true);
 
 	progress->hide();
 }
 
+void ReviewModeFilter::initCollectionCombo(QComboBox *combobox)
+{
+	map<string, vector<string>> list_container = getClipIDList();
+	vector<string> clipidList = this->getClustersOfClips(list_container["clipid"], list_container["localpctime"]);
+	combo_handle->initCombo(combobox, clipidList);
+	if(this->m_oFilterGUI.chk_tour->isChecked()==true) combobox->setEnabled(false);
+	else combobox->setEnabled(true);
+
+}
+
 vector<string> ReviewModeFilter::getClustersOfClips(vector<string> clipidList, vector<string> localpctime_list)
 {
-
-
-
-
 
 	vector<string> collection;
 	if(clipidList.size()==0){
@@ -370,8 +371,10 @@ void ReviewModeFilter::initMode()
 {
 	this->m_oFilterGUI.txt_clip_directory->setEnabled(false);
 	this->m_oFilterGUI.grp_pwchange->setVisible(false);
+	this->toTextAnnotationMode(true);
 	this->toLoginMode(false);
-	this->toSearchAnnotationMode(false);
+	this->toAIMode(true);
+	this->toSearchAnnotationMode(true);
 	this->toSettingMode(false);
 	this->toInsertMode(false);
 	this->toAnnotationCategoryMode(false);
@@ -384,8 +387,6 @@ void ReviewModeFilter::initGUI()
 	QDate date = QDate::currentDate();
 	m_oFilterGUI.dateEdit->setDate(date);
 	m_oFilterGUI.dateEdit_2->setDate(date);
-	//this->toTextAnnotationMode(true);
-	//this->initStatusCombo(this->m_oFilterGUI.cbo_status);
 	this->initProjectList();
 	this->registerEventHandler();
 }
@@ -464,6 +465,15 @@ void ReviewModeFilter::initProjectModel(){
 	this->m_oFilterGUI.listProjectSelected->setModel(this->selectedProjectModel);
 	this->m_oFilterGUI.listVin->setModel(this->vinModel);
 	this->m_oFilterGUI.listVinSelected->setModel(this->selectedVinModel);
+}
+
+void ReviewModeFilter::initAI()
+{
+	this->AIModel = new QStandardItemModel();
+	this->m_oFilterGUI.listAI->setModel(this->AIModel);
+
+	this->selectedAIModel = new QStandardItemModel();
+	this->m_oFilterGUI.listAISelected->setModel(this->selectedAIModel);
 }
 
 void ReviewModeFilter::initModel()
@@ -671,6 +681,8 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_RL2, SIGNAL(clicked()), this, SLOT(on_btn_RL2_clicked()));
 	connect(m_oFilterGUI.btn_LR3, SIGNAL(clicked()), this, SLOT(on_btn_LR3_clicked()));
 	connect(m_oFilterGUI.btn_RL3, SIGNAL(clicked()), this, SLOT(on_btn_RL3_clicked()));
+	connect(m_oFilterGUI.btn_LR4, SIGNAL(clicked()), this, SLOT(on_btn_LR4_clicked()));
+	connect(m_oFilterGUI.btn_RL4, SIGNAL(clicked()), this, SLOT(on_btn_RL4_clicked()));
 
 	connect(m_oFilterGUI.btn_showclip, SIGNAL(clicked()), this, SLOT(on_btn_showclip_clicked()));
 	connect(m_oFilterGUI.btn_update, SIGNAL(clicked()), this, SLOT(on_btn_udpate_clicked()));
@@ -679,6 +691,8 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_submit, SIGNAL(clicked()), this, SLOT(on_btn_submit_clicked()));
 	connect(m_oFilterGUI.btn_prev, SIGNAL(clicked()), this, SLOT(on_btn_prev_clicked()));
 	connect(m_oFilterGUI.btn_next, SIGNAL(clicked()), this, SLOT(on_btn_next_clicked()));
+
+	connect(m_oFilterGUI.btn_show_playlist, SIGNAL(clicked()), this, SLOT(on_btn_show_play_list_clicked()));
 
 	connect(m_oFilterGUI.chk_date, SIGNAL(clicked()), this, SLOT(on_chk_date_clicked()));
 	connect(m_oFilterGUI.chk_tour, SIGNAL(clicked()), this, SLOT(on_chk_tour_clicked()));
@@ -712,21 +726,24 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.chk_text_annotation, SIGNAL(clicked()), this, SLOT(on_chk_text_annotation_clicked()));
 	connect(m_oFilterGUI.chk_i_text_annotation, SIGNAL(clicked()), this, SLOT(on_chk_i_text_annotation_clicked()));
 
+	connect(m_oFilterGUI.chk_AI, SIGNAL(clicked()), this, SLOT(on_chk_AI_clicked()));
 	connect(m_oFilterGUI.dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(on_dateEdit_changed()));
 	connect(m_oFilterGUI.dateEdit_2, SIGNAL(dateChanged(QDate)), this, SLOT(on_dateEdit_2_changed()));
 
 	connect(m_oFilterGUI.listEventAnnotation, SIGNAL(clicked(const QModelIndex)), this, SLOT(on_list_event_annotation_clicked(QModelIndex)));
 
 	connect(m_oFilterGUI.cbo_i_feature, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_i_feature_changed()));
-	//connect(m_oFilterGUI.cbo_project, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_project_changed()));
+	connect(m_oFilterGUI.cbo_AI, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_AI_changed()));
 	//connect(m_oFilterGUI.cbo_vin, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_vin_changed()));
-	connect(m_oFilterGUI.cbo_collection, SIGNAL(clicked()), this, SLOT(on_cbo_collection_clicked()));
 	connect(m_oFilterGUI.cbo_collection, SIGNAL(currentIndexChanged(int)), this, SLOT(on_cbo_collection_changed()));
 
 	connect(m_oFilterGUI.txt_m, SIGNAL(editingFinished()), this, SLOT(on_txt_m_edited()));
 	connect(m_oFilterGUI.txt_s, SIGNAL(editingFinished()), this, SLOT(on_txt_s_edited()));
 	connect(m_oFilterGUI.txt_ms, SIGNAL(editingFinished()), this, SLOT(on_txt_ms_edited()));
 	connect(m_oFilterGUI.txt_search, SIGNAL(textChanged(const QString &)), this, SLOT(on_txt_search_edited(const QString &)));
+
+	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_P), this->m_pFilterWidget);
+	QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_p_shortcut()));
 }
 
 void ReviewModeFilter::unregisterEventHandler()
@@ -799,7 +816,10 @@ string ReviewModeFilter::getCurClipText()
 
 	return datFile;
 }
-
+tResult ReviewModeFilter::on_p_shortcut(){
+	this->toPlayListMode(!this->m_oFilterGUI.grp_playlist->isVisible());
+	RETURN_NOERROR;
+}
 tResult ReviewModeFilter::on_btn_change_pw_clicked(){
 	this->m_oFilterGUI.grp_pwchange->setVisible(true);
 	this->m_oFilterGUI.txt_cur_pw->setEchoMode(QLineEdit::Password);
@@ -973,6 +993,12 @@ tResult ReviewModeFilter::on_txt_search_edited(const QString &search_text)
 	RETURN_NOERROR;
 }
 
+tResult ReviewModeFilter::on_chk_AI_clicked()
+{
+	this->toAIMode(this->m_oFilterGUI.chk_AI->isChecked());
+	this->refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
 
 tResult ReviewModeFilter::on_chk_annotation_clicked()
 {
@@ -1083,6 +1109,13 @@ tResult ReviewModeFilter::on_btn_next_clicked()
 	RETURN_NOERROR;
 }
 
+tResult ReviewModeFilter::on_btn_show_play_list_clicked()
+{
+
+	this->toPlayListMode(this->m_oFilterGUI.list_playlist->isVisible());
+	RETURN_NOERROR;
+}
+
 
 tResult ReviewModeFilter::on_chk_tour_clicked()
 {
@@ -1095,17 +1128,23 @@ tResult ReviewModeFilter::on_chk_tour_clicked()
 	RETURN_NOERROR;
 }
 
-tResult ReviewModeFilter::on_cbo_collection_clicked()
+tResult ReviewModeFilter::on_cbo_AI_changed()
 {
+	
+	string ai_type = this->m_oFilterGUI.cbo_AI->currentText().toStdString();
+	this->AIModel = new QStandardItemModel();
+	this->m_oFilterGUI.listAI->setModel(this->AIModel);
+	if(ai_type.empty())
+		RETURN_NOERROR;
+	
+	string ai_type_id = MagnaUtil::stringTokenizer(ai_type, '-').at(1);
+	
+	string query = "SELECT b.name as typename, a.name as name, b.id as typeid, a.value as id ";
+	query += " FROM additional_event_value a, additional_event_type b where a.typeid = b.id and a.typeid = "+ai_type_id+";";
 
-	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
-	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
-
-	if(vin_id.empty() || project_id.empty())
-	{
-		MagnaUtil::show_message("Please select a project and vin.");
-	}
-
+	map<string, vector<string>> containers = (new Retriever(getListField4AI(), query))->getData();
+	this->listhandle->addItemsFromDB(m_oFilterGUI.listAI, AIModel, this->getListField4AI(), query);
+	
 	RETURN_NOERROR;
 }
 
@@ -1606,6 +1645,20 @@ tResult ReviewModeFilter::on_btn_RL3_clicked()
 	RETURN_NOERROR;
 }
 
+tResult ReviewModeFilter::on_btn_LR4_clicked()
+{
+	this->listhandle->moveSelectedItems(m_oFilterGUI.listAI, this->AIModel, m_oFilterGUI.listAISelected, this->selectedAIModel);
+	refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter::on_btn_RL4_clicked()
+{
+	this->listhandle->removeSelectedItems(m_oFilterGUI.listAISelected, this->selectedAIModel);
+	refreshAnnotationGroup(0);
+	RETURN_NOERROR;
+}
+
 tResult ReviewModeFilter::on_chk_date_clicked()
 {
 	if(!m_oFilterGUI.chk_date->isChecked())
@@ -1741,6 +1794,35 @@ void ReviewModeFilter::toSearchAnnotationMode(bool mode)
 		this->on_chk_annotation_clicked();
 	}
 }
+
+void ReviewModeFilter::toAIMode(bool mode)
+{
+	this->m_oFilterGUI.chk_AI->setChecked(mode);
+	this->m_oFilterGUI.cbo_AI->setEnabled(!mode);
+	this->selectedAIModel = new QStandardItemModel();
+	this->m_oFilterGUI.listAISelected->setModel(this->selectedAIModel);
+	this->m_oFilterGUI.listAISelected->setEnabled(!mode);
+	this->m_oFilterGUI.listAI->setEnabled(!mode);
+	this->m_oFilterGUI.btn_LR4->setEnabled(!mode);
+	this->m_oFilterGUI.btn_RL4->setEnabled(!mode);
+}
+
+void ReviewModeFilter::toPlayListMode(bool mode)
+{
+	this->m_oFilterGUI.grp_playlist->setVisible(!mode);
+	if(mode==true) this->m_oFilterGUI.btn_show_playlist->setText(QString(">"));
+	else this->m_oFilterGUI.btn_show_playlist->setText(QString("<"));
+	QRect rect = this->m_oFilterGUI.grp_annotation->geometry();
+	if(mode==true)
+	{
+		this->m_oFilterGUI.btn_show_playlist->setGeometry(10, 22, 20, 211);
+		this->m_oFilterGUI.grp_annotation->setGeometry(35, 20, 861, 211);
+	}else{
+		this->m_oFilterGUI.btn_show_playlist->setGeometry(345, 22, 20, 211);
+		this->m_oFilterGUI.grp_annotation->setGeometry(370, 20, 861, 211);
+	}
+}
+
 
 void ReviewModeFilter::toSettingMode(bool mode)
 {
@@ -2103,15 +2185,18 @@ void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> 
 void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 {
 
-	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
+	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);
 	vector<string> vin_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);
+	vector<string> ai_typeid = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listAISelected, 2);
+	vector<string> ai_value = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listAISelected, 3);
 
 	vector<string> days = this->getDayTypes();
 	vector<string> weathers = this->getWeatherTypes();
 	vector<string> roads = this->getRoadTypes();
 	vector<string> event_status = this->getEventStatus();
 
-	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty() || event_status.empty())
+	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty() || event_status.empty() 
+		|| (this->m_oFilterGUI.chk_AI->isChecked()==false && ai_typeid.empty()))
 	{
 		initAnnotationGroup();
 	}
@@ -2184,7 +2269,9 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 			vector<string> event_categories = getEventCategories();
 			string query = this->queryFactory->getEventListQuery(this->offset,
 				this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
-				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status);
+				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status, ai_typeid, ai_value);
+
+			LOG_INFO(query.c_str());
 			
 			progress->setValue(50);
 			recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
@@ -2378,6 +2465,16 @@ vector<string> ReviewModeFilter::getField4EventEdit()
 
 	return itemsFromDB;
 }
+vector<string> ReviewModeFilter::getListField4AI()
+{
+	vector<string> itemsFromDB;
+	itemsFromDB.push_back("typename");
+	itemsFromDB.push_back("name");
+	itemsFromDB.push_back("typeid");
+	itemsFromDB.push_back("id");
+
+	return itemsFromDB;
+}
 
 vector<string> ReviewModeFilter::getListField4Event()
 {
@@ -2387,6 +2484,7 @@ vector<string> ReviewModeFilter::getListField4Event()
 
 	return itemsFromDB;
 }
+
 
 vector<string> ReviewModeFilter::getField4Status()
 {

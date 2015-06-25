@@ -18,6 +18,11 @@ public:
 	~ListHandle(void);
 
 	void moveSelectedItemWithDelete(QListView* source, QStandardItemModel* sourceModel, QListView* destination, QStandardItemModel* destinationModel);
+
+	void moveSelectedItems(QListView* source, QStandardItemModel* sourceModel, QListView* destination, QStandardItemModel* destinationModel);
+
+	void removeSelectedItems(QListView* source, QStandardItemModel* sourceModel);
+
 	int addItemsFromDB(QListView* source, QStandardItemModel* model, vector<string> itemsFromDB, char prefix, string query);
 	int addItemsFromDB(QListView* source, QStandardItemModel* model, vector<string> itemsFromDB, string query);
 	int addItems(QListView* source, QStandardItemModel* model, string name);

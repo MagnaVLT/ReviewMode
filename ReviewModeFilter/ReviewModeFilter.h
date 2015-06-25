@@ -151,6 +151,8 @@ private:
 	QStandardItemModel* annotationModel;
 	QStandardItemModel* selectedAnnotationModel;
 	QStandardItemModel* eventListModel;
+	QStandardItemModel* selectedAIModel;
+	QStandardItemModel* AIModel;
 
 	QueryFactory* queryFactory;
 	SQLFileHandler* sqlFileHandler;
@@ -160,6 +162,7 @@ private:
 	vector<string> getListField4EventList();
 	vector<string> getListField4Annotation();
 	vector<string> getField4EventEdit();
+	vector<string> getListField4AI();
 	vector<string> getField4Status();
 	void initMode();
 	void initModel();
@@ -196,6 +199,7 @@ private:
 	void toInsertMode(bool mode);
 	void toAnnotationCategoryMode(bool mode);
 	string getCurClipText();
+
 	int checkNumber(QLineEdit* edit, int digits);
 	bool changeDatFile();
 	void toTextAnnotationMode(bool mode);
@@ -206,6 +210,8 @@ private:
 	string getAnnotationValue(bool isText, QComboBox* combo_box, QTextEdit* text_edit);
 	bool existClip(string clip);
 	void toSearchAnnotationMode(bool mode);
+	void toAIMode(bool mode);
+	void toPlayListMode(bool mode);
 	void toExecutingMode(bool mode);
 	vector<string> getListField4EventAll();
 	void transform_data(sEvent_Data *event_data, vector<string> item_list, map<string, vector<string>> containers);
@@ -223,6 +229,7 @@ private:
 	vector<string> getListField4Project();
 	void initEventList();
 	void initProjectModel();
+	void initAI();
 	void unregisterEventHandler();
 	void initAllDuringWork();
 	void initEventGroup();
@@ -231,6 +238,7 @@ private:
 	void initCollectionCombo(QComboBox* combobox);
 	map<string, vector<string>> getClipIDList();
 	vector<string> getClustersOfClips(vector<string> clipidList, vector<string> localpctime_list);
+	void refreshAICombo(vector<string> project_id, QProgressDialog * progress);
 
 public slots:
 	tResult on_btn_clip_clicked();
@@ -245,6 +253,8 @@ public slots:
 	tResult on_btn_RL2_clicked();
 	tResult on_btn_LR3_clicked();
 	tResult on_btn_RL3_clicked();
+	tResult on_btn_RL4_clicked();
+	tResult on_btn_LR4_clicked();
 	tResult on_dateEdit_changed();
 	tResult on_chk_date_clicked();
 	tResult on_dateEdit_2_changed();
@@ -264,20 +274,22 @@ public slots:
 	tResult on_btn_udpate_clicked();
 	tResult on_btn_insert_clicked();
 	tResult on_txt_search_edited(const QString &search_text);
+	tResult on_chk_AI_clicked();
 	tResult on_btn_login_clicked();
 	tResult on_btn_change_pw_clicked();
 	tResult on_btn_change_cancel_clicked();
 	tResult on_btn_change_clicked();
 	tResult on_btn_prev_clicked();
 	tResult on_btn_next_clicked();
+	tResult on_btn_show_play_list_clicked();
 	tResult on_chk_tour_clicked();
-	tResult on_cbo_collection_clicked();
+	tResult on_cbo_AI_changed();
 	tResult on_cbo_collection_changed();
 	tResult on_btn_LR_clicked();
 	tResult on_btn_RL_clicked();
 	tResult on_btn_LR0_clicked();
 	tResult on_btn_RL0_clicked();
-	void refreshAICombo(vector<string> project_id, QProgressDialog * progress);
+	tResult on_p_shortcut();
 };
 
 #endif

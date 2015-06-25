@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Tue Jun 23 17:39:42 2015
+** Created: Wed Jun 24 20:51:51 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      45,   14, // methods
+      49,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -45,38 +45,42 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
      260,   17,   18,   17, 0x0a,
      281,   17,   18,   17, 0x0a,
      302,   17,   18,   17, 0x0a,
-     324,   17,   18,   17, 0x0a,
-     346,   17,   18,   17, 0x0a,
-     370,   17,   18,   17, 0x0a,
-     387,   17,   18,   17, 0x0a,
-     415,   17,   18,   17, 0x0a,
-     439,   17,   18,   17, 0x0a,
-     472,   17,   18,   17, 0x0a,
-     507,   17,   18,   17, 0x0a,
-     531,   17,   18,   17, 0x0a,
-     555,   17,   18,   17, 0x0a,
+     323,   17,   18,   17, 0x0a,
+     344,   17,   18,   17, 0x0a,
+     366,   17,   18,   17, 0x0a,
+     388,   17,   18,   17, 0x0a,
+     412,   17,   18,   17, 0x0a,
+     429,   17,   18,   17, 0x0a,
+     457,   17,   18,   17, 0x0a,
+     481,   17,   18,   17, 0x0a,
+     514,   17,   18,   17, 0x0a,
+     549,   17,   18,   17, 0x0a,
      573,   17,   18,   17, 0x0a,
-     591,   17,   18,   17, 0x0a,
-     610,   17,   18,   17, 0x0a,
-     637,   17,   18,   17, 0x0a,
-     663,   17,   18,   17, 0x0a,
-     709,   17,   18,   17, 0x0a,
-     733,   17,   18,   17, 0x0a,
-     769,  757,   18,   17, 0x0a,
-     799,   17,   18,   17, 0x0a,
-     822,   17,   18,   17, 0x0a,
-     849,   17,   18,   17, 0x0a,
-     880,   17,   18,   17, 0x0a,
-     904,   17,   18,   17, 0x0a,
-     926,   17,   18,   17, 0x0a,
-     948,   17,   18,   17, 0x0a,
-     970,   17,   18,   17, 0x0a,
-     998,   17,   18,   17, 0x0a,
-    1026,   17,   18,   17, 0x0a,
-    1046,   17,   18,   17, 0x0a,
-    1066,   17,   18,   17, 0x0a,
-    1087,   17,   18,   17, 0x0a,
-    1128, 1108,   17,   17, 0x0a,
+     597,   17,   18,   17, 0x0a,
+     615,   17,   18,   17, 0x0a,
+     633,   17,   18,   17, 0x0a,
+     652,   17,   18,   17, 0x0a,
+     679,   17,   18,   17, 0x0a,
+     705,   17,   18,   17, 0x0a,
+     751,   17,   18,   17, 0x0a,
+     775,   17,   18,   17, 0x0a,
+     811,  799,   18,   17, 0x0a,
+     841,   17,   18,   17, 0x0a,
+     861,   17,   18,   17, 0x0a,
+     884,   17,   18,   17, 0x0a,
+     911,   17,   18,   17, 0x0a,
+     942,   17,   18,   17, 0x0a,
+     966,   17,   18,   17, 0x0a,
+     988,   17,   18,   17, 0x0a,
+    1010,   17,   18,   17, 0x0a,
+    1042,   17,   18,   17, 0x0a,
+    1064,   17,   18,   17, 0x0a,
+    1084,   17,   18,   17, 0x0a,
+    1112,   17,   18,   17, 0x0a,
+    1132,   17,   18,   17, 0x0a,
+    1152,   17,   18,   17, 0x0a,
+    1173,   17,   18,   17, 0x0a,
+    1194,   17,   18,   17, 0x0a,
 
        0        // eod
 };
@@ -90,6 +94,7 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_btn_LR1_clicked()\0on_btn_RL1_clicked()\0"
     "on_btn_LR2_clicked()\0on_btn_RL2_clicked()\0"
     "on_btn_LR3_clicked()\0on_btn_RL3_clicked()\0"
+    "on_btn_RL4_clicked()\0on_btn_LR4_clicked()\0"
     "on_dateEdit_changed()\0on_chk_date_clicked()\0"
     "on_dateEdit_2_changed()\0on_chk_clicked()\0"
     "on_chk_annotation_clicked()\0"
@@ -103,17 +108,17 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_list_event_annotation_clicked(QModelIndex)\0"
     "on_btn_udpate_clicked()\0on_btn_insert_clicked()\0"
     "search_text\0on_txt_search_edited(QString)\0"
-    "on_btn_login_clicked()\0"
+    "on_chk_AI_clicked()\0on_btn_login_clicked()\0"
     "on_btn_change_pw_clicked()\0"
     "on_btn_change_cancel_clicked()\0"
     "on_btn_change_clicked()\0on_btn_prev_clicked()\0"
-    "on_btn_next_clicked()\0on_chk_tour_clicked()\0"
-    "on_cbo_collection_clicked()\0"
+    "on_btn_next_clicked()\0"
+    "on_btn_show_play_list_clicked()\0"
+    "on_chk_tour_clicked()\0on_cbo_AI_changed()\0"
     "on_cbo_collection_changed()\0"
     "on_btn_LR_clicked()\0on_btn_RL_clicked()\0"
     "on_btn_LR0_clicked()\0on_btn_RL0_clicked()\0"
-    "project_id,progress\0"
-    "refreshAICombo(vector<string>,QProgressDialog*)\0"
+    "on_p_shortcut()\0"
 };
 
 const QMetaObject ReviewModeFilter::staticMetaObject = {
@@ -171,74 +176,83 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 11: { tResult _r = on_btn_RL3_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 12: { tResult _r = on_dateEdit_changed();
+        case 12: { tResult _r = on_btn_RL4_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 13: { tResult _r = on_chk_date_clicked();
+        case 13: { tResult _r = on_btn_LR4_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 14: { tResult _r = on_dateEdit_2_changed();
+        case 14: { tResult _r = on_dateEdit_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 15: { tResult _r = on_chk_clicked();
+        case 15: { tResult _r = on_chk_date_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 16: { tResult _r = on_chk_annotation_clicked();
+        case 16: { tResult _r = on_dateEdit_2_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 17: { tResult _r = on_chk_search_clicked();
+        case 17: { tResult _r = on_chk_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 18: { tResult _r = on_chk_text_annotation_clicked();
+        case 18: { tResult _r = on_chk_annotation_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 19: { tResult _r = on_chk_i_text_annotation_clicked();
+        case 19: { tResult _r = on_chk_search_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 20: { tResult _r = on_btn_cancel_clicked();
+        case 20: { tResult _r = on_chk_text_annotation_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 21: { tResult _r = on_btn_submit_clicked();
+        case 21: { tResult _r = on_chk_i_text_annotation_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 22: { tResult _r = on_txt_m_edited();
+        case 22: { tResult _r = on_btn_cancel_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 23: { tResult _r = on_txt_s_edited();
+        case 23: { tResult _r = on_btn_submit_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 24: { tResult _r = on_txt_ms_edited();
+        case 24: { tResult _r = on_txt_m_edited();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 25: { tResult _r = on_cbo_i_feature_changed();
+        case 25: { tResult _r = on_txt_s_edited();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 26: { tResult _r = on_btn_showclip_clicked();
+        case 26: { tResult _r = on_txt_ms_edited();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 27: { tResult _r = on_list_event_annotation_clicked((*reinterpret_cast< QModelIndex(*)>(_a[1])));
+        case 27: { tResult _r = on_cbo_i_feature_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 28: { tResult _r = on_btn_udpate_clicked();
+        case 28: { tResult _r = on_btn_showclip_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 29: { tResult _r = on_btn_insert_clicked();
+        case 29: { tResult _r = on_list_event_annotation_clicked((*reinterpret_cast< QModelIndex(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 30: { tResult _r = on_txt_search_edited((*reinterpret_cast< const QString(*)>(_a[1])));
+        case 30: { tResult _r = on_btn_udpate_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 31: { tResult _r = on_btn_login_clicked();
+        case 31: { tResult _r = on_btn_insert_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 32: { tResult _r = on_btn_change_pw_clicked();
+        case 32: { tResult _r = on_txt_search_edited((*reinterpret_cast< const QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 33: { tResult _r = on_btn_change_cancel_clicked();
+        case 33: { tResult _r = on_chk_AI_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 34: { tResult _r = on_btn_change_clicked();
+        case 34: { tResult _r = on_btn_login_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 35: { tResult _r = on_btn_prev_clicked();
+        case 35: { tResult _r = on_btn_change_pw_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 36: { tResult _r = on_btn_next_clicked();
+        case 36: { tResult _r = on_btn_change_cancel_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 37: { tResult _r = on_chk_tour_clicked();
+        case 37: { tResult _r = on_btn_change_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 38: { tResult _r = on_cbo_collection_clicked();
+        case 38: { tResult _r = on_btn_prev_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 39: { tResult _r = on_cbo_collection_changed();
+        case 39: { tResult _r = on_btn_next_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 40: { tResult _r = on_btn_LR_clicked();
+        case 40: { tResult _r = on_btn_show_play_list_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 41: { tResult _r = on_btn_RL_clicked();
+        case 41: { tResult _r = on_chk_tour_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 42: { tResult _r = on_btn_LR0_clicked();
+        case 42: { tResult _r = on_cbo_AI_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 43: { tResult _r = on_btn_RL0_clicked();
+        case 43: { tResult _r = on_cbo_collection_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 44: refreshAICombo((*reinterpret_cast< vector<string>(*)>(_a[1])),(*reinterpret_cast< QProgressDialog*(*)>(_a[2]))); break;
+        case 44: { tResult _r = on_btn_LR_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 45: { tResult _r = on_btn_RL_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 46: { tResult _r = on_btn_LR0_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 47: { tResult _r = on_btn_RL0_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 48: { tResult _r = on_p_shortcut();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         default: ;
         }
-        _id -= 45;
+        _id -= 49;
     }
     return _id;
 }

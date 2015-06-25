@@ -101,7 +101,7 @@ void QueryFactory::addGroupByClaud(vector<string> items, string* query)
 
 std::string QueryFactory::getEventListQuery(int offset, vector<string> items, string userid, vector<string> projectid, vector<string> events, 
 									   string stime, string etime, vector<string> event_categories, vector<string> predefined_annotation, string search_condition, bool chk_search,
-									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads, vector<string> event_status)
+									   vector<string> vin, bool chk_tour, string start_clip, string end_clip, vector<string> days, vector<string> weathers, vector<string> roads, vector<string> event_status, vector<string> ai_types, vector<string> ai_values)
 {
 	string query = "";
 	query+= "select ";
@@ -110,7 +110,16 @@ std::string QueryFactory::getEventListQuery(int offset, vector<string> items, st
 	}
 	query+=  items.at(items.size()-1) + " " ;
 
-	query += " from event_report a, event_list b, clip_info c where a.eventid = b.id and a.clipid = c.clipid ";
+	query += " from ";
+	if(!ai_types.empty() && (ai_values.size() == ai_types.size()))
+	{
+		query +=  + "(" + this->addEventReportTable(ai_types, ai_values) + ") a, ";
+	}else
+	{
+		query += " event_report a, ";
+	}
+	
+	query += " event_list b, clip_info c where a.eventid = b.id and a.clipid = c.clipid ";
 	query = this->addFieldsViaInStatement("projectid", projectid, query, 2, false);
 	query = this->addFieldsViaInStatement("c.daytypeid", days, query, 2, false);
 	query = this->addFieldsViaInStatement("c.weathertypeid", weathers, query, 2, false);
@@ -147,8 +156,26 @@ std::string QueryFactory::getEventListQuery(int offset, vector<string> items, st
 
 	query+= " order by reportid desc limit " + MagnaUtil::integerToString(offset) + ", 100;";
 
-	LOG_INFO(query.c_str());
 	return query;
+}
+
+std::string QueryFactory::addEventReportTable(vector<string> ai_types, vector<string> ai_values)
+{
+	string query = "select d.* ";
+	query += " from event_report d, additional_event_report f ";
+	query += " where d.reportid = f.reportid and d.vin = f.vin and (";
+	this->addTypeAndValuePair(&query, ai_types, ai_values);
+	query += ") ";
+	return query;
+}
+
+void QueryFactory::addTypeAndValuePair(string* query, vector<string> ai_types, vector<string> ai_value)
+{
+	for(unsigned int i = 0 ; i < ai_types.size()-1 ; i++)
+	{
+		*query += " (typeid = " + ai_types.at(i) + " and value = " + ai_value.at(i) + ") or";
+	}
+	*query += " (typeid = " + ai_types.at(ai_value.size()-1) + " and value = " + ai_value.at(ai_value.size()-1) + ")";
 }
 
 
