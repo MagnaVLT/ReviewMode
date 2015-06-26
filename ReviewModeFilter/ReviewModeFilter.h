@@ -153,6 +153,7 @@ private:
 	QStandardItemModel* eventListModel;
 	QStandardItemModel* selectedAIModel;
 	QStandardItemModel* AIModel;
+	QStandardItemModel* playlistModel;
 
 	QueryFactory* queryFactory;
 	SQLFileHandler* sqlFileHandler;
@@ -161,6 +162,7 @@ private:
 	vector<string> getListField4Event();
 	vector<string> getListField4EventList();
 	vector<string> getListField4Annotation();
+	vector<string> getListField4PlayList();
 	vector<string> getField4EventEdit();
 	vector<string> getListField4AI();
 	vector<string> getField4Status();
@@ -231,7 +233,6 @@ private:
 	void initProjectModel();
 	void initAI();
 	void unregisterEventHandler();
-	void initAllDuringWork();
 	void initEventGroup();
 	void initAnnotationGroup();
 	void initBasicGroup();
@@ -280,8 +281,10 @@ public slots:
 	tResult on_btn_change_cancel_clicked();
 	tResult on_btn_change_clicked();
 	tResult on_btn_prev_clicked();
+	tResult on_btn_directory_clicked();
 	tResult on_btn_next_clicked();
 	tResult on_btn_show_play_list_clicked();
+	tResult on_btn_generate_play_list();
 	tResult on_chk_tour_clicked();
 	tResult on_cbo_AI_changed();
 	tResult on_cbo_collection_changed();
@@ -289,7 +292,6 @@ public slots:
 	tResult on_btn_RL_clicked();
 	tResult on_btn_LR0_clicked();
 	tResult on_btn_RL0_clicked();
-	tResult on_p_shortcut();
 };
 
 #endif

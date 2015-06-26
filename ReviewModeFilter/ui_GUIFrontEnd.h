@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ReviewMode_NoGPS.ui'
 **
-** Created: Wed Jun 24 20:51:51 2015
+** Created: Fri Jun 26 02:17:53 2015
 **      by: Qt User Interface Compiler version 4.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -129,6 +129,8 @@ public:
     QListView *list_playlist;
     QPushButton *btn_generate;
     QLabel *lbl_status_playlist;
+    QPushButton *btn_dir;
+    QLineEdit *txt_directory;
     QPushButton *btn_show_playlist;
     QGroupBox *GrpInsert;
     QPushButton *btn_submit;
@@ -478,20 +480,20 @@ public:
         btn_copy->setGeometry(QRect(690, 60, 151, 31));
         chk_text_annotation = new QCheckBox(grp_annotation);
         chk_text_annotation->setObjectName(QString::fromUtf8("chk_text_annotation"));
-        chk_text_annotation->setGeometry(QRect(460, 60, 151, 17));
+        chk_text_annotation->setGeometry(QRect(420, 60, 151, 17));
         chk_text_annotation->setChecked(true);
         lbl_clip = new QLabel(grp_annotation);
         lbl_clip->setObjectName(QString::fromUtf8("lbl_clip"));
-        lbl_clip->setGeometry(QRect(460, 40, 381, 16));
+        lbl_clip->setGeometry(QRect(420, 40, 421, 20));
         btn_next = new QPushButton(grp_annotation);
         btn_next->setObjectName(QString::fromUtf8("btn_next"));
-        btn_next->setGeometry(QRect(260, 152, 181, 31));
+        btn_next->setGeometry(QRect(220, 152, 181, 31));
         cbo_status = new QComboBox(grp_annotation);
         cbo_status->setObjectName(QString::fromUtf8("cbo_status"));
-        cbo_status->setGeometry(QRect(460, 152, 221, 31));
+        cbo_status->setGeometry(QRect(420, 152, 261, 31));
         txt_annotation = new QTextEdit(grp_annotation);
         txt_annotation->setObjectName(QString::fromUtf8("txt_annotation"));
-        txt_annotation->setGeometry(QRect(460, 80, 221, 51));
+        txt_annotation->setGeometry(QRect(420, 80, 261, 51));
         btn_update = new QPushButton(grp_annotation);
         btn_update->setObjectName(QString::fromUtf8("btn_update"));
         btn_update->setGeometry(QRect(690, 120, 151, 31));
@@ -506,20 +508,20 @@ public:
         lbl_reportid->setGeometry(QRect(320, 10, 46, 13));
         label_5 = new QLabel(grp_annotation);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(470, 132, 71, 16));
+        label_5->setGeometry(QRect(430, 132, 71, 16));
         btn_prev = new QPushButton(grp_annotation);
         btn_prev->setObjectName(QString::fromUtf8("btn_prev"));
         btn_prev->setGeometry(QRect(30, 152, 181, 31));
         cbo_annotation = new QComboBox(grp_annotation);
         cbo_annotation->setObjectName(QString::fromUtf8("cbo_annotation"));
-        cbo_annotation->setGeometry(QRect(460, 80, 221, 31));
+        cbo_annotation->setGeometry(QRect(420, 80, 261, 31));
         listEventAnnotation = new QListView(grp_annotation);
         listEventAnnotation->setObjectName(QString::fromUtf8("listEventAnnotation"));
         listEventAnnotation->setEnabled(true);
-        listEventAnnotation->setGeometry(QRect(30, 30, 411, 121));
+        listEventAnnotation->setGeometry(QRect(30, 30, 371, 121));
         lbl_adtftime = new QLabel(grp_annotation);
         lbl_adtftime->setObjectName(QString::fromUtf8("lbl_adtftime"));
-        lbl_adtftime->setGeometry(QRect(460, 20, 171, 20));
+        lbl_adtftime->setGeometry(QRect(420, 20, 171, 20));
         btn_showclip = new QPushButton(grp_annotation);
         btn_showclip->setObjectName(QString::fromUtf8("btn_showclip"));
         btn_showclip->setGeometry(QRect(690, 90, 151, 31));
@@ -529,19 +531,26 @@ public:
         list_playlist = new QListView(grp_playlist);
         list_playlist->setObjectName(QString::fromUtf8("list_playlist"));
         list_playlist->setEnabled(true);
-        list_playlist->setGeometry(QRect(10, 30, 311, 121));
+        list_playlist->setGeometry(QRect(10, 47, 311, 121));
         btn_generate = new QPushButton(grp_playlist);
         btn_generate->setObjectName(QString::fromUtf8("btn_generate"));
-        btn_generate->setGeometry(QRect(10, 153, 311, 31));
+        btn_generate->setGeometry(QRect(10, 170, 311, 31));
         lbl_status_playlist = new QLabel(grp_playlist);
         lbl_status_playlist->setObjectName(QString::fromUtf8("lbl_status_playlist"));
         lbl_status_playlist->setGeometry(QRect(10, 190, 311, 16));
+        btn_dir = new QPushButton(grp_playlist);
+        btn_dir->setObjectName(QString::fromUtf8("btn_dir"));
+        btn_dir->setGeometry(QRect(240, 20, 81, 21));
+        txt_directory = new QLineEdit(grp_playlist);
+        txt_directory->setObjectName(QString::fromUtf8("txt_directory"));
+        txt_directory->setEnabled(false);
+        txt_directory->setGeometry(QRect(12, 20, 221, 21));
         btn_show_playlist = new QPushButton(GrpEdit);
         btn_show_playlist->setObjectName(QString::fromUtf8("btn_show_playlist"));
         btn_show_playlist->setGeometry(QRect(345, 22, 20, 211));
         GrpInsert = new QGroupBox(Form);
         GrpInsert->setObjectName(QString::fromUtf8("GrpInsert"));
-        GrpInsert->setGeometry(QRect(530, 770, 561, 261));
+        GrpInsert->setGeometry(QRect(530, 440, 561, 261));
         QPalette palette;
         QBrush brush(QColor(0, 0, 0, 255));
         brush.setStyle(Qt::SolidPattern);
@@ -1101,6 +1110,7 @@ public:
         grp_playlist->setTitle(QApplication::translate("Form", "PlayList", 0, QApplication::UnicodeUTF8));
         btn_generate->setText(QApplication::translate("Form", "Generate Play-List", 0, QApplication::UnicodeUTF8));
         lbl_status_playlist->setText(QString());
+        btn_dir->setText(QApplication::translate("Form", "Set Directory", 0, QApplication::UnicodeUTF8));
         btn_show_playlist->setText(QApplication::translate("Form", "<", 0, QApplication::UnicodeUTF8));
         GrpInsert->setTitle(QApplication::translate("Form", "Event Data Insertion", 0, QApplication::UnicodeUTF8));
         btn_submit->setText(QApplication::translate("Form", "Insert", 0, QApplication::UnicodeUTF8));

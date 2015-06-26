@@ -179,9 +179,9 @@ int ListHandle::addItems(QListView* source, QStandardItemModel* model, vector<st
 			string temp = model->index(i,0).data(Qt::DisplayRole).toString().toStdString();
 			if(temp.compare(f)==0)
 			{
-				QMessageBox b;
+				/*QMessageBox b;
 				b.setText(QString(temp.c_str()));
-				b.exec();
+				b.exec();*/
 				chk=true;
 			}
 		}

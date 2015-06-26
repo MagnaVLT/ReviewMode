@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Wed Jun 24 20:51:51 2015
+** Created: Fri Jun 26 02:17:53 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,7 +24,7 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      49,   14, // methods
+      50,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -72,15 +72,16 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
      942,   17,   18,   17, 0x0a,
      966,   17,   18,   17, 0x0a,
      988,   17,   18,   17, 0x0a,
-    1010,   17,   18,   17, 0x0a,
-    1042,   17,   18,   17, 0x0a,
-    1064,   17,   18,   17, 0x0a,
-    1084,   17,   18,   17, 0x0a,
-    1112,   17,   18,   17, 0x0a,
-    1132,   17,   18,   17, 0x0a,
-    1152,   17,   18,   17, 0x0a,
-    1173,   17,   18,   17, 0x0a,
-    1194,   17,   18,   17, 0x0a,
+    1015,   17,   18,   17, 0x0a,
+    1037,   17,   18,   17, 0x0a,
+    1069,   17,   18,   17, 0x0a,
+    1097,   17,   18,   17, 0x0a,
+    1119,   17,   18,   17, 0x0a,
+    1139,   17,   18,   17, 0x0a,
+    1167,   17,   18,   17, 0x0a,
+    1187,   17,   18,   17, 0x0a,
+    1207,   17,   18,   17, 0x0a,
+    1228,   17,   18,   17, 0x0a,
 
        0        // eod
 };
@@ -112,13 +113,14 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_btn_change_pw_clicked()\0"
     "on_btn_change_cancel_clicked()\0"
     "on_btn_change_clicked()\0on_btn_prev_clicked()\0"
+    "on_btn_directory_clicked()\0"
     "on_btn_next_clicked()\0"
     "on_btn_show_play_list_clicked()\0"
+    "on_btn_generate_play_list()\0"
     "on_chk_tour_clicked()\0on_cbo_AI_changed()\0"
     "on_cbo_collection_changed()\0"
     "on_btn_LR_clicked()\0on_btn_RL_clicked()\0"
     "on_btn_LR0_clicked()\0on_btn_RL0_clicked()\0"
-    "on_p_shortcut()\0"
 };
 
 const QMetaObject ReviewModeFilter::staticMetaObject = {
@@ -230,29 +232,31 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 38: { tResult _r = on_btn_prev_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 39: { tResult _r = on_btn_next_clicked();
+        case 39: { tResult _r = on_btn_directory_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 40: { tResult _r = on_btn_show_play_list_clicked();
+        case 40: { tResult _r = on_btn_next_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 41: { tResult _r = on_chk_tour_clicked();
+        case 41: { tResult _r = on_btn_show_play_list_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 42: { tResult _r = on_cbo_AI_changed();
+        case 42: { tResult _r = on_btn_generate_play_list();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 43: { tResult _r = on_cbo_collection_changed();
+        case 43: { tResult _r = on_chk_tour_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 44: { tResult _r = on_btn_LR_clicked();
+        case 44: { tResult _r = on_cbo_AI_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 45: { tResult _r = on_btn_RL_clicked();
+        case 45: { tResult _r = on_cbo_collection_changed();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 46: { tResult _r = on_btn_LR0_clicked();
+        case 46: { tResult _r = on_btn_LR_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 47: { tResult _r = on_btn_RL0_clicked();
+        case 47: { tResult _r = on_btn_RL_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 48: { tResult _r = on_p_shortcut();
+        case 48: { tResult _r = on_btn_LR0_clicked();
+            if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
+        case 49: { tResult _r = on_btn_RL0_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         default: ;
         }
-        _id -= 49;
+        _id -= 50;
     }
     return _id;
 }

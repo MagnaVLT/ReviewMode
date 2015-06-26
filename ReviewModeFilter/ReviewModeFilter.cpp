@@ -43,6 +43,7 @@ extern const std::string STATIC_TABLES = "./filter/Magna/static_tables.sql";
 extern const std::string BACKUP_DB = "fcm_hil_playback_backup";
 extern const std::string LOGIN = "1";
 extern const std::string LOGOUT = "0";
+extern const std::string PLAY_LIST_HOME = "./hil_playback_playlist/";
 extern const __int64 th = 180;
 
 string ReviewModeFilter::USERLOG_ID = "";
@@ -194,8 +195,6 @@ tResult ReviewModeFilter::ReleaseView()
 void ReviewModeFilter::initAllAtStart()
 {
 	
-	
-
 	this->initProjectModel();
 	this->initFeatureModel();
 	this->initAI();
@@ -206,6 +205,7 @@ void ReviewModeFilter::initAllAtStart()
 
 	string tmpFile = TEMP_FILE + "tmp.xml";
 	this->sqlFileHandler = new SQLFileHandler(TEMP_FILE, ID);
+	this->m_oFilterGUI.txt_directory->setText(QString(""));
 
 	if(QFile().exists(QString(tmpFile.c_str())))
 	{
@@ -214,17 +214,11 @@ void ReviewModeFilter::initAllAtStart()
 		this->registerEventHandler();
 	}else
 	{
-
 		this->initEventList();
 		this->initGUI();
 	}
 }
 
-void ReviewModeFilter::initAllDuringWork()
-{
-	initEventGroup();
-	initAnnotationGroup();
-}
 
 void ReviewModeFilter::initBasicGroup()
 {
@@ -332,7 +326,6 @@ map<string, vector<string>> ReviewModeFilter::getClipIDList()
 		if(!vin_id.empty()) query = this->queryFactory->addFieldsViaInStatement("a.vin", vin_id, query, 2, true);
 		query += " group by a.clipid order by a.clipid;";
 
-		LOG_INFO(query.c_str());
 		map<string, vector<string>> collectionContainer = (new Retriever( collection_fields, query))->getData();
 
 		return collectionContainer;
@@ -382,11 +375,37 @@ void ReviewModeFilter::initMode()
 
 void ReviewModeFilter::initGUI()
 {
+	this->m_oFilterGUI.chk_day_1->setChecked(true);
+	this->m_oFilterGUI.chk_day_2->setChecked(true);
+	this->m_oFilterGUI.chk_day_3->setChecked(true);
+
+	this->m_oFilterGUI.chk_weather_1->setChecked(true);
+	this->m_oFilterGUI.chk_weather_2->setChecked(true);
+	this->m_oFilterGUI.chk_weather_3->setChecked(true);
+	this->m_oFilterGUI.chk_weather_4->setChecked(true);
+
+	this->m_oFilterGUI.chk_road_1->setChecked(true);
+	this->m_oFilterGUI.chk_road_2->setChecked(true);
+	this->m_oFilterGUI.chk_road_3->setChecked(true);
+
+	this->m_oFilterGUI.chk_event_status_1->setChecked(true);
+	this->m_oFilterGUI.chk_event_status_2->setChecked(true);
+	this->m_oFilterGUI.chk_event_status_3->setChecked(true);
+	this->m_oFilterGUI.chk_event_status_4->setChecked(true);
+	this->m_oFilterGUI.chk_event_status_5->setChecked(true);
+
 	m_oFilterGUI.lbl_reportid->setVisible(false);
 	m_oFilterGUI.lbl_table->setVisible(false);
 	QDate date = QDate::currentDate();
 	m_oFilterGUI.dateEdit->setDate(date);
 	m_oFilterGUI.dateEdit_2->setDate(date);
+	this->m_oFilterGUI.cbo_collection->clear();
+	this->m_oFilterGUI.cbo_collection->setEnabled(false);
+	this->m_oFilterGUI.cbo_AI->clear();
+	this->m_oFilterGUI.cbo_AI->setEnabled(false);
+	this->m_oFilterGUI.chk_tour->setChecked(true);
+	this->m_oFilterGUI.chk_AI->setChecked(true);
+
 	this->initProjectList();
 	this->registerEventHandler();
 }
@@ -397,6 +416,7 @@ void ReviewModeFilter::initWorkspaceDirectory()
 	MagnaUtil::make_directory(CLIP_BACKUP);
 	MagnaUtil::make_directory(DB_HOME);
 	MagnaUtil::make_directory(TEMP_FILE);
+	MagnaUtil::make_directory(PLAY_LIST_HOME);
 }
 
 void ReviewModeFilter::initProjectList()
@@ -483,14 +503,14 @@ void ReviewModeFilter::initModel()
 	annotationModel = new QStandardItemModel();
 	selectedAnnotationModel = new QStandardItemModel();
 	eventListModel = new QStandardItemModel();
-	
+	playlistModel = new QStandardItemModel(); 
 
 	this->m_oFilterGUI.listEvent->setModel(this->eventModel);
 	this->m_oFilterGUI.listEventSelected->setModel(this->selectedEventModel);
 	this->m_oFilterGUI.listAnnotation->setModel(this->annotationModel);
 	this->m_oFilterGUI.listAnnotationSelected->setModel(this->selectedAnnotationModel);
 	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
-
+	this->m_oFilterGUI.list_playlist->setModel(this->playlistModel);
 }
 
 void ReviewModeFilter::initFeatureModel()
@@ -505,6 +525,12 @@ void ReviewModeFilter::initFeatureModel()
 void ReviewModeFilter::initEventListModel(){
 	eventListModel = new QStandardItemModel();	
 	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
+
+	if(this->offset==0)
+	{
+		playlistModel = new QStandardItemModel();	
+		this->m_oFilterGUI.list_playlist->setModel(this->playlistModel);
+	}
 }
 
 void ReviewModeFilter::initIProjectCombo(QComboBox* combobox)
@@ -693,7 +719,9 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_next, SIGNAL(clicked()), this, SLOT(on_btn_next_clicked()));
 
 	connect(m_oFilterGUI.btn_show_playlist, SIGNAL(clicked()), this, SLOT(on_btn_show_play_list_clicked()));
-
+	connect(m_oFilterGUI.btn_generate, SIGNAL(clicked()), this, SLOT(on_btn_generate_play_list()));
+	connect(m_oFilterGUI.btn_dir, SIGNAL(clicked()), this, SLOT(on_btn_directory_clicked()));
+	
 	connect(m_oFilterGUI.chk_date, SIGNAL(clicked()), this, SLOT(on_chk_date_clicked()));
 	connect(m_oFilterGUI.chk_tour, SIGNAL(clicked()), this, SLOT(on_chk_tour_clicked()));
 
@@ -743,7 +771,7 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.txt_search, SIGNAL(textChanged(const QString &)), this, SLOT(on_txt_search_edited(const QString &)));
 
 	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_P), this->m_pFilterWidget);
-	QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_p_shortcut()));
+	QObject::connect(shortcut, SIGNAL(activated()), this->m_oFilterGUI.btn_show_playlist, SLOT(clicked()));
 }
 
 void ReviewModeFilter::unregisterEventHandler()
@@ -816,10 +844,7 @@ string ReviewModeFilter::getCurClipText()
 
 	return datFile;
 }
-tResult ReviewModeFilter::on_p_shortcut(){
-	this->toPlayListMode(!this->m_oFilterGUI.grp_playlist->isVisible());
-	RETURN_NOERROR;
-}
+
 tResult ReviewModeFilter::on_btn_change_pw_clicked(){
 	this->m_oFilterGUI.grp_pwchange->setVisible(true);
 	this->m_oFilterGUI.txt_cur_pw->setEchoMode(QLineEdit::Password);
@@ -1049,7 +1074,7 @@ tResult ReviewModeFilter::on_list_event_annotation_clicked(QModelIndex index)
 	query += " a.eventstatusid, c.name as name, d.name as annotation ";
 	query += " from event_report a, clip_info b, event_status_list c, predefined_annotation_list d ";
 	query += " where a.predefinedannotationid = d.id and b.clipid=a.clipid and a.vin = b.vin and a.eventstatusid = c.id and a.reportid = "+id+" and eventcategoryid = " +prefix+ ";";
-	
+
 	vector<string> fields = this->getField4EventEdit();
 	map<string, vector<string>> dataContainer = (new Retriever(fields, query))->getData();
 
@@ -1103,6 +1128,33 @@ tResult ReviewModeFilter::on_btn_prev_clicked()
 	RETURN_NOERROR;
 }
 
+tResult ReviewModeFilter::on_btn_directory_clicked()
+{
+	QFileDialog *fd = new QFileDialog;
+	QTreeView *tree = fd->findChild <QTreeView*>();
+	
+	tree->setRootIsDecorated(true);
+	tree->setItemsExpandable(true);
+	tree->setExpandsOnDoubleClick(true);
+	fd->setFileMode(QFileDialog::Directory);
+	fd->setOption(QFileDialog::ShowDirsOnly);
+	fd->setViewMode(QFileDialog::Detail);
+	int result = fd->exec();
+	QString directory;
+
+	if (result)
+	{
+		directory = fd->selectedFiles()[0] + "/";
+		this->m_oFilterGUI.txt_directory->setText(directory);
+	}
+
+	fd->close();
+	tree->close();
+
+	saveCurrentStatus(LOGOUT);
+	RETURN_NOERROR;
+}
+
 tResult ReviewModeFilter::on_btn_next_clicked()
 {
 	this->refreshAnnotationGroup(this->offset + 100);
@@ -1115,7 +1167,33 @@ tResult ReviewModeFilter::on_btn_show_play_list_clicked()
 	this->toPlayListMode(this->m_oFilterGUI.list_playlist->isVisible());
 	RETURN_NOERROR;
 }
+tResult ReviewModeFilter::on_btn_generate_play_list()
+{
 
+	string prefix = this->m_oFilterGUI.txt_directory->text().toStdString();
+	vector<string> clip_list = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.list_playlist, 0);
+	
+	if(clip_list.empty()) 
+	{
+		MagnaUtil::show_message("The clip list is empty.");
+		RETURN_NOERROR;
+	}
+
+	string dir = this->m_oFilterGUI.txt_directory->text().toStdString();
+	
+	if(dir.empty()){
+		MagnaUtil::show_message("Please set the directory.");
+		RETURN_NOERROR;
+	}
+
+	MagnaUtil::outToFile(PLAY_LIST_HOME, prefix, clip_list);
+	MagnaUtil::show_message("The play list of the clips has been created.");
+
+	MagnaUtil::delete_file(TEMP_FILE + "tmp.xml");
+	this->initAllAtStart();
+	this->m_oFilterGUI.txt_clip_directory->setText(QString(""));
+	RETURN_NOERROR;
+}
 
 tResult ReviewModeFilter::on_chk_tour_clicked()
 {
@@ -1144,6 +1222,8 @@ tResult ReviewModeFilter::on_cbo_AI_changed()
 
 	map<string, vector<string>> containers = (new Retriever(getListField4AI(), query))->getData();
 	this->listhandle->addItemsFromDB(m_oFilterGUI.listAI, AIModel, this->getListField4AI(), query);
+
+	saveCurrentStatus(LOGOUT);
 	
 	RETURN_NOERROR;
 }
@@ -1851,41 +1931,115 @@ void ReviewModeFilter::toInsertMode(bool mode)
 
 void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 {
+
+	this->m_oFilterGUI.chk_eyeq_event->setChecked(false);
+	this->m_oFilterGUI.chk_fcm_event->setChecked(false);
+	this->m_oFilterGUI.chk_user_event->setChecked(false);
+	this->m_oFilterGUI.chk_radar->setChecked(false);
+
+	this->m_oFilterGUI.chk_day_1->setChecked(false);
+	this->m_oFilterGUI.chk_day_2->setChecked(false);
+	this->m_oFilterGUI.chk_day_3->setChecked(false);
+
+	this->m_oFilterGUI.chk_weather_1->setChecked(false);
+	this->m_oFilterGUI.chk_weather_2->setChecked(false);
+	this->m_oFilterGUI.chk_weather_3->setChecked(false);
+	this->m_oFilterGUI.chk_weather_4->setChecked(false);
+
+	this->m_oFilterGUI.chk_road_1->setChecked(false);
+	this->m_oFilterGUI.chk_road_2->setChecked(false);
+	this->m_oFilterGUI.chk_road_3->setChecked(false);
+
+	this->m_oFilterGUI.chk_event_status_1->setChecked(false);
+	this->m_oFilterGUI.chk_event_status_2->setChecked(false);
+	this->m_oFilterGUI.chk_event_status_3->setChecked(false);
+	this->m_oFilterGUI.chk_event_status_4->setChecked(false);
+	this->m_oFilterGUI.chk_event_status_5->setChecked(false);
+
 	this->m_oFilterGUI.lbl_reportid->setVisible(false);
 	this->m_oFilterGUI.lbl_table->setVisible(false);
 	this->m_oFilterGUI.txt_annotation->setVisible(false);
+
 	XMLHandler *xmlHandle = new XMLHandler(tmpFile);
+
+
+	this->offset = MagnaUtil::stringTointeger(xmlHandle->getNodeValue("offset", "value"));
+
+	vector<string> project_list = xmlHandle->getNodeListAtSecondLevel("project_list");
+	vector<string> selected_project_list = xmlHandle->getNodeListAtSecondLevel("selected_project_list");
+
+	vector<string> vin_list = xmlHandle->getNodeListAtSecondLevel("vin_list");
+	vector<string> selected_vin_list = xmlHandle->getNodeListAtSecondLevel("selected_vin_list");
+
+	vector<string> collection_list = xmlHandle->getNodeListAtSecondLevel("collection_list");
 
 	vector<string> feature_list = xmlHandle->getNodeListAtSecondLevel("feature_list");
 	vector<string> selected_feature_list = xmlHandle->getNodeListAtSecondLevel("selected_feature_list");
+
 	vector<string> event_list = xmlHandle->getNodeListAtSecondLevel("event_list");
 	vector<string> selected_event_list = xmlHandle->getNodeListAtSecondLevel("selected_event_list");
+
 	vector<string> annotation_list = xmlHandle->getNodeListAtSecondLevel("annotation_list");
 	vector<string> selected_annotation_list = xmlHandle->getNodeListAtSecondLevel("selected_annotation_list");
+
+	vector<string> AI_type_list = xmlHandle->getNodeListAtSecondLevel("AI_type_list");
+	vector<string> AI_list = xmlHandle->getNodeListAtSecondLevel("AI_list");
+	vector<string> selected_AI_list = xmlHandle->getNodeListAtSecondLevel("selected_AI_list");
+	vector<string> play_list = xmlHandle->getNodeListAtSecondLevel("play_list");
 	vector<string> event_annotation_list = xmlHandle->getNodeListAtSecondLevel("event_annotation_list");
-	vector<string> table_list = xmlHandle->getNodeListAtSecondLevel("table_list");
-	vector<string> project_list = xmlHandle->getNodeListAtSecondLevel("project_list");
+
+	vector<string> event_category_list = xmlHandle->getNodeListAtSecondLevel("event_category_list");
+	vector<string> day_list = xmlHandle->getNodeListAtSecondLevel("day_list");
+	vector<string> weather_list = xmlHandle->getNodeListAtSecondLevel("weather_list");
+	vector<string> road_list = xmlHandle->getNodeListAtSecondLevel("road_list");
+	vector<string> event_status_list = xmlHandle->getNodeListAtSecondLevel("event_status_list");
 
 	string clip_directory = xmlHandle->getNodeValue("clip_directory", "value");
 	string selected_event = xmlHandle->getNodeValue("selected_event", "value");
-	string selected_project = xmlHandle->getNodeValue("selected_project", "value");
+	string selected_collection = xmlHandle->getNodeValue("collection_selected", "value");
+	string selected_AI_type = xmlHandle->getNodeValue("AI_type_selected", "value");
+	string set_directory = xmlHandle->getNodeValue("set_directory", "value");
+
+	string chk_collection = xmlHandle->getNodeValue("collection_check", "value");
+	string chk_AI = xmlHandle->getNodeValue("AI_check", "value");
 	string chk_date = xmlHandle->getNodeValue("date_check", "value");
 	string chk_annotation = xmlHandle->getNodeValue("annotation_check", "value");
 	string chk_text_annotation = xmlHandle->getNodeValue("text_annotation_check", "value");
 	string text_annotation = xmlHandle->getNodeValue("text_annotation", "value");
+	string status = xmlHandle->getNodeValue("status", "value");
 
 	string start_date = xmlHandle->getNodeValue("start_date", "value");
 	string end_date = xmlHandle->getNodeValue("end_date", "value");
-
-
+	
+	this->m_oFilterGUI.lbl_status->setText(QString(status.c_str()));
 	this->initAnnotationCombo(this->m_oFilterGUI.cbo_annotation, selected_feature_list);
+	this->listhandle->addItems(this->m_oFilterGUI.listProject, this->projectModel, project_list);
+	this->listhandle->addItems(this->m_oFilterGUI.listProjectSelected, this->selectedProjectModel, selected_project_list);
+	this->listhandle->addItems(this->m_oFilterGUI.listVin, this->vinModel, vin_list);
+	this->listhandle->addItems(this->m_oFilterGUI.listVinSelected, this->selectedVinModel, selected_vin_list);
+
 	this->listhandle->addItems(this->m_oFilterGUI.listFeature, this->featureModel, feature_list);
 	this->listhandle->addItems(this->m_oFilterGUI.listFeatureSelected, this->selectedFeatureModel, selected_feature_list);
 	this->listhandle->addItems(this->m_oFilterGUI.listEvent, this->eventModel, event_list);
 	this->listhandle->addItems(this->m_oFilterGUI.listEventSelected, this->selectedEventModel, selected_event_list);
-	this->listhandle->addItems(this->m_oFilterGUI.listAnnotation, this->annotationModel, annotation_list);
+	this->listhandle->addItems(this->m_oFilterGUI.listAnnotation, this->annotationModel, annotation_list);	
 	this->listhandle->addItems(this->m_oFilterGUI.listAnnotationSelected, this->selectedAnnotationModel, selected_annotation_list);
+	this->listhandle->addItems(this->m_oFilterGUI.listAI, this->AIModel, AI_list);	
+	this->listhandle->addItems(this->m_oFilterGUI.listAISelected, this->selectedAIModel, selected_AI_list);
+
 	this->listhandle->addItems(this->m_oFilterGUI.listEventAnnotation, this->eventListModel, event_annotation_list);
+
+	this->listhandle->addItems(this->m_oFilterGUI.list_playlist, this->playlistModel, play_list);
+
+	combo_handle->initCombo(this->m_oFilterGUI.cbo_collection, collection_list);
+	combo_handle->initCombo(this->m_oFilterGUI.cbo_AI, AI_type_list);
+
+	int indexOfColelction = this->m_oFilterGUI.cbo_collection->findText(QString(selected_collection.c_str()));
+	this->m_oFilterGUI.cbo_collection->setCurrentIndex(indexOfColelction);
+	int indexOfAI = this->m_oFilterGUI.cbo_AI->findText(QString(selected_AI_type.c_str()));
+	this->m_oFilterGUI.cbo_AI->setCurrentIndex(indexOfAI);
+
+	this->m_oFilterGUI.txt_directory->setText(QString(set_directory.c_str()));
 
 	string str_true = "true";
 	if(chk_date.compare(str_true)==0){
@@ -1927,17 +2081,54 @@ void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 	{
 		this->toAnnotationCategoryMode(false);
 	}
+	if(chk_collection.compare(str_true)) {
+		this->m_oFilterGUI.chk_tour->setChecked(false);
+		this->on_chk_tour_clicked();
+	}
 
-	for(unsigned int idx = 0 ; idx < table_list.size() ; idx++)
+	for(unsigned int idx = 0 ; idx < event_category_list.size() ; idx++)
 	{
-		string tmp = table_list.at(idx);
-		string eyeq = "eyeq";
-		string fcm = "fcm";
-		string user = "user";
+		string tmp = event_category_list.at(idx);
 
-		if(tmp.compare(eyeq)==0) this->m_oFilterGUI.chk_eyeq_event->setChecked(true);
-		if(tmp.compare(fcm)==0) this->m_oFilterGUI.chk_fcm_event->setChecked(true);
-		if(tmp.compare(user)==0) this->m_oFilterGUI.chk_user_event->setChecked(true);
+		if(tmp.compare("eyeq")==0) this->m_oFilterGUI.chk_eyeq_event->setChecked(true);
+		if(tmp.compare("fcm")==0) this->m_oFilterGUI.chk_fcm_event->setChecked(true);
+		if(tmp.compare("user")==0) this->m_oFilterGUI.chk_user_event->setChecked(true);
+		if(tmp.compare("radar")==0) this->m_oFilterGUI.chk_user_event->setChecked(true);
+	}
+
+	for(unsigned int idx = 0 ; idx < day_list.size() ; idx++)
+	{
+		string tmp = day_list.at(idx);
+		if(tmp.compare("day")==0) this->m_oFilterGUI.chk_day_1->setChecked(true);
+		if(tmp.compare("dusk")==0) this->m_oFilterGUI.chk_day_2->setChecked(true);
+		if(tmp.compare("night")==0) this->m_oFilterGUI.chk_day_3->setChecked(true);
+	}
+
+	for(unsigned int idx = 0 ; idx < weather_list.size() ; idx++)
+	{
+		string tmp = weather_list.at(idx);
+		if(tmp.compare("clear")==0) this->m_oFilterGUI.chk_weather_1->setChecked(true);
+		if(tmp.compare("rain")==0) this->m_oFilterGUI.chk_weather_2->setChecked(true);
+		if(tmp.compare("overcast")==0) this->m_oFilterGUI.chk_weather_3->setChecked(true);
+		if(tmp.compare("snow")==0) this->m_oFilterGUI.chk_weather_4->setChecked(true);
+	}
+
+	for(unsigned int idx = 0 ; idx < road_list.size() ; idx++)
+	{
+		string tmp = road_list.at(idx);
+		if(tmp.compare("highway")==0) this->m_oFilterGUI.chk_road_1->setChecked(true);
+		if(tmp.compare("urban")==0) this->m_oFilterGUI.chk_road_2->setChecked(true);
+		if(tmp.compare("both")==0) this->m_oFilterGUI.chk_road_3->setChecked(true);
+	}
+
+	for(unsigned int idx = 0 ; idx < event_status_list.size() ; idx++)
+	{
+		string tmp = event_status_list.at(idx);
+		if(tmp.compare("unconfirmed")==0) this->m_oFilterGUI.chk_event_status_1->setChecked(true);
+		if(tmp.compare("accepted")==0) this->m_oFilterGUI.chk_event_status_2->setChecked(true);
+		if(tmp.compare("annotated")==0) this->m_oFilterGUI.chk_event_status_3->setChecked(true);
+		if(tmp.compare("declined")==0) this->m_oFilterGUI.chk_event_status_4->setChecked(true);
+		if(tmp.compare("missed")==0) this->m_oFilterGUI.chk_event_status_5->setChecked(true);
 	}
 
 	if(!selected_event.empty()){
@@ -1946,25 +2137,33 @@ void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 		this->on_list_event_annotation_clicked(idx);
 	}
 
+	
 	this->m_oFilterGUI.txt_clip_directory->setText(QString(clip_directory.c_str()));
+
 	saveCurrentStatus(LOGOUT);
 }
 
 
 void ReviewModeFilter::saveCurrentStatus(string status)
 {
-
 	bool datechecker=this->m_oFilterGUI.chk_date->isChecked();
 	bool text_annotation_checker= this->m_oFilterGUI.chk_text_annotation->isChecked();
 	bool annotation_checker= this->m_oFilterGUI.chk_annotation->isChecked();
-
+	bool AI_checker= this->m_oFilterGUI.chk_AI->isChecked();
+	bool collection_checker= this->m_oFilterGUI.chk_tour->isChecked();
+	string offset = MagnaUtil::integerToString(this->offset);
 	string sdate;
 	string edate;
 	string text_annotation;
 	string clip_directory;
+	string txt_status = this->m_oFilterGUI.lbl_status->text().toStdString();
 	vector<string> project_list;
 	vector<string> selected_project_list;
-	vector<string> table;
+	vector<string> vin_list;
+	vector<string> selected_vin_list;
+	vector<string> AI_list;
+	vector<string> selected_AI_list;
+	vector<string> play_list;
 	vector<string> featureList;
 	vector<string> selectedFeatureList;
 	vector<string> eventList;
@@ -1972,23 +2171,72 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 	vector<string> annotationList;
 	vector<string> selectedAnnotationList;
 	vector<string> eventAnnotationList;
+
+	vector<string> event_category;
+	vector<string> days;
+	vector<string> weathers;
+	vector<string> roads;
+	vector<string> event_statuses;
+
+	vector<string> collection_list;
+	vector<string> AI_type_list;
+
+
+	string selectedAIType = this->m_oFilterGUI.cbo_AI->currentText().toStdString();
+	string selectedCollection = this->m_oFilterGUI.cbo_collection->currentText().toStdString();
 	string selectedEvent;
+	string set_directory;
 	
-	if(this->m_oFilterGUI.chk_eyeq_event->isChecked()) table.push_back("eyeq");
-	if(this->m_oFilterGUI.chk_fcm_event->isChecked()) table.push_back("fcm");
-	if(this->m_oFilterGUI.chk_user_event->isChecked()) table.push_back("user");
+	if(this->m_oFilterGUI.chk_eyeq_event->isChecked()) event_category.push_back("eyeq");
+	if(this->m_oFilterGUI.chk_fcm_event->isChecked()) event_category.push_back("fcm");
+	if(this->m_oFilterGUI.chk_user_event->isChecked()) event_category.push_back("user");
+	if(this->m_oFilterGUI.chk_radar->isChecked()) event_category.push_back("radar");
+
+	if(this->m_oFilterGUI.chk_day_1->isChecked()) days.push_back("day");
+	if(this->m_oFilterGUI.chk_day_2->isChecked()) days.push_back("dusk");
+	if(this->m_oFilterGUI.chk_day_3->isChecked()) days.push_back("night");
+
+	if(this->m_oFilterGUI.chk_weather_1->isChecked()) weathers.push_back("clear");
+	if(this->m_oFilterGUI.chk_weather_2->isChecked()) weathers.push_back("rain");
+	if(this->m_oFilterGUI.chk_weather_3->isChecked()) weathers.push_back("overcast");
+	if(this->m_oFilterGUI.chk_weather_4->isChecked()) weathers.push_back("snow");
+
+	if(this->m_oFilterGUI.chk_road_1->isChecked()) roads.push_back("highway");
+	if(this->m_oFilterGUI.chk_road_2->isChecked()) roads.push_back("urban");
+	if(this->m_oFilterGUI.chk_road_3->isChecked()) roads.push_back("both");
+
+	if(this->m_oFilterGUI.chk_event_status_1->isChecked()) event_statuses.push_back("unconfirmed");
+	if(this->m_oFilterGUI.chk_event_status_2->isChecked()) event_statuses.push_back("accepted");
+	if(this->m_oFilterGUI.chk_event_status_3->isChecked()) event_statuses.push_back("annotated");
+	if(this->m_oFilterGUI.chk_event_status_4->isChecked()) event_statuses.push_back("declined");
+	if(this->m_oFilterGUI.chk_event_status_5->isChecked()) event_statuses.push_back("missed");
 	
 	text_annotation = this->m_oFilterGUI.txt_annotation->toPlainText().toStdString();
 	clip_directory = this->m_oFilterGUI.txt_clip_directory->text().toStdString();
+	set_directory = this->m_oFilterGUI.txt_directory->text().toStdString();
 
 	sdate = this->getDate(this->m_oFilterGUI.dateEdit, "/");
 	edate = this->getDate(this->m_oFilterGUI.dateEdit_2, "/");
+
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.cbo_collection->model()->rowCount() ; idx++)
+		collection_list.push_back(this->m_oFilterGUI.cbo_collection->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.cbo_AI->model()->rowCount() ; idx++)
+		AI_type_list.push_back(this->m_oFilterGUI.cbo_AI->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
 
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listProject->model()->rowCount() ; idx++)
 		project_list.push_back(this->m_oFilterGUI.listProject->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
 
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listProjectSelected->model()->rowCount() ; idx++)
 		selected_project_list.push_back(this->m_oFilterGUI.listProjectSelected->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.listVin->model()->rowCount() ; idx++)
+		vin_list.push_back(this->m_oFilterGUI.listVin->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.listVinSelected->model()->rowCount() ; idx++)
+		selected_vin_list.push_back(this->m_oFilterGUI.listVinSelected->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
 
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listFeature->model()->rowCount() ; idx++)
 		featureList.push_back(this->m_oFilterGUI.listFeature->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
@@ -2008,21 +2256,41 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listAnnotationSelected->model()->rowCount() ; idx++)
 		selectedAnnotationList.push_back(this->m_oFilterGUI.listAnnotationSelected->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
 
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.listAI->model()->rowCount() ; idx++)
+		AI_list.push_back(this->m_oFilterGUI.listAI->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.listAISelected->model()->rowCount() ; idx++)
+		selected_AI_list.push_back(this->m_oFilterGUI.listAISelected->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+
+
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listEventAnnotation->model()->rowCount() ; idx++)
 		eventAnnotationList.push_back(this->m_oFilterGUI.listEventAnnotation->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.list_playlist->model()->rowCount() ; idx++)
+		play_list.push_back(this->m_oFilterGUI.list_playlist->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
 	
 	vector<string> v_selectedEventList = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listEventAnnotation, this->eventListModel);
 	if(!v_selectedEventList.empty())
 		selectedEvent = v_selectedEventList.at(0);
 
-
 	XMLHandler xmlHandle(TEMP_FILE + "tmp.xml");
 	xmlHandle.open();
 	xmlHandle.addHeader("backup");
 
+	xmlHandle.addItem("offset", "value", offset);
 	xmlHandle.addItem("clip_directory", "value", clip_directory);
+	xmlHandle.addItem("set_directory", "value", set_directory);
 	xmlHandle.addItem("date_check", "value", !datechecker);
 	xmlHandle.addItem("text_annotation_check", "value", !text_annotation_checker);
+	xmlHandle.addItem("AI_check", "value", !AI_checker);
+	xmlHandle.addItem("AI_type_selected", "value", selectedAIType);
+	xmlHandle.addItem("collection_check", "value", !collection_checker);
+	xmlHandle.addItem("collection_selected", "value", selectedCollection);
+	xmlHandle.addItem("status", "value", txt_status);
+
 	xmlHandle.addItem("annotation_check", "value", !annotation_checker);
 	xmlHandle.addItem("text_annotation", "value", text_annotation);
 	xmlHandle.addItem("start_date", "value", sdate);
@@ -2041,16 +2309,31 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 		xmlHandle.addItem("login", "value", id);
 	}
 
+	xmlHandle.addItems("collection_list", "item", collection_list);
+	xmlHandle.addItems("AI_type_list", "item", AI_type_list);
+
 	xmlHandle.addItems("project_list", "item", project_list);
 	xmlHandle.addItems("selected_project_list", "item", selected_project_list);
+	xmlHandle.addItems("vin_list", "item", vin_list);
+	xmlHandle.addItems("selected_vin_list", "item", selected_vin_list);
 	xmlHandle.addItems("feature_list", "item", featureList);
 	xmlHandle.addItems("selected_feature_list", "item", selectedFeatureList);
 	xmlHandle.addItems("event_list", "item", eventList);
 	xmlHandle.addItems("selected_event_list", "item", selectedEventList);
 	xmlHandle.addItems("annotation_list", "item", annotationList);
 	xmlHandle.addItems("selected_annotation_list", "item", selectedAnnotationList);
+	
+	xmlHandle.addItems("AI_type_list", "item", AI_type_list);
+	xmlHandle.addItems("AI_list", "item", AI_list);
+	xmlHandle.addItems("selected_AI_list", "item", selected_AI_list);
 	xmlHandle.addItems("event_annotation_list", "item", eventAnnotationList);
-	xmlHandle.addItems("table_list", "item", table);
+	
+	xmlHandle.addItems("play_list", "item", play_list);
+	xmlHandle.addItems("event_category_list", "item", event_category);
+	xmlHandle.addItems("day_list", "item", days);
+	xmlHandle.addItems("weather_list", "item", weathers);
+	xmlHandle.addItems("road_list", "item", roads);
+	xmlHandle.addItems("event_status_list", "item", event_statuses);
 
 	xmlHandle.addFooter("backup");
 	xmlHandle.close();
@@ -2175,7 +2458,6 @@ void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> 
 		string query = this->queryFactory->getEventTypeQuery(this->getListField4Event(), 
 			" event_report b, clip_info c", categories, stime, etime, vstr_fetures, project_id,
 			vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, status);
-		
 		this->listhandle->addItemsFromDB(m_oFilterGUI.listEvent, eventModel, this->getListField4Event(), query);
 	}
 
@@ -2194,10 +2476,39 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 	vector<string> weathers = this->getWeatherTypes();
 	vector<string> roads = this->getRoadTypes();
 	vector<string> event_status = this->getEventStatus();
+	vector<string> event_categories = getEventCategories();
 
-	if(project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty() || event_status.empty() 
-		|| (this->m_oFilterGUI.chk_AI->isChecked()==false && ai_typeid.empty()))
+	vector<string> events = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listEventSelected, 1);
+	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
+	vector<string> annotations = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listAnnotationSelected, 1);
+
+	string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
+	string search_condition = this->m_oFilterGUI.txt_search->text().toStdString();
+	bool chk_search = this->m_oFilterGUI.chk_search->isChecked();
+	bool chk_annotation = this->m_oFilterGUI.chk_annotation->isChecked();
+	string start_clip = "";
+	string end_clip = "";
+
+	bool chk_tour = this->m_oFilterGUI.chk_tour->isChecked();
+	if(selected_clip_cluster!= "")
 	{
+		start_clip = MagnaUtil::stringTokenizer(selected_clip_cluster, '-').at(0);
+		end_clip = MagnaUtil::stringTokenizer(selected_clip_cluster, '-').at(1);
+	}
+
+	string stime, etime;
+	if(!this->m_oFilterGUI.chk_date->isChecked())
+	{
+		vector<string> dateRange= getDateRange();
+		stime = dateRange.at(0);
+		etime = dateRange.at(1);
+	}
+
+	if(vstr_fetures.empty()|| events.empty()|| event_categories.empty() || 
+		project_id.empty() || vin_id.empty() || days.empty() || weathers.empty()|| roads.empty() || event_status.empty() 
+		|| (this->m_oFilterGUI.chk_AI->isChecked()==false && ai_typeid.empty())|| (annotations.size()==0 && chk_annotation))
+	{
+		this->m_oFilterGUI.lbl_status->setText("");
 		initAnnotationGroup();
 	}
 	else
@@ -2219,38 +2530,12 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 		this->m_oFilterGUI.lbl_table->setText(QString(""));
 		this->m_oFilterGUI.lbl_reportid->setText(QString(""));
 		this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
-		vector<string> events = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listEventSelected, 1);
-
-		vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
-		vector<string> annotations = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listAnnotationSelected, 1);
-		string selected_clip_cluster = ReviewModeFilter::localtime_clipid_map[this->m_oFilterGUI.cbo_collection->currentText().toStdString()];
-		string start_clip = "";
-		string end_clip = "";
-
-		bool chk_tour = this->m_oFilterGUI.chk_tour->isChecked();
-		if(selected_clip_cluster!= "")
-		{
-			start_clip = MagnaUtil::stringTokenizer(selected_clip_cluster, '-').at(0);
-			end_clip = MagnaUtil::stringTokenizer(selected_clip_cluster, '-').at(1);
-		}
-
-		string search_condition = this->m_oFilterGUI.txt_search->text().toStdString();
-		bool chk_search = this->m_oFilterGUI.chk_search->isChecked();
-
-		bool chk_annotation = this->m_oFilterGUI.chk_annotation->isChecked();
 		this->m_oFilterGUI.chk_text_annotation->setChecked(true);
+
 		this->on_chk_text_annotation_clicked();
 		this->m_oFilterGUI.txt_annotation->clear();
-
-		string stime, etime;
-
 		progress->setValue(30);
-		if(!this->m_oFilterGUI.chk_date->isChecked())
-		{
-			vector<string> dateRange= getDateRange();
-			stime = dateRange.at(0);
-			etime = dateRange.at(1);
-		}
+
 
 		this->m_oFilterGUI.lbl_status->setText("");
 		this->m_oFilterGUI.lbl_clip->setText("");
@@ -2258,33 +2543,37 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 		this->m_oFilterGUI.cbo_status->setCurrentIndex(0);
 		this->m_oFilterGUI.cbo_annotation->setCurrentIndex(0);
 
-		progress->setValue(40);
-		int recordsize =0;
-		if(events.size()==0 || (annotations.size()==0 && chk_annotation)){
-
-			this->m_oFilterGUI.lbl_status->setText("");
-
-		}else{
-
-			vector<string> event_categories = getEventCategories();
-			string query = this->queryFactory->getEventListQuery(this->offset,
-				this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
-				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status, ai_typeid, ai_value);
-
-			LOG_INFO(query.c_str());
+		progress->setValue(20);
+		
+		string query = this->queryFactory->getEventListQuery(this->offset,
+			this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
+			vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status, ai_typeid, ai_value, true);
+		
+		int recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
+		progress->setValue(30);
+		
+		if(this->offset==0)
+		{
+			progress->setLabelText(QString("Refreshing PlayList..."));
+			string queryPlaylist = this->queryFactory->getEventListQuery(this->offset,
+				this->getListField4PlayList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
+				vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status, ai_typeid, ai_value, false);
 			
-			progress->setValue(50);
-			recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
-		}
+			int recordsizedPlayList = this->listhandle->addItemsFromDB(m_oFilterGUI.list_playlist, playlistModel, this->getListField4PlayList(), queryPlaylist);
 
-		progress->setValue(90);
+		}
+		
+		progress->setValue(60);
+		
+
 		this->initAnnotationCombo(this->m_oFilterGUI.cbo_annotation);
 		string text = MagnaUtil::integerToString(recordsize) + " events have been selected in the " + MagnaUtil::integerToString(this->offset/100 + 1) + " page.";
-		
 		this->m_oFilterGUI.lbl_status->setText(QString(text.c_str()));
-		this->saveCurrentStatus(LOGOUT);
+		progress->setValue(90);
 
+		this->saveCurrentStatus(LOGOUT);
 		progress->hide();
+
 		if(current_offset>0 && recordsize==0)
 		{
 			refreshAnnotationGroup(current_offset-100);
@@ -2434,11 +2723,17 @@ vector<string> ReviewModeFilter::getListField4Annotation()
 	return itemsFromDB;
 }
 
+vector<string> ReviewModeFilter::getListField4PlayList()
+{
+	vector<string> itemsFromDB;
+	itemsFromDB.push_back("clipname");
+
+	return itemsFromDB;
+}
 
 vector<string> ReviewModeFilter::getListField4EventList()
 {
 	vector<string> itemsFromDB;
-
 
 	itemsFromDB.push_back("eventcategoryid");
 	itemsFromDB.push_back("reportid");
