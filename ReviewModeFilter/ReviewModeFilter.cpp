@@ -1331,9 +1331,10 @@ tResult ReviewModeFilter::on_btn_insert_clicked()
 
 
 	vector<string> project_id = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listProjectSelected, 1);	
-	if(project_id.empty())
+	vector<string> vehicle = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listVinSelected, 0);	
+	if(project_id.empty() || vehicle.empty())
 	{
-		MagnaUtil::show_message("Select Project");
+		MagnaUtil::show_message("Select Project and Vin");
 		RETURN_NOERROR;
 	}
 
@@ -1909,18 +1910,21 @@ void ReviewModeFilter::toSettingMode(bool mode)
 	this->m_oFilterGUI.GrpSetting->setVisible(mode);
 	if(this->m_oFilterGUI.GrpInsert->isVisible()) this->on_btn_cancel_clicked();
 	this->m_oFilterGUI.GrpFeature->setEnabled(!mode);
+	this->m_oFilterGUI.GrpFeature->setEnabled(!mode);
 	this->m_oFilterGUI.GrpEvent->setEnabled(!mode);
 	this->m_oFilterGUI.GrpEdit->setEnabled(!mode);
+	this->m_oFilterGUI.AnnotationFilter->setEnabled(!mode);
 	this->m_oFilterGUI.btn_setting->setEnabled(!mode);
 	this->m_oFilterGUI.cbo_collection->setVisible(!mode);
-	this->m_oFilterGUI.btn_browse->setFocus(Qt::OtherFocusReason);
+	this->m_oFilterGUI.btn_clip->setEnabled(!mode);
+	//this->m_oFilterGUI.btn_clip->setFocus(Qt::OtherFocusReason);
 }
 
 void ReviewModeFilter::toInsertMode(bool mode)
 {
 	//this->toITextAnnotationMode(mode);
 	this->m_oFilterGUI.GrpInsert->setVisible(mode);
-	this->m_oFilterGUI.GrpFeature->setEnabled(!mode);
+	this->m_oFilterGUI.AnnotationFilter->setEnabled(!mode);
 	this->m_oFilterGUI.GrpEvent->setEnabled(!mode);
 	this->m_oFilterGUI.GrpEdit->setEnabled(!mode);
 	this->m_oFilterGUI.btn_clip->setEnabled(!mode);
