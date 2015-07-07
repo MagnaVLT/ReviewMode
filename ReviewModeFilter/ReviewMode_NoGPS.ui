@@ -19,7 +19,7 @@
      <x>10</x>
      <y>30</y>
      <width>1241</width>
-     <height>461</height>
+     <height>441</height>
     </rect>
    </property>
    <property name="title">
@@ -608,7 +608,7 @@
       <x>10</x>
       <y>300</y>
       <width>1221</width>
-      <height>151</height>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">
@@ -620,7 +620,7 @@
        <x>391</x>
        <y>40</y>
        <width>170</width>
-       <height>101</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -633,7 +633,7 @@
        <x>611</x>
        <y>40</y>
        <width>170</width>
-       <height>101</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -662,7 +662,7 @@
        <x>20</x>
        <y>40</y>
        <width>151</width>
-       <height>101</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -675,7 +675,7 @@
        <x>220</x>
        <y>40</y>
        <width>151</width>
-       <height>101</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -686,7 +686,7 @@
      <property name="geometry">
       <rect>
        <x>571</x>
-       <y>96</y>
+       <y>85</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -712,7 +712,7 @@
      <property name="geometry">
       <rect>
        <x>571</x>
-       <y>66</y>
+       <y>55</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -725,7 +725,7 @@
      <property name="geometry">
       <rect>
        <x>180</x>
-       <y>66</y>
+       <y>56</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -751,7 +751,7 @@
      <property name="geometry">
       <rect>
        <x>180</x>
-       <y>96</y>
+       <y>86</y>
        <width>31</width>
        <height>23</height>
       </rect>
@@ -816,7 +816,7 @@
      <property name="geometry">
       <rect>
        <x>985</x>
-       <y>96</y>
+       <y>84</y>
        <width>41</width>
        <height>23</height>
       </rect>
@@ -836,7 +836,7 @@
        <x>800</x>
        <y>40</y>
        <width>181</width>
-       <height>101</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -849,7 +849,7 @@
        <x>1030</x>
        <y>40</y>
        <width>181</width>
-       <height>101</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="selectionMode">
@@ -860,7 +860,7 @@
      <property name="geometry">
       <rect>
        <x>985</x>
-       <y>66</y>
+       <y>54</y>
        <width>41</width>
        <height>23</height>
       </rect>
@@ -1088,7 +1088,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>500</y>
+     <y>474</y>
      <width>1241</width>
      <height>251</height>
     </rect>
@@ -1112,7 +1112,7 @@
      <property name="geometry">
       <rect>
        <x>690</x>
-       <y>150</y>
+       <y>167</y>
        <width>151</width>
        <height>31</height>
       </rect>
@@ -1125,7 +1125,7 @@
      <property name="geometry">
       <rect>
        <x>690</x>
-       <y>60</y>
+       <y>77</y>
        <width>151</width>
        <height>31</height>
       </rect>
@@ -1137,10 +1137,10 @@
     <widget class="QCheckBox" name="chk_text_annotation">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>60</y>
-       <width>151</width>
-       <height>17</height>
+       <x>390</x>
+       <y>76</y>
+       <width>161</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
@@ -1153,10 +1153,10 @@
     <widget class="QLabel" name="lbl_clip">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>40</y>
-       <width>421</width>
-       <height>20</height>
+       <x>390</x>
+       <y>38</y>
+       <width>401</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -1166,8 +1166,8 @@
     <widget class="QPushButton" name="btn_next">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>152</y>
+       <x>200</x>
+       <y>170</y>
        <width>181</width>
        <height>31</height>
       </rect>
@@ -1179,9 +1179,9 @@
     <widget class="QComboBox" name="cbo_status">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>152</y>
-       <width>261</width>
+       <x>390</x>
+       <y>168</y>
+       <width>291</width>
        <height>31</height>
       </rect>
      </property>
@@ -1189,9 +1189,9 @@
     <widget class="QTextEdit" name="txt_annotation">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>80</y>
-       <width>261</width>
+       <x>390</x>
+       <y>96</y>
+       <width>291</width>
        <height>51</height>
       </rect>
      </property>
@@ -1200,7 +1200,7 @@
      <property name="geometry">
       <rect>
        <x>690</x>
-       <y>120</y>
+       <y>137</y>
        <width>151</width>
        <height>31</height>
       </rect>
@@ -1222,19 +1222,6 @@
       <string>TextLabel</string>
      </property>
     </widget>
-    <widget class="QLabel" name="lbl_status">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>190</y>
-       <width>851</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
     <widget class="QLabel" name="lbl_reportid">
      <property name="geometry">
       <rect>
@@ -1251,8 +1238,8 @@
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>430</x>
-       <y>132</y>
+       <x>392</x>
+       <y>148</y>
        <width>71</width>
        <height>16</height>
       </rect>
@@ -1264,8 +1251,8 @@
     <widget class="QPushButton" name="btn_prev">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>152</y>
+       <x>10</x>
+       <y>170</y>
        <width>181</width>
        <height>31</height>
       </rect>
@@ -1277,9 +1264,9 @@
     <widget class="QComboBox" name="cbo_annotation">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>80</y>
-       <width>261</width>
+       <x>390</x>
+       <y>96</y>
+       <width>291</width>
        <height>31</height>
       </rect>
      </property>
@@ -1290,17 +1277,17 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>10</x>
        <y>30</y>
        <width>371</width>
-       <height>121</height>
+       <height>131</height>
       </rect>
      </property>
     </widget>
     <widget class="QLabel" name="lbl_adtftime">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>391</x>
        <y>20</y>
        <width>171</width>
        <height>20</height>
@@ -1314,13 +1301,39 @@
      <property name="geometry">
       <rect>
        <x>690</x>
-       <y>90</y>
+       <y>107</y>
        <width>151</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
       <string>Show Clip</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_prevclip">
+     <property name="geometry">
+      <rect>
+       <x>799</x>
+       <y>42</y>
+       <width>21</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_nextclip">
+     <property name="geometry">
+      <rect>
+       <x>819</x>
+       <y>42</y>
+       <width>21</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&gt;</string>
      </property>
     </widget>
    </widget>
@@ -1366,7 +1379,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>190</y>
+       <y>210</y>
        <width>311</width>
        <height>16</height>
       </rect>
@@ -1415,12 +1428,25 @@
      <string>&lt;</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lbl_status">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>230</y>
+      <width>851</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="GrpInsert">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>440</y>
+     <x>500</x>
+     <y>430</y>
      <width>561</width>
      <height>261</height>
     </rect>
@@ -2270,8 +2296,8 @@
   <widget class="QGroupBox" name="grp_login">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>290</y>
+     <x>540</x>
+     <y>230</y>
      <width>231</width>
      <height>121</height>
     </rect>
@@ -2773,8 +2799,8 @@
   <widget class="QGroupBox" name="grp_pwchange">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>410</y>
+     <x>540</x>
+     <y>350</y>
      <width>231</width>
      <height>181</height>
     </rect>

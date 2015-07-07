@@ -721,6 +721,9 @@ void ReviewModeFilter::registerEventHandler()
 	connect(m_oFilterGUI.btn_show_playlist, SIGNAL(clicked()), this, SLOT(on_btn_show_play_list_clicked()));
 	connect(m_oFilterGUI.btn_generate, SIGNAL(clicked()), this, SLOT(on_btn_generate_play_list()));
 	connect(m_oFilterGUI.btn_dir, SIGNAL(clicked()), this, SLOT(on_btn_directory_clicked()));
+
+	connect(m_oFilterGUI.btn_prevclip, SIGNAL(clicked()), this, SLOT(on_btn_prev_clip_clicked()));
+	connect(m_oFilterGUI.btn_nextclip, SIGNAL(clicked()), this, SLOT(on_btn_next_clip_clicked()));
 	
 	connect(m_oFilterGUI.chk_date, SIGNAL(clicked()), this, SLOT(on_chk_date_clicked()));
 	connect(m_oFilterGUI.chk_tour, SIGNAL(clicked()), this, SLOT(on_chk_tour_clicked()));
@@ -1169,10 +1172,9 @@ tResult ReviewModeFilter::on_btn_show_play_list_clicked()
 }
 tResult ReviewModeFilter::on_btn_generate_play_list()
 {
-
 	string prefix = this->m_oFilterGUI.txt_directory->text().toStdString();
 	vector<string> clip_list = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.list_playlist, 0);
-	
+	clip_list = this->getPreviousClip(clip_list);
 	if(clip_list.empty()) 
 	{
 		MagnaUtil::show_message("The clip list is empty.");
@@ -1194,6 +1196,34 @@ tResult ReviewModeFilter::on_btn_generate_play_list()
 	this->m_oFilterGUI.txt_clip_directory->setText(QString(""));
 	RETURN_NOERROR;
 }
+
+vector<string> ReviewModeFilter::getPreviousClip(vector<string> cliplist){
+	vector<string> insert_list;
+	vector<int> insert_idx_list;
+
+	for(unsigned int i = 0 ; i < cliplist.size(); i++)
+	{
+		string cur_clip = cliplist.at(i);
+		string prev_clip = get_related_clip_name(cur_clip, -1);
+		if(!prev_clip.empty() && !MagnaUtil::Contains_String(cliplist, prev_clip))
+		{
+			insert_list.push_back(prev_clip);
+			insert_idx_list.push_back(i);
+		}
+		
+	}
+	unsigned int cnt = 0;
+	for(unsigned int k = 0; k < insert_idx_list.size() ; k++)
+	{	
+		int idx = insert_idx_list.at(k);
+		cliplist.insert(cliplist.begin()+(idx+cnt), insert_list.at(k));
+		cnt+=1;
+	}
+	
+	return cliplist;
+	
+}
+
 
 tResult ReviewModeFilter::on_chk_tour_clicked()
 {
@@ -1485,6 +1515,79 @@ tResult ReviewModeFilter::on_dateEdit_2_changed()
 	refreshAnnotationGroup(0);
 	this->m_oFilterGUI.dateEdit_2->blockSignals(false);
 	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter::on_btn_prev_clip_clicked()
+{
+	string cur_dat = this->m_oFilterGUI.lbl_clip->text().toStdString();
+	if(!cur_dat.empty())
+	{
+		string clip_name = get_related_clip_name(cur_dat, -1);
+		if(clip_name.empty()) {
+			MagnaUtil::show_message("No Previous Clip.");
+			RETURN_NOERROR;
+		}
+		this->m_oFilterGUI.lbl_clip->setText(QString(clip_name.c_str()));
+	}
+	RETURN_NOERROR;
+}
+
+tResult ReviewModeFilter::on_btn_next_clip_clicked()
+{
+	string cur_dat = this->m_oFilterGUI.lbl_clip->text().toStdString();
+	if(!cur_dat.empty())
+	{
+		string clip_name = get_related_clip_name(cur_dat, 1);
+		if(clip_name.empty()) {
+			MagnaUtil::show_message("No Previous Clip.");
+			RETURN_NOERROR;
+		}
+		this->m_oFilterGUI.lbl_clip->setText(QString(clip_name.c_str()));
+	}
+
+	RETURN_NOERROR;
+}
+
+std::string ReviewModeFilter::get_related_clip_name(string cur_clip_name, int distance)
+{
+	string prev_clip_name = "";
+	vector<string> tokens = MagnaUtil::stringTokenizer(cur_clip_name, '_');
+	
+	for(unsigned int i = 1; i < tokens.size()-2 ; i++)
+		prev_clip_name += tokens.at(i) + "_";
+	prev_clip_name += tokens.at(tokens.size()-2);
+
+	string num = MagnaUtil::stringTokenizer(tokens.at(tokens.size()-1), '.').at(0);
+	int int_prev_num = MagnaUtil::stringTointeger(num)+ distance;
+	string prev_num = "";
+	
+	if(int_prev_num<0) return "";
+
+	if(int_prev_num<10) prev_num = "00" + MagnaUtil::integerToString(int_prev_num);
+	else if(int_prev_num<100) prev_num = "0" + MagnaUtil::integerToString(int_prev_num);
+	else prev_num = MagnaUtil::integerToString(int_prev_num);
+
+	prev_clip_name+= "_" + prev_num + ".dat";
+	vector<string> fields;
+	fields.push_back("clipid");
+	fields.push_back("clipname");
+	string query = "select clipid, clipname from clip_info where clipname like '%"+prev_clip_name+"';";
+	map<string, vector<string>> container = (new Retriever(fields, query))->getData();
+	if(container["clipid"].size()>0)
+	{
+		for (unsigned int i = 0 ; i < container["clipid"].size() ; i++)
+		{
+			string pctime = container["clipid"].at(i);
+			__int64 diff = MagnaUtil::convertSystemTimeToSecond(tokens.at(0)) - MagnaUtil::convertSystemTimeToSecond(pctime);
+			if(diff<0) diff = diff * -1;
+			if(diff<th){
+				prev_clip_name = container["clipname"].at(i);
+				return prev_clip_name;
+			}
+		}
+	}
+
+	return "";
 }
 
 
@@ -2565,10 +2668,12 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 			
 			int recordsizedPlayList = this->listhandle->addItemsFromDB(m_oFilterGUI.list_playlist, playlistModel, this->getListField4PlayList(), queryPlaylist);
 
+			string text_playlist = MagnaUtil::integerToString(recordsizedPlayList) + " clips have been selected.";
+			this->m_oFilterGUI.lbl_status_playlist->setText(QString(text_playlist.c_str()));
+
 		}
 		
 		progress->setValue(60);
-		
 
 		this->initAnnotationCombo(this->m_oFilterGUI.cbo_annotation);
 		string text = MagnaUtil::integerToString(recordsize) + " events have been selected in the " + MagnaUtil::integerToString(this->offset/100 + 1) + " page.";

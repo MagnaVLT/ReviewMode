@@ -452,6 +452,15 @@ public:
 		return false;
 	}
 
+
+	static bool Contains_String(vector<string> v, string str)
+	{
+		if(v.size()==0) return false;
+		bool check = find(v.begin(), v.end(), str) != v.end();
+		return check;
+	}
+
+
 	static bool Contains(map<string, string> m, string str )
 	{
 		if(m.size()==0) return false;

@@ -290,7 +290,7 @@ bool SimpleReviewModeFilter::changeDatFile(string dat)
 		string att_value = "adtf.stg.harddisk_player";
 
 		XMLHandler *t = new XMLHandler(SYSTEM_RELEASE);
-		t->update("adtf:project", "configurations", "Review", att_name, att_value, dat);
+		t->update("adtf:project", "configurations", "SimpleReview", att_name, att_value, dat);
 
 		return true;
 	}

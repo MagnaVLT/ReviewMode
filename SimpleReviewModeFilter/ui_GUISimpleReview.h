@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'simple_reviewmode_gui.ui'
 **
-** Created: Mon Jun 8 17:30:06 2015
+** Created: Tue Jun 30 01:59:40 2015
 **      by: Qt User Interface Compiler version 4.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

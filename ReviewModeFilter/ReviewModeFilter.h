@@ -259,6 +259,9 @@ public slots:
 	tResult on_dateEdit_changed();
 	tResult on_chk_date_clicked();
 	tResult on_dateEdit_2_changed();
+	tResult on_btn_prev_clip_clicked();
+	string get_related_clip_name(string cur_clip_name, int distance);
+	tResult on_btn_next_clip_clicked();
 	tResult on_chk_clicked();
 	tResult on_chk_annotation_clicked();
 	tResult on_chk_search_clicked();
@@ -285,6 +288,7 @@ public slots:
 	tResult on_btn_next_clicked();
 	tResult on_btn_show_play_list_clicked();
 	tResult on_btn_generate_play_list();
+	vector<string> getPreviousClip(vector<string> cliplist);
 	tResult on_chk_tour_clicked();
 	tResult on_cbo_AI_changed();
 	tResult on_cbo_collection_changed();
