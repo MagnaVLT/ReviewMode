@@ -179,6 +179,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ComboHandle.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\moc_ SimpleReviewModeFilter.cpp"
 				>
 			</File>
@@ -208,6 +212,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\ComboHandle.h"
+				>
+			</File>
 			<File
 				RelativePath=".\SimpleReviewModeFilter.h"
 				>
@@ -252,7 +260,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="$(QTDIR)\bin\uic.exe -o &quot;ui_GUISimpleReview.h&quot; &quot;simple_reviewmode_gui.ui&quot;"
+					CommandLine="$(QTDIR)\bin\uic.exe -o &quot;ui_GUISimpleReview.h&quot; &quot;simple_reviewmode_gui.ui&quot;&#x0D;&#x0A;"
 					Outputs="ui_GUISimpleReview.h"
 				/>
 			</FileConfiguration>

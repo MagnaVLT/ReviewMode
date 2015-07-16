@@ -74,8 +74,8 @@ tResult ReviewModeFilter::Init(tInitStage eStage, __exception)
 		//	static_cast<IPinEventSink*>(this)));
 		//RETURN_IF_FAILED(RegisterPin(&this->m_sample_data));
 
-		RETURN_IF_FAILED(m_out_reviewed_data.Create("Reviewed_Data", new adtf::cMediaType(MEDIA_TYPE_STRUCTURED_DATA, MEDIA_SUBTYPE_STRUCT_STRUCTURED), this));
-		RETURN_IF_FAILED(RegisterPin(&m_out_reviewed_data));
+		//RETURN_IF_FAILED(m_out_reviewed_data.Create("Reviewed_Data", new adtf::cMediaType(MEDIA_TYPE_STRUCTURED_DATA, MEDIA_SUBTYPE_STRUCT_STRUCTURED), this));
+		//RETURN_IF_FAILED(RegisterPin(&m_out_reviewed_data));
 
 	}
 
@@ -97,23 +97,23 @@ tResult ReviewModeFilter::Init(tInitStage eStage, __exception)
 /* Start Function */
 tResult ReviewModeFilter::Start(__exception)
 {
+	RETURN_IF_FAILED(cFilter::Start(__exception_ptr));
 	return cBaseQtFilter::Start(__exception_ptr);		// TODO	RETURN_IF_FAILED generates a warning [created on 07/02/2014]
 }
 
 /** Stop Function */
 tResult ReviewModeFilter::Stop(__exception)
 {
-    return cBaseQtFilter::Stop(__exception_ptr);
+    //return cBaseQtFilter::Stop(__exception_ptr);
+
+	RETURN_IF_FAILED(cBaseQtFilter::Stop(__exception_ptr));
+	return cFilter::Stop();
+
 }
 
 tResult ReviewModeFilter::Shutdown(tInitStage eStage, __exception)
 {
-    // In each stage clean up everything that you initialized in the corresponding stage during Init.
-    // Pins are an exception:
-    // - The base class takes care of static pins that are members of this class.
-    // - Dynamic pins have to be cleaned up in the ReleasePins method, please see the demo_dynamicpin
-    //   example for further reference.
-    
+
     if (eStage == StageGraphReady)
     {
     }
@@ -155,7 +155,7 @@ tHandle ReviewModeFilter::CreateView()
 	m_pFilterWidget = new QWidget();
 	m_oFilterGUI.setupUi(m_pFilterWidget);
 	string tmpFile = TEMP_FILE + "tmp.xml";
-
+	
 	if(QFile().exists(QString(tmpFile.c_str())))
 	{
 		XMLHandler *xmlHandle = new XMLHandler(tmpFile.c_str());
@@ -357,7 +357,6 @@ void ReviewModeFilter::initAnnotationGroup()
 	this->m_oFilterGUI.listEventAnnotation->setModel(this->eventListModel);
 	this->m_oFilterGUI.lbl_adtftime->setText(QString(""));
 	this->m_oFilterGUI.lbl_clip->setText(QString(""));
-	this->m_oFilterGUI.chk_tour->setChecked(true);
 }
 
 void ReviewModeFilter::initMode()
@@ -466,6 +465,7 @@ void ReviewModeFilter::initFeatureList()
 		string query =	" select b.name, b.id from users_feature_project_map a, feature_list b ";
 		query +=		" where a.featureid = b.id and a.userid = '"+ReviewModeFilter::ID+"'";
 		query = queryFactory->addFieldsViaInStatement("a.projectid", project_id, query, 2, false);
+		
 		this->listhandle->addItemsFromDB(m_oFilterGUI.listFeature, featureModel, this->getListField4Feature(), query);
 	}
 }
@@ -1172,13 +1172,23 @@ tResult ReviewModeFilter::on_btn_show_play_list_clicked()
 }
 tResult ReviewModeFilter::on_btn_generate_play_list()
 {
+
 	string prefix = this->m_oFilterGUI.txt_directory->text().toStdString();
 	vector<string> clip_list = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.list_playlist, 0);
-	clip_list = this->getPreviousClip(clip_list);
+
+	QProgressDialog *progress = new QProgressDialog(this->m_pFilterWidget);
+	progress->setWindowTitle(QString("Generating..."));
+	progress->setWindowModality(Qt::WindowModal);
+	progress->setRange(0,clip_list.size());
+	progress->show();
+	progress->setLabelText(QString("Generating Playlist ..."));
+
+	clip_list = this->getPreviousClip(clip_list, progress);
 	if(clip_list.empty()) 
 	{
-		MagnaUtil::show_message("The clip list is empty.");
+		progress->hide();
 		RETURN_NOERROR;
+		//MagnaUtil::show_message("The clip list is empty.");
 	}
 
 	string dir = this->m_oFilterGUI.txt_directory->text().toStdString();
@@ -1190,23 +1200,27 @@ tResult ReviewModeFilter::on_btn_generate_play_list()
 
 	MagnaUtil::outToFile(PLAY_LIST_HOME, prefix, clip_list);
 	MagnaUtil::show_message("The play list of the clips has been created.");
-
+	progress->hide();
 	MagnaUtil::delete_file(TEMP_FILE + "tmp.xml");
-	this->initAllAtStart();
-	this->m_oFilterGUI.txt_clip_directory->setText(QString(""));
+
+	//this->initAllAtStart();
+	//this->m_oFilterGUI.txt_clip_directory->setText(QString(""));
+
+
 	RETURN_NOERROR;
 }
 
-vector<string> ReviewModeFilter::getPreviousClip(vector<string> cliplist){
+vector<string> ReviewModeFilter::getPreviousClip(vector<string> cliplist, QProgressDialog *progress){
 	vector<string> insert_list;
 	vector<int> insert_idx_list;
 
 	for(unsigned int i = 0 ; i < cliplist.size(); i++)
 	{
+		progress->setValue(i);
 		string cur_clip = cliplist.at(i);
 		string prev_clip = get_related_clip_name(cur_clip, -1);
 		if(!prev_clip.empty() && !MagnaUtil::Contains_String(cliplist, prev_clip))
-		{
+		{	
 			insert_list.push_back(prev_clip);
 			insert_idx_list.push_back(i);
 		}
@@ -1221,7 +1235,6 @@ vector<string> ReviewModeFilter::getPreviousClip(vector<string> cliplist){
 	}
 	
 	return cliplist;
-	
 }
 
 
@@ -1529,17 +1542,20 @@ tResult ReviewModeFilter::on_btn_prev_clip_clicked()
 		}
 		this->m_oFilterGUI.lbl_clip->setText(QString(clip_name.c_str()));
 	}
+
+
 	RETURN_NOERROR;
 }
 
 tResult ReviewModeFilter::on_btn_next_clip_clicked()
 {
+
 	string cur_dat = this->m_oFilterGUI.lbl_clip->text().toStdString();
 	if(!cur_dat.empty())
 	{
 		string clip_name = get_related_clip_name(cur_dat, 1);
 		if(clip_name.empty()) {
-			MagnaUtil::show_message("No Previous Clip.");
+			MagnaUtil::show_message("No Next Clip.");
 			RETURN_NOERROR;
 		}
 		this->m_oFilterGUI.lbl_clip->setText(QString(clip_name.c_str()));
@@ -1625,7 +1641,8 @@ tResult ReviewModeFilter::on_btn_setting_clicked()
 tResult ReviewModeFilter::on_btn_setting_cancel_clicked()
 {
 	this->sqlFileHandler->delete_temporal_database("temporal_database", "root", "hil");	
-	this->initAllAtStart();
+	//this->initAllAtStart();
+	this->toSettingMode(false);
 	RETURN_NOERROR;
 }
 
@@ -2182,7 +2199,7 @@ void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 	}
 	
 	if(chk_annotation.compare(str_true)==0)
-	{	
+	{
 		this->toAnnotationCategoryMode(true);
 	}else
 	{
@@ -2190,7 +2207,10 @@ void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 	}
 	if(chk_collection.compare(str_true)) {
 		this->m_oFilterGUI.chk_tour->setChecked(false);
-		this->on_chk_tour_clicked();
+		this->m_oFilterGUI.cbo_collection->setEnabled(true);
+	}else{
+		this->m_oFilterGUI.chk_tour->setChecked(true);
+		this->m_oFilterGUI.cbo_collection->setEnabled(false);
 	}
 
 	for(unsigned int idx = 0 ; idx < event_category_list.size() ; idx++)
@@ -2244,10 +2264,11 @@ void ReviewModeFilter::restoreCurrentStatus(const char* tmpFile)
 		this->on_list_event_annotation_clicked(idx);
 	}
 
-	
 	this->m_oFilterGUI.txt_clip_directory->setText(QString(clip_directory.c_str()));
 
+	
 	saveCurrentStatus(LOGOUT);
+	
 }
 
 
@@ -2331,7 +2352,6 @@ void ReviewModeFilter::saveCurrentStatus(string status)
 
 	for(int idx = 0 ; idx < this->m_oFilterGUI.cbo_AI->model()->rowCount() ; idx++)
 		AI_type_list.push_back(this->m_oFilterGUI.cbo_AI->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
-
 
 	for(int idx = 0 ; idx < this->m_oFilterGUI.listProject->model()->rowCount() ; idx++)
 		project_list.push_back(this->m_oFilterGUI.listProject->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
@@ -2483,6 +2503,8 @@ void ReviewModeFilter::refreshEventGroup()
 		progress->show();
 		QApplication::processEvents();
 		progress->setLabelText(QString("Init Event Filter Panel ..."));
+
+
 		refreshEvents(progress, project_id, vin_id, chk_tour, start_clip, end_clip, days, weathers, roads);
 		refreshAnnotation(project_id, progress);
 		refreshAICombo(project_id, progress);
@@ -2542,14 +2564,14 @@ void ReviewModeFilter::refreshEvents(QProgressDialog * progress, vector<string> 
 {
 	eventModel = new QStandardItemModel();
 	selectedEventModel = new QStandardItemModel();
-
+	
 	this->m_oFilterGUI.listEvent->setModel(this->eventModel);
 	this->m_oFilterGUI.listEventSelected->setModel(this->selectedEventModel);
 
 	vector<string> vstr_fetures = this->listhandle->getSelectedItemTextList(this->m_oFilterGUI.listFeatureSelected, 1);	
 	vector<string> categories = this->getEventCategories();
 	vector<string> status = this->getEventStatus();
-
+	
 	progress->setValue(20);
 
 	string stime, etime;
@@ -2655,7 +2677,6 @@ void ReviewModeFilter::refreshAnnotationGroup(int current_offset)
 		string query = this->queryFactory->getEventListQuery(this->offset,
 			this->getListField4EventList(), ReviewModeFilter::ID , project_id, events, stime, etime, event_categories, annotations, search_condition, chk_search, 
 			vin_id, chk_tour, start_clip, end_clip, days, weathers, roads, event_status, ai_typeid, ai_value, true);
-		
 		int recordsize = this->listhandle->addItemsFromDB(m_oFilterGUI.listEventAnnotation, eventListModel, this->getListField4EventList(), query);
 		progress->setValue(30);
 		

@@ -288,7 +288,7 @@ public slots:
 	tResult on_btn_next_clicked();
 	tResult on_btn_show_play_list_clicked();
 	tResult on_btn_generate_play_list();
-	vector<string> getPreviousClip(vector<string> cliplist);
+	vector<string> getPreviousClip(vector<string> cliplist, QProgressDialog *progress);
 	tResult on_chk_tour_clicked();
 	tResult on_cbo_AI_changed();
 	tResult on_cbo_collection_changed();

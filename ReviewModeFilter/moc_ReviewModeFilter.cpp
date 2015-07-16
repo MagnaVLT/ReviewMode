@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ReviewModeFilter.h'
 **
-** Created: Tue Jul 7 05:21:49 2015
+** Created: Wed Jul 15 23:23:01 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -78,14 +78,14 @@ static const uint qt_meta_data_ReviewModeFilter[] = {
     1133,   17,   18,   17, 0x0a,
     1155,   17,   18,   17, 0x0a,
     1187,   17,   18,   17, 0x0a,
-    1239, 1230, 1215,   17, 0x0a,
-    1271,   17,   18,   17, 0x0a,
-    1293,   17,   18,   17, 0x0a,
-    1313,   17,   18,   17, 0x0a,
-    1341,   17,   18,   17, 0x0a,
-    1361,   17,   18,   17, 0x0a,
-    1381,   17,   18,   17, 0x0a,
-    1402,   17,   18,   17, 0x0a,
+    1248, 1230, 1215,   17, 0x0a,
+    1297,   17,   18,   17, 0x0a,
+    1319,   17,   18,   17, 0x0a,
+    1339,   17,   18,   17, 0x0a,
+    1367,   17,   18,   17, 0x0a,
+    1387,   17,   18,   17, 0x0a,
+    1407,   17,   18,   17, 0x0a,
+    1428,   17,   18,   17, 0x0a,
 
        0        // eod
 };
@@ -125,7 +125,8 @@ static const char qt_meta_stringdata_ReviewModeFilter[] = {
     "on_btn_next_clicked()\0"
     "on_btn_show_play_list_clicked()\0"
     "on_btn_generate_play_list()\0vector<string>\0"
-    "cliplist\0getPreviousClip(vector<string>)\0"
+    "cliplist,progress\0"
+    "getPreviousClip(vector<string>,QProgressDialog*)\0"
     "on_chk_tour_clicked()\0on_cbo_AI_changed()\0"
     "on_cbo_collection_changed()\0"
     "on_btn_LR_clicked()\0on_btn_RL_clicked()\0"
@@ -255,7 +256,7 @@ int ReviewModeFilter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
         case 45: { tResult _r = on_btn_generate_play_list();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;
-        case 46: { vector<string> _r = getPreviousClip((*reinterpret_cast< vector<string>(*)>(_a[1])));
+        case 46: { vector<string> _r = getPreviousClip((*reinterpret_cast< vector<string>(*)>(_a[1])),(*reinterpret_cast< QProgressDialog*(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< vector<string>*>(_a[0]) = _r; }  break;
         case 47: { tResult _r = on_chk_tour_clicked();
             if (_a[0]) *reinterpret_cast< tResult*>(_a[0]) = _r; }  break;

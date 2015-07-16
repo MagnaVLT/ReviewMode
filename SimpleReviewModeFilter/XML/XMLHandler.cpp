@@ -213,6 +213,33 @@ void XMLHandler::update(string path1, string path2, string mode_name, string fil
 		this->save();
 	}
 }
+
+vector<string> XMLHandler::getConfigurationNames(string path1, string path2){
+
+	ifstream theFile (filename.c_str());
+	vector<char> buffer((istreambuf_iterator<char>(theFile)), istreambuf_iterator<char>());
+	buffer.push_back('\0');
+	this->doc.parse<0>(&buffer[0]);
+	xml_node<>* root_node = this->doc.first_node(path1.c_str())->first_node(path2.c_str());
+	vector<string> configurations;
+
+	for (xml_node<> *child = root_node->first_node(); child; child = child->next_sibling()) 
+	{
+		string node_name = child->name();
+		for (xml_attribute<> *attribute = child->first_attribute(); attribute; attribute = attribute->next_attribute()) 
+		{
+			string att_name = attribute->name();
+			string att_value = attribute->value();
+			if(node_name.compare("configuration")==0 && att_name.compare("name")==0){
+				configurations.push_back(att_value);
+			}
+		}
+	}
+
+	return configurations;
+}
+
+
 void XMLHandler::getConfiguration(xml_node<> * root_node, string config_name)
 {
 	for (xml_node<> *child = root_node->first_node(); child; child = child->next_sibling()) 

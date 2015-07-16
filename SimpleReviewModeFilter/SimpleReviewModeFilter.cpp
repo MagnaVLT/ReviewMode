@@ -18,6 +18,7 @@
 #include "stdafx.h"
 #include "SimpleReviewModeFilter.h"
 #include "XML/XMLHandler.h"
+#include "ComboHandle.h"
 #include <QtGui/QFileDialog>
 #include <QtGui/QTreeView>
 #include <QtCore/QDir>
@@ -111,7 +112,7 @@ tHandle SimpleReviewModeFilter::CreateView()
     m_oFilterGUI.setupUi(m_pFilterWidget);
 	
 	this->registerEventHandler();
-
+	
 	if(QFile().exists(QString(TEMP_FILE.c_str()))){
 		this->restoreCurrentStatus();
 	}else{
@@ -124,10 +125,13 @@ tHandle SimpleReviewModeFilter::CreateView()
 
 void SimpleReviewModeFilter::initGUI()
 {
-	//XMLHandler *xmlHandle = new XMLHandler(tmpFile);
+	XMLHandler *t = new XMLHandler(SYSTEM_RELEASE);
 	this->m_oFilterGUI.btn_showclip->setEnabled(false);
 	this->m_oFilterGUI.btn_next->setEnabled(false);
 	this->m_oFilterGUI.btn_previous->setEnabled(false);
+	vector<string> configurations = t->getConfigurationNames("adtf:project", "configurations");
+	ComboHandle comboHandle;
+	comboHandle.initCombo(this->m_oFilterGUI.cbo_mode, configurations);
 }
 
 tResult SimpleReviewModeFilter::ReleaseView()
@@ -254,9 +258,17 @@ void SimpleReviewModeFilter::saveCurrentStatus()
 	XMLHandler xmlHandle(TEMP_FILE);
 	xmlHandle.open();
 	xmlHandle.addHeader("backup");
+	vector<string> mode_list;
+
+	for(int idx = 0 ; idx < this->m_oFilterGUI.cbo_mode->model()->rowCount() ; idx++)
+		mode_list.push_back(this->m_oFilterGUI.cbo_mode->model()->index(idx,0).data(Qt::DisplayRole).toString().toStdString());
+
+	xmlHandle.addItems("mode_list", "item", mode_list);
 
 	string clip = this->m_oFilterGUI.txt_clip_directory->text().toStdString();
 	xmlHandle.addItem("clip_url", "value", clip);
+
+
 	
 	xmlHandle.addFooter("backup");
 	xmlHandle.close();
@@ -267,6 +279,12 @@ void SimpleReviewModeFilter::restoreCurrentStatus()
 	XMLHandler xmlHandle(TEMP_FILE);
 
 	string clip = xmlHandle.getNodeValue("clip_url", "value");
+
+	vector<string> mode_list = xmlHandle.getNodeListAtSecondLevel("mode_list");
+
+	ComboHandle combo_handle;
+	combo_handle.initCombo(this->m_oFilterGUI.cbo_mode, mode_list);
+
 	this->m_oFilterGUI.txt_clip_directory->setEnabled(false);
 	this->m_oFilterGUI.txt_clip_directory->setText(QString(clip.c_str()));
 	this->setFileList(QString(clip.c_str()));
@@ -288,9 +306,9 @@ bool SimpleReviewModeFilter::changeDatFile(string dat)
 	}else{
 		string att_name = "idref";
 		string att_value = "adtf.stg.harddisk_player";
-
+		string mode = this->m_oFilterGUI.cbo_mode->currentText().toStdString();
 		XMLHandler *t = new XMLHandler(SYSTEM_RELEASE);
-		t->update("adtf:project", "configurations", "SimpleReview", att_name, att_value, dat);
+		t->update("adtf:project", "configurations", mode, att_name, att_value, dat);
 
 		return true;
 	}

@@ -15,6 +15,7 @@ public:
 	XMLHandler(string filename);
 	~XMLHandler(void);
 	void update(string path1, string path2, string mode_name, string filter_name, string filter_value, string replace_value);
+	vector<string> getConfigurationNames(string path1, string path2);
 	string getCurDatFile(string path1, string path2, string mode_name, string filter_name, string filter_value);
 	vector<string> getNodeListAtSecondLevel(string node_name);
 	vector<string> getNodeListAtFirstLevel(string node_name);
